@@ -1,0 +1,9 @@
+exit
+cd .workspace/repos/ ls
+cd .workspace/repos
+ls
+clear
+ls
+npm
+exit
+npm
