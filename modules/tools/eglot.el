@@ -1,3 +1,4 @@
+;; Added lombok for java dev
 (setq lombok-library-path (concat user-emacs-directory "lombok.jar"))
 (unless (file-exists-p lombok-library-path)
   (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
@@ -27,3 +28,5 @@
                                  "--jvm-arg=-XX:+UseStringDeduplication"
                                  "-Djava.format.settings.url=file:///home/user/code-format.xml"
                                  "-Djava.format.settings.profile=myown"))))
+
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))

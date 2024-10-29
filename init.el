@@ -44,8 +44,8 @@
 ;; You can simply uncomment the following if you'd like to get started with
 ;; MELPA packages quickly:
 ;;
-;; (with-eval-after-load 'package
-;;   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+(with-eval-after-load 'package
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 ;; If you want to turn off the welcome screen, uncomment this
 (setopt inhibit-splash-screen t)
@@ -198,9 +198,16 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package emacs
-  :config
-  (load-theme 'modus-vivendi))          ; for light theme, use modus-operandi
+
+(if (daemonp)
+    (cl-labels ((load-nord (frame)
+                           (with-selected-frame frame
+                             (load-theme 'catppuccin t))
+                           (remove-hook 'after-make-frame-functions #'load-nord)))
+      (add-hook 'after-make-frame-functions #'load-nord))
+  (load-theme 'catppuccin t))
+
+
 
 ;;; load editor modules
 (load-file (expand-file-name "modules/editor/avy.el" user-emacs-directory))
@@ -216,9 +223,7 @@ If the new path's directories does not exist, create them."
 (load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/devdocs.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
-
-
-
+(load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
 
 ;;load defaults
 
@@ -268,10 +273,10 @@ If the new path's directories does not exist, create them."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(avy cape consult corfu corfu-terminal devdocs eat
-	 exec-path-from-shell expand-region kind-icon magit
-	 markdown-mode orderless org-contacts vertico wgrep which-key)))
+ '(custom-safe-themes
+   '("24b6ade0e3cabdfee9fa487961b089d059e048d77fe13137ea4788c1b62bd99d"
+     default))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

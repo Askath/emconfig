@@ -10,7 +10,7 @@
 (use-package eat
   :ensure t
   :custom
-  (eat-term-name "xterm")
+  (eat-term-name "iterm")
   :config
   (eat-eshell-mode)                     ; use Eat to handle term codes in program output
   (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat

@@ -191,3 +191,144 @@
 
 (setq org-contacts-files (list "~/contacts/contacts.org"))
 (setq org-contacts-vcard-file "contacts.vcard")
+
+(use-package org-super-agenda
+  :ensure t)
+
+(use-package org-modern
+  :ensure t)
+
+(use-package org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-agenda-include-deadlines nil
+        org-agenda-include-scheduled nil
+        org-agenda-block-separator nil
+        org-agenda-compact-blocks t
+        org-agenda-start-day nil ;; i.e. today
+        org-agenda-span 1
+        org-agenda-start-on-weekday nil)
+  (setq org-agenda-custom-commands
+        '(
+          ("c" "Today"
+           ((agenda "" (
+                        (org-agenda-span 1)
+                        (org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '(
+                           (:name "Today"
+                            :time-grid t
+                            :scheduled today
+                            :order 1)
+                           (:name "Habit"
+                            :habit t
+                            :tag "habit"
+                            :order 2)
+                           (:name "Recurring"
+                            :time-grid t
+                            :tag "recurring"
+                            :order 4)
+                           (:discard (:scheduled future :deadline t))
+                           ))))
+            ;; (alltodo "" (
+            ;;              (org-agenda-overriding-header "")
+            ;;              (org-super-agenda-groups
+            ;;               '(
+            ;;                 (:name "Privat"
+            ;;                  :tag "private"
+            ;;                  :order 3)
+            ;;                 (:name "Work"
+            ;;                  :tag "work"
+            ;;                  :order 4)
+            ;;                 (:name "Other"
+            ;;                  :order 5)
+            ;;                 (:discard (:tag "appointment" :tag "habit"))
+            ;;                 ))))
+            ))
+
+          ("w" "Week"
+           ((agenda "" (
+                        (org-agenda-span 7)
+                        (org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '(
+                           (:name "--------- Workday -------"
+                            :tag "workday"
+                            :order 1)
+                           (:name "Todo on this day"
+                            :time-grid t
+                            :order 2)
+                           (:name "Recurring"
+                            :tag "recurring"
+                            :order 3)
+                           (:name "Due This day"
+                            :date t
+                            :order 4)
+                           ))))
+            ))
+
+          ("m" "Month"
+           ((agenda "" (
+                        (org-agenda-span 30)
+                        (org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '(
+                           (:name "--------- Workday -------"
+                            :tag "workday"
+                            :order 1)
+                           (:name "Todo on this day"
+                            :time-grid t
+                            :order 2)
+                           (:name "Recurring"
+                            :tag "recurring"
+                            :order 3)
+                           (:name "Due This day"
+                            :date t
+                            :order 4)
+                           ))))
+            ))
+          )))
+:config
+(org-super-agenda-mode)
+(add-hook 'org-mode-hook #'org-modern-mode)
+
+(use-package org-make-toc
+:ensure t)
+
+(require 'org-make-toc)
+
+;; Default t
+(setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "PROJ(p)"  ; A project, which usually contains other tasks
+           "LOOP(r)"  ; A recurring task
+           "STRT(s)"  ; A task that is in progress
+           "WAIT(w)"  ; Something external is holding up this task
+           "HOLD(h)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "|"
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence
+           "|"
+           "OKAY(o)"
+           "YES(y)"
+           "NO(n)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("STRT" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("WAIT" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel)))

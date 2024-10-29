@@ -9,7 +9,7 @@
          ("M-y"   . consult-yank-pop)   ; orig. yank-pop ;; Not sure I need that
          ;; Searching
          ("M-s r" . find-grep)
-	 ("M-s f" . consult-find) ;; find File
+	     ("M-s f" . consult-find) ;; find File
          ("M-s /" . consult-line)       ; Alternative: rebind C-s to use
          ("M-s s" . consult-line)       ; consult-line instead of isearch, bind
          ("M-s L" . consult-line-multi) ; isearch to M-s s 
