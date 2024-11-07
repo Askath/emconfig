@@ -290,7 +290,7 @@ If the new path's directories does not exist, create them."
  '(hledger-top-expense-account "Expenses")
  '(hledger-top-income-account "Revenue")
  '(org-agenda-files
-   '("/Users/taradruffel/org/albion/albion.org"
+   '("~/org/todos.org" "/Users/taradruffel/org/albion/albion.org"
      "/Users/taradruffel/org/configs/config.org"
      "/Users/taradruffel/org/configs/contacts.org"
      "/Users/taradruffel/org/contacts/contacts.org"
@@ -314,12 +314,7 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/recurring_calendar.org"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
- '(package-selected-packages
-   '(avy calfw calfw-org cape catppuccin-theme cider compat-macs consult
-         corfu-terminal devdocs eat exec-path-from-shell expand-region
-         gptel kind-icon ledger-mode magit markdown-mode orderless
-         org-contacts org-modern org-super-agenda org-timeblock
-         toc-org vertico wgrep)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

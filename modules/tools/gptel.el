@@ -1,5 +1,4 @@
 (use-package gptel 
-:ensure t
-:config
+:ensure t)
 
 (setq gptel-default-mode 'text-mode)

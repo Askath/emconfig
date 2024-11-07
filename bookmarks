@@ -2,8 +2,8 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-capture-last-stored" (filename . "~/org/calendar.org")
- (front-context-string . "** TODO Plaing g")
- (rear-context-string . "2024-11-04 Mon>\n") (position . 163)
- (last-modified 26408 58061 448615 0))
+(("org-capture-last-stored" (filename . "~/org/todos.org")
+ (front-context-string . "** TODO Work tod")
+ (rear-context-string . "-07 Thu>\n* Work\n") (position . 100)
+ (last-modified 26412 64535 255573 0))
 )
