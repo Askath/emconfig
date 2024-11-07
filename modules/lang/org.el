@@ -61,7 +61,7 @@
   ;; Make exporting quotes better
   (setq org-export-with-smart-quotes t)
   )
-
+(setq org-startup-folded 'fold)
 
 (setq org-contacts-vcard-file "contacts.vcard")
 
@@ -78,8 +78,14 @@
          "** TODO %? :private:\n  %i\n")
         ("T" "Todo Work" entry (file+headline "~/org/todos.org" "Work")
          "** TODO %? :work:\n  %i\n")
+        ("r" "Recurring" entry (file "~/org/recurring_calendar.org")
+         "** TODO  %?\n "
+         )
         ("l" "Link" entry (file+headline "~/org/link.org" "inbox")
          "** %\n"
+         )
+        ("n" "Note" entry (file "~/org/inbox.org")
+         "* %?"
          )
         ("m" "Meeting" entry (file "~/org/notes/areas/work/meetings/notes.org")
          "* %? "

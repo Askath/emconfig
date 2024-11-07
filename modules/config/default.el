@@ -1,6 +1,16 @@
-(set-frame-font "Monaspace Neon Var-18" nil t)
+(set-frame-font "Monaspace Neon Var-16" nil t)
 
 (delete-selection-mode 1)
+
+
+;; Enable line numbers globally
+(global-display-line-numbers-mode)
+
+;; Disable line numbers in a specific mode (e.g., org-mode)
+(add-hook 'org-timeblock-mode-hook (lambda () (display-line-numbers-mode 0)))
+
+;; Enable line numbers again when entering another mode, if needed
+(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
 (recentf-mode 1)
 (cua-mode -1)

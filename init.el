@@ -314,7 +314,13 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/recurring_calendar.org"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(all-the-icons avy calfw calfw-org cape catppuccin-theme cider
+                   consult corfu-terminal devdocs eat
+                   exec-path-from-shell expand-region gptel kind-icon
+                   ledger-mode magit markdown-mode nerd-icons
+                   orderless org-contacts org-modern org-super-agenda
+                   org-timeblock toc-org vertico wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
