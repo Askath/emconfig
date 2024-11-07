@@ -1,0 +1,13 @@
+auto-save-list
+org-persist/
+.cache
+org-persist
+elpa
+emacs-backup
+eshell
+history
+recentf
+transient
+tree-sitter
+lombok.jar
+org-persist/
