@@ -290,7 +290,7 @@ If the new path's directories does not exist, create them."
  '(hledger-top-expense-account "Expenses")
  '(hledger-top-income-account "Revenue")
  '(org-agenda-files
-   '("~/org/todos.org" "/Users/taradruffel/org/albion/albion.org"
+   '("/Users/taradruffel/org/albion/albion.org"
      "/Users/taradruffel/org/configs/config.org"
      "/Users/taradruffel/org/configs/contacts.org"
      "/Users/taradruffel/org/contacts/contacts.org"
@@ -302,6 +302,7 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/notes/areas/work/notes.org"
      "/Users/taradruffel/org/notes/areas/work/other_links.org"
      "/Users/taradruffel/org/notes/areas/inventur.org"
+     "/Users/taradruffel/org/notes/projects/game/README.org"
      "/Users/taradruffel/org/notes/projects/projects.org"
      "/Users/taradruffel/org/notes/resources/codesign.org"
      "/Users/taradruffel/org/notes/resources/morning-routine.org"
@@ -309,9 +310,11 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/notes/resources/reading_list.org"
      "/Users/taradruffel/org/notes/index.org"
      "/Users/taradruffel/org/calendar_work.org"
+     "/Users/taradruffel/org/inbox.org"
      "/Users/taradruffel/org/inventur.org"
      "/Users/taradruffel/org/link.org"
-     "/Users/taradruffel/org/recurring_calendar.org"))
+     "/Users/taradruffel/org/recurring_calendar.org"
+     "/Users/taradruffel/org/todos.org"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
  '(package-selected-packages
@@ -319,8 +322,9 @@ If the new path's directories does not exist, create them."
                    consult corfu-terminal devdocs eat
                    exec-path-from-shell expand-region gptel kind-icon
                    ledger-mode magit markdown-mode nerd-icons
-                   orderless org-contacts org-modern org-super-agenda
-                   org-timeblock toc-org vertico wgrep)))
+                   orderless org-cliplink org-contacts org-modern
+                   org-super-agenda org-timeblock toc-org vertico
+                   wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

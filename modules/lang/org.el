@@ -236,3 +236,29 @@
           ("PROJ" . +org-todo-project)
           ("NO"   . +org-todo-cancel)
           ("KILL" . +org-todo-cancel)))
+
+(use-package org-cliplink 
+:ensure t)
+
+(global-set-key (kbd "C-x p i") 'org-cliplink)
+(global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
+
+(defun org-clock-todo-change ()
+  (if (string= org-state "PROGR")
+      (org-clock-in)
+    (when (org-clocking-p)
+      (org-clock-out))))
+
+(add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
+
+
+(setq org-clock-default-task-id "9CAA065A-1590-4EE1-9965-D95A9B39442C")
+(defun my-org-clock-in-default-task ()
+  "Clock in to the default task set by `org-clock-default-task-id`."
+  (interactive)
+  (when org-clock-default-task-id
+    (org-with-point-at (org-id-find org-clock-default-task-id 'marker)
+      (org-clock-in))))
+
+;; Automatically clock in to the default task on startup, if desired
+(add-hook 'after-init-hook 'my-org-clock-in-default-task)
