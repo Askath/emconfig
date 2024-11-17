@@ -1,4 +1,4 @@
-;;;  ________                                                _______                 __                            __
+;;  ________                                                _______                 __                            __
 ;;; /        |                                              /       \               /  |                          /  |
 ;;; $$$$$$$$/ _____  ____   ______   _______  _______       $$$$$$$  | ______   ____$$ | ______   ______   _______$$ |   __
 ;;; $$ |__   /     \/    \ /      \ /       |/       |      $$ |__$$ |/      \ /    $$ |/      \ /      \ /       $$ |  /  |
@@ -227,6 +227,7 @@ If the new path's directories does not exist, create them."
 (load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
+(load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
 (load-file (expand-file-name "modules/lang/clojure.el" user-emacs-directory))
 
 ;;load defaults
@@ -295,6 +296,7 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/configs/contacts.org"
      "/Users/taradruffel/org/contacts/contacts.org"
      "/Users/taradruffel/org/notes/areas/clojure/clojure_faq.org"
+     "/Users/taradruffel/org/notes/areas/cooking/recipes.org"
      "/Users/taradruffel/org/notes/areas/fitness/exercise.org"
      "/Users/taradruffel/org/notes/areas/work/meetings/estimations.org"
      "/Users/taradruffel/org/notes/areas/work/meetings/notes.org"
@@ -319,12 +321,12 @@ If the new path's directories does not exist, create them."
  '(org-timeblock-scale-options nil)
  '(package-selected-packages
    '(all-the-icons avy calfw calfw-org cape catppuccin-theme cider
-                   consult corfu-terminal devdocs eat
-                   exec-path-from-shell expand-region gptel kind-icon
-                   ledger-mode magit markdown-mode nerd-icons
-                   orderless org-cliplink org-contacts org-modern
-                   org-super-agenda org-timeblock toc-org vertico
-                   wgrep)))
+                   consult corfu-terminal devdocs eat elfeed
+                   exec-path-from-shell expand-region gptel
+                   hledger-mode kind-icon ledger-mode magit
+                   markdown-mode nerd-icons orderless org-cliplink
+                   org-contacts org-modern org-super-agenda
+                   org-timeblock toc-org vertico wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

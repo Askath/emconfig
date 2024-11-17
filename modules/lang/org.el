@@ -51,7 +51,7 @@
          (org-mode . flyspell-mode))    ; spell checking!
 
   :bind (:map global-map)
-                :config
+  :config
   (require 'oc-csl)                     ; citation support
   (add-to-list 'org-export-backends 'md)
 
@@ -119,126 +119,113 @@
   :init
   (setq org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t
-        org-agenda-include-deadlines nil
-        org-agenda-include-scheduled nil
+        org-agenda-include-deadlines t
         org-agenda-block-separator nil
         org-agenda-compact-blocks t
         org-agenda-start-day nil ;; i.e. today
-        org-agenda-span 1
+        org-agenda-span 7
         org-agenda-start-on-weekday nil)
+  (setq org-deadline-warning-days 90)
+  (setq org-agenda-warning-days 90)
+  (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
+  (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
+
   (setq org-agenda-custom-commands
         '(
           ("c" "Today"
            ((agenda "" (
-                        (org-agenda-span 1)
+                        (org-agenda-span 'day)
                         (org-agenda-overriding-header "")
                         (org-super-agenda-groups
-                         '(
+                         '((:name "NOTES"
+                                  :tag "marker"
+                                  :order 1
+                                  :transformer (--> it
+                                                    (upcase it)
+                                                    (propertize it 'face 
+                                                                '(:background "goldenrod3" :foreground "black"))))
                            (:name "Today"
-                            :time-grid t
-                            :scheduled today
-                            :order 1)
+                                  :time-grid t
+                                  :scheduled today
+                                  :order 2)
                            (:name "Habit"
-                            :habit t
-                            :tag "habit"
-                            :order 2)
+                                  :habit t
+                                  :tag "habit"
+                                  :order 3)
                            (:name "Recurring"
-                            :time-grid t
-                            :tag "recurring"
-                            :order 4)
-                           (:discard (:scheduled future :deadline t))
+                                  :time-grid t
+                                  :tag "recurring"
+                                  :order 4)
+                           (:name "Upcoming schedules"
+                                  :tag "appointment"
+                                  :deadline t
+                                  :time-grid t
+                                  :order 5)
+                           (:discard (:scheduled future :deadline t :tag "idle" :anything t))
                            ))))
-           
-            ))
-
-          ("w" "Week"
-           ((agenda "" (
-                        (org-agenda-span 7)
-                        (org-agenda-overriding-header "")
-                        (org-super-agenda-groups
-                         '(
-                           (:name "--------- Workday -------"
-                            :tag "workday"
-                            :order 1)
-                           (:name "Todo on this day"
-                            :time-grid t
-                            :order 2)
-                           (:name "Recurring"
-                            :tag "recurring"
-                            :order 3)
-                           (:name "Due This day"
-                            :date t
-                            :order 4)
-                           ))))
-            ))
-
-          ("m" "Month"
-           ((agenda "" (
-                        (org-agenda-span 30)
-                        (org-agenda-overriding-header "")
-                        (org-super-agenda-groups
-                         '(
-                           (:name "--------- Workday -------"
-                            :tag "workday"
-                            :order 1)
-                           (:name "Todo on this day"
-                            :time-grid t
-                            :order 2)
-                           (:name "Recurring"
-                            :tag "recurring"
-                            :order 3)
-                           (:name "Due This day"
-                            :date t
-                            :order 4)
-                           ))))
-            ))
-          )))
-:config
+            (alltodo "" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '(
+                            (:name "Clocks"
+                                   :tag "clock"
+                                   :date today
+                                   :order 1)
+                            (:name "NEXT"
+                                   :todo "NEXT"
+                                   :order 2
+                                   :transformer (--> it 
+                                                     (propertize it 'face '(:background "blue"))))
+                            (:name "Private"
+                                   :and (:tag "private" :deadline nil)
+                                   :order 3)
+                            (:name "Work"
+                                   :tag "work"
+                                   :order 4)
+                            (:discard (:tag "recurring" :scheduled t :tag "appointment" :deadline t))
+                            )))
+                     ))
+           ))))
 (org-super-agenda-mode)
 (add-hook 'org-mode-hook #'org-modern-mode)
 
 (use-package toc-org ; auto-table of contents
-:ensure t
+  :ensure t
   :hook (org-mode . toc-org-enable)
   :config
   (setq toc-org-hrefify-default "gh"))
 
 ;; Default t
 (setq org-todo-keywords
-        '((sequence
-           "TODO(t)"  ; A task that needs doing & is ready to do
-           "PROJ(p)"  ; A project, which usually contains other tasks
-           "LOOP(r)"  ; A recurring task
-           "PROGR(s)"  ; A task that is in progress
-           "WAIT(w)"  ; Something external is holding up this task
-           "HOLD(h)"  ; This task is paused/on hold because of me
-           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "|"
-           "DONE(d)"  ; Task successfully completed
-           "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
-          (sequence
-           "[ ](T)"   ; A task that needs doing
-           "[-](S)"   ; Task is in progress
-           "[?](W)"   ; Task is being held up or paused
-           "|"
-           "[X](D)")  ; Task was completed
-          (sequence
-           "|"
-           "OKAY(o)"
-           "YES(y)"
-           "NO(n)"))
-        org-todo-keyword-faces
-        '(("[-]"  . +org-todo-active)
-          ("STRT" . +org-todo-active)
-          ("[?]"  . +org-todo-onhold)
-          ("WAIT" . +org-todo-onhold)
-          ("HOLD" . +org-todo-onhold)
-          ("PROJ" . +org-todo-project)
-          ("NO"   . +org-todo-cancel)
-          ("KILL" . +org-todo-cancel)))
+      '((sequence
+         "TODO(t)"  ; A task that needs doing & is ready to do
+         "NEXT(n)"
+         "PROJ(p)"  ; A project, which usually contains other tasks
+         "RESC(r)"
+         "PROGR(s)"  ; A task that is in progress
+         "WAIT(w)"  ; Something external is holding up this task
+         "HOLD(h)"  ; This task is paused/on hold because of me
+         "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+         "|"
+         "DONE(d)"  ; Task successfully completed
+         "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
+        (sequence
+         "[ ](T)"   ; A task that needs doing
+         "[-](S)"   ; Task is in progress
+         "[?](W)"   ; Task is being held up or paused
+         "|"
+         "[X](D)")  ; Task was completed
+        )
+      org-todo-keyword-faces
+      '(("[-]"  . +org-todo-active)
+        ("STRT" . +org-todo-active)
+        ("[?]"  . +org-todo-onhold)
+        ("WAIT" . +org-todo-onhold)
+        ("HOLD" . +org-todo-onhold)
+        ("PROJ" . +org-todo-project)
+        ("KILL" . +org-todo-cancel)))
 
 (use-package org-cliplink 
-:ensure t)
+  :ensure t)
 
 (global-set-key (kbd "C-x p i") 'org-cliplink)
 (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
@@ -262,3 +249,4 @@
 
 ;; Automatically clock in to the default task on startup, if desired
 (add-hook 'after-init-hook 'my-org-clock-in-default-task)
+
