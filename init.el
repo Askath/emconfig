@@ -198,14 +198,15 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package catppuccin-theme
-:ensure t)
+  :ensure t)
+
+(defun apply-catppuccin-theme (frame)
+  "Apply the catppuccin theme to the FRAME."
+  (with-selected-frame frame
+    (load-theme 'catppuccin t)))
 
 (if (daemonp)
-    (cl-labels ((load-nord (frame)
-                           (with-selected-frame frame
-                             (load-theme 'catppuccin t))
-                           (remove-hook 'after-make-frame-functions #'load-nord)))
-      (add-hook 'after-make-frame-functions #'load-nord))
+    (add-hook 'after-make-frame-functions #'apply-catppuccin-theme)
   (load-theme 'catppuccin t))
 
 
@@ -317,6 +318,9 @@ If the new path's directories does not exist, create them."
      "/Users/taradruffel/org/link.org"
      "/Users/taradruffel/org/recurring_calendar.org"
      "/Users/taradruffel/org/todos.org"))
+ '(org-safe-remote-resources
+   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"
+     "\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-bigblow\\.setup\\'"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
  '(package-selected-packages
@@ -326,7 +330,7 @@ If the new path's directories does not exist, create them."
                    hledger-mode kind-icon ledger-mode magit
                    markdown-mode nerd-icons orderless org-cliplink
                    org-contacts org-modern org-super-agenda
-                   org-timeblock toc-org vertico wgrep)))
+                   org-timeblock org-vcard toc-org vertico wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -334,4 +338,3 @@ If the new path's directories does not exist, create them."
  ;; If there is more than one, they won't work right.
  )
 
-(setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))

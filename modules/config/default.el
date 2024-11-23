@@ -1,4 +1,16 @@
-(set-frame-font "Monaspace Neon Var-16" nil t)
+
+
+(defun set-default-font (frame)
+  "Set the default font for the FRAME."
+  (with-selected-frame frame
+    (set-face-attribute 'default nil
+                        :family "Monaspace Neon Var" ; Replace with your font name
+                        :height 160
+                        )))         ; Adjust the height as needed
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'set-default-font)
+  (set-default-font (selected-frame)))
 
 (delete-selection-mode 1)
 

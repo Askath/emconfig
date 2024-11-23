@@ -105,7 +105,7 @@
        :END:"))
       )
 
-(setq org-contacts-files (list "~/contacts/contacts.org"))
+(setq org-contacts-files (list "~/org/contacts/contacts.org"))
 (setq org-contacts-vcard-file "contacts.vcard")
 
 (use-package org-super-agenda
@@ -129,12 +129,12 @@
   (setq org-agenda-warning-days 90)
   (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
   (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
-
+(setq org-agenda-start-with-log-mode t)
   (setq org-agenda-custom-commands
         '(
           ("c" "Today"
            ((agenda "" (
-                        (org-agenda-span 'day)
+                        (org-agenda-span 1)
                         (org-agenda-overriding-header "")
                         (org-super-agenda-groups
                          '((:name "NOTES"
@@ -148,18 +148,16 @@
                                   :time-grid t
                                   :scheduled today
                                   :order 2)
-                           (:name "Habit"
-                                  :habit t
-                                  :tag "habit"
-                                  :order 3)
                            (:name "Recurring"
-                                  :time-grid t
-                                  :tag "recurring"
-                                  :order 4)
+                                  :tag "recurring" 
+                                  :order 3)
                            (:name "Upcoming schedules"
                                   :tag "appointment"
                                   :deadline t
                                   :time-grid t
+                                  :order 4)
+                           (:name "Morning Routine"
+                                  :tag "morning_routine"
                                   :order 5)
                            (:discard (:scheduled future :deadline t :tag "idle" :anything t))
                            ))))
@@ -181,7 +179,7 @@
                             (:name "Work"
                                    :tag "work"
                                    :order 4)
-                            (:discard (:tag "recurring" :scheduled t :tag "appointment" :deadline t))
+                            (:discard (:tag "recurring" :scheduled t :tag "appointment" :deadline t :tag "morning_routine" :tag "evening_routine"))
                             )))
                      ))
            ))))
@@ -230,23 +228,18 @@
 (global-set-key (kbd "C-x p i") 'org-cliplink)
 (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
 
+(require 'org-clock)
 (defun org-clock-todo-change ()
-  (if (string= org-state "PROGR")
-      (org-clock-in)
+  (cond
+   ((string= org-state "PROGR")
+    (org-clock-in))
+   ((string= org-state "DONE")
+    (unless (org-clocking-p)
+      (org-clock-in))
+    (org-clock-out))
+   (t
     (when (org-clocking-p)
-      (org-clock-out))))
+      (org-clock-out)))))
 
 (add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
-
-
-(setq org-clock-default-task-id "9CAA065A-1590-4EE1-9965-D95A9B39442C")
-(defun my-org-clock-in-default-task ()
-  "Clock in to the default task set by `org-clock-default-task-id`."
-  (interactive)
-  (when org-clock-default-task-id
-    (org-with-point-at (org-id-find org-clock-default-task-id 'marker)
-      (org-clock-in))))
-
-;; Automatically clock in to the default task on startup, if desired
-(add-hook 'after-init-hook 'my-org-clock-in-default-task)
 
