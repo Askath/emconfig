@@ -65,7 +65,6 @@
 
 (setq org-contacts-vcard-file "contacts.vcard")
 
-
 (use-package org-contacts
   :ensure t)
 

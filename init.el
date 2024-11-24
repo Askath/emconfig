@@ -281,16 +281,21 @@ If the new path's directories does not exist, create them."
  '(custom-safe-themes
    '("24b6ade0e3cabdfee9fa487961b089d059e048d77fe13137ea4788c1b62bd99d"
      default))
- '(hledger-currency-string "")
+ '(hledger-currency-string "EUR")
+ '(hledger-extra-args "")
+ '(hledger-extrapolate-savings-period 12)
+ '(hledger-extrapolate-savings-rate 7.0)
  '(hledger-ratios-assets-accounts "Assets")
  '(hledger-ratios-debt-accounts "Liabilities")
  '(hledger-ratios-essential-expense-accounts "")
- '(hledger-ratios-income-accounts "Gehalt Sonstiges Netflix Refunds")
- '(hledger-ratios-liquid-asset-accounts "assets:bank assets:wallet Assets:Checking Assets:Savings")
+ '(hledger-ratios-income-accounts
+   "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds")
+ '(hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings")
  '(hledger-show-expanded-report t)
  '(hledger-top-asset-account "Assets")
  '(hledger-top-expense-account "Expenses")
  '(hledger-top-income-account "Revenue")
+ '(hledger-year-of-birth 1997)
  '(org-agenda-files
    '("/Users/taradruffel/org/albion/albion.org"
      "/Users/taradruffel/org/configs/config.org"

@@ -11,3 +11,4 @@ transient
 tree-sitter
 lombok.jar
 org-persist/
+*.elc
