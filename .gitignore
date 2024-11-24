@@ -1,6 +1,7 @@
 auto-save-list
 org-persist/
 .cache
+eln-cache
 org-persist
 elpa
 emacs-backup
