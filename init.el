@@ -180,6 +180,8 @@ If the new path's directories does not exist, create them."
 (ido-mode 1)
 (ido-everywhere 1)
 
+(setq completion-styles '(partial-completion))
+
 (use-package emacs
   :config
   ;; Treesitter config
@@ -220,42 +222,6 @@ If the new path's directories does not exist, create them."
      (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
      (clojure "https://github.com/sogaiu/tree-sitter-clojure")
      ))
-
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Optional extras
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Uncomment the (load-file …) lines or copy code from the extras/ elisp files
-;; as desired
-
-;; UI/UX enhancements mostly focused on minibuffer and autocompletion interfaces
-;; These ones are *strongly* recommended!
-;(load-file (expand-file-name "extras/base.el" user-emacs-directory))
-
-;; Packages for software development
-;(load-file (expand-file-name "extras/dev.el" user-emacs-directory))
-
-;; Vim-bindings in Emacs (evil-mode configuration)
-;(load-file (expand-file-name "extras/vim-like.el" user-emacs-directory))
-
-;; Org-mode configuration
-;; WARNING: need to customize things inside the elisp file before use! See
-;; the file extras/org-intro.txt for help.
-;(load-file (expand-file-name "extras/org.el" user-emacs-directory))
-
-;; Email configuration in Emacs
-;; WARNING: needs the `mu' program installed; see the elisp file for more
-;; details.
-;(load-file (expand-file-name "extras/email.el" user-emacs-directory))
-
-;; Tools for academic researchers
-;(load-file (expand-file-name "extras/researcher.el" user-emacs-directory))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -317,14 +283,6 @@ If the new path's directories does not exist, create them."
       "\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-bigblow\\.setup\\'"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
- '(package-selected-packages
-    '(avy calfw calfw-org cape catppuccin-theme cider consult
-          corfu-terminal devdocs eat elfeed emacs-everywhere
-          exec-path-from-shell expand-region gptel hledger-mode
-          kind-icon ledger-mode magit markdown-mode
-          modus-operandi-tinted-palette orderless org-cliplink
-          org-contacts org-modern org-super-agenda org-timeblock
-          toc-org vertico wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
