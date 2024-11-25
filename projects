@@ -1,4 +1,5 @@
 ;;; -*- lisp-data -*-
-(("/Users/taradruffel/.workspace/repos/hledger-mode/")
+(("/Users/taradruffel/.emacs.d/")
+ ("/Users/taradruffel/.workspace/repos/phoenix-frontend/")
  ("/Users/taradruffel/org/")
- ("/Users/taradruffel/.workspace/repos/phoenix-frontend/"))
+ ("/Users/taradruffel/.workspace/repos/hledger-mode/"))

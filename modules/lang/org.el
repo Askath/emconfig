@@ -1,54 +1,14 @@
-;;; Emacs Bedrock;
-;;; Extra config: Org-mode starter config
-
-;;; Usage: Append or require this file from init.el for some software
-;;; development-focused packages.
-;;;
-;;; Org-mode is a fantastically powerful package. It does a lot of things, which
-;;; makes it a little difficult to understand at first.
-;;;
-;;; We will configure Org-mode in phases. Work with each phase as you are
-;;; comfortable.
-;;;
-;;; YOU NEED TO CONFIGURE SOME VARIABLES! The most important variable is the
-;;; `org-directory', which tells org-mode where to look to find your agenda
-;;; files.
-
-;;; See "org-intro.txt" for a high-level overview.
-
-;;; Contents:
-;;;
-;;;  - Critical variables
-;;;  - Phase 1: editing and exporting files
-;;;  - Phase 2: todos, agenda generation, and task tracking
-;;;  - Phase 3: extensions (org-roam, etc.)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Critical variables
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;; These variables need to be set for Org-mode's full power to be unlocked!
-;;;
-;;; You can read the documentation for any variable with `C-h v'. If you have
-;;; Consult configured (see the `base.el' file) then it should help you find
-;;; what you're looking for.
-
-;;; Phase 1 variables
-
-;;; Phase 2 variables
 (use-package org-timeblock :ensure t)
 (use-package calfw :ensure t)
 (use-package calfw-org :ensure t)
+
 ;; Agenda variables
 (setq org-directory "~/org/") ; Non-absolute paths for agenda and
 
 (setq org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
 
 (use-package org
-  :hook ((org-mode . visual-line-mode)  ; wrap lines at word breaks
-         (org-mode . flyspell-mode))    ; spell checking!
+  :hook ((org-mode . visual-line-mode) )    ; spell checking!
 
   :bind (:map global-map)
   :config
@@ -64,7 +24,6 @@
 (setq org-startup-folded 'fold)
 
 (setq org-contacts-vcard-file "contacts.vcard")
-
 (use-package org-contacts
   :ensure t)
 
@@ -108,9 +67,6 @@
 (setq org-contacts-vcard-file "contacts.vcard")
 
 (use-package org-super-agenda
-  :ensure t)
-
-(use-package org-modern
   :ensure t)
 
 (use-package org-super-agenda

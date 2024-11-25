@@ -1,55 +1,9 @@
-;;  ________                                                _______                 __                            __
-;;; /        |                                              /       \               /  |                          /  |
-;;; $$$$$$$$/ _____  ____   ______   _______  _______       $$$$$$$  | ______   ____$$ | ______   ______   _______$$ |   __
-;;; $$ |__   /     \/    \ /      \ /       |/       |      $$ |__$$ |/      \ /    $$ |/      \ /      \ /       $$ |  /  |
-;;; $$    |  $$$$$$ $$$$  |$$$$$$  /$$$$$$$//$$$$$$$/       $$    $$</$$$$$$  /$$$$$$$ /$$$$$$  /$$$$$$  /$$$$$$$/$$ |_/$$/
-;;; $$$$$/   $$ | $$ | $$ |/    $$ $$ |     $$      \       $$$$$$$  $$    $$ $$ |  $$ $$ |  $$/$$ |  $$ $$ |     $$   $$<
-;;; $$ |_____$$ | $$ | $$ /$$$$$$$ $$ \_____ $$$$$$  |      $$ |__$$ $$$$$$$$/$$ \__$$ $$ |     $$ \__$$ $$ \_____$$$$$$  \
-;;; $$       $$ | $$ | $$ $$    $$ $$       /     $$/       $$    $$/$$       $$    $$ $$ |     $$    $$/$$       $$ | $$  |
-;;; $$$$$$$$/$$/  $$/  $$/ $$$$$$$/ $$$$$$$/$$$$$$$/        $$$$$$$/  $$$$$$$/ $$$$$$$/$$/       $$$$$$/  $$$$$$$/$$/   $$/
-
-;;; Minimal init.el
-
-;;; Contents:
-;;;
-;;;  - Basic settings
-;;;  - Discovery aids
-;;;  - Minibuffer/completion settings
-;;;  - Interface enhancements/defaults
-;;;  - Tab-bar configuration
-;;;  - Theme
-;;;  - Optional extras
-;;;  - Built-in customization framework
-
-;;; Guardrail
-
-(when (< emacs-major-version 29)
-  (error "Emacs Bedrock only works with Emacs 29 and newer; you have version %s" emacs-major-version))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Basic settings
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Package initialization
-;;
-;; We'll stick to the built-in GNU and non-GNU ELPAs (Emacs Lisp Package
-;; Archive) for the base install, but there are some other ELPAs you could look
-;; at if you want more packages. MELPA in particular is very popular. See
-;; instructions at:
-;;
-;;    https://melpa.org/#/getting-started
-;;
-;; You can simply uncomment the following if you'd like to get started with
-;; MELPA packages quickly:
-;;
-(with-eval-after-load 'package
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+;
+;; (with-eval-after-load 'package
+  ;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 ;; If you want to turn off the welcome screen, uncomment this
 (setopt inhibit-splash-screen t)
-
 (setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
 (setopt display-time-default-load-average nil) ; this information is useless for most
 
@@ -162,9 +116,6 @@ If the new path's directories does not exist, create them."
 (blink-cursor-mode -1)                                ; Steady cursor
 (pixel-scroll-precision-mode)                         ; Smooth scrolling
 
-;; Use common keystrokes by default
-(cua-mode)
-
 ;; Display line numbers in programming mode
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setopt display-line-numbers-width 3)           ; Set a minimum width
@@ -197,43 +148,81 @@ If the new path's directories does not exist, create them."
 ;;;   Theme
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package catppuccin-theme
-  :ensure t)
-
-(defun apply-catppuccin-theme (frame)
+(defun apply-modus-operandi-tinted-palette (frame)
   "Apply the catppuccin theme to the FRAME."
   (with-selected-frame frame
-    (load-theme 'catppuccin t)))
+    (load-theme 'modus-operandi-tinted t)))
 
 (if (daemonp)
-    (add-hook 'after-make-frame-functions #'apply-catppuccin-theme)
-  (load-theme 'catppuccin t))
+    (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+  (load-theme 'modus-operandi-tinted t))
 
 
-
-;;; load editor modules
-(load-file (expand-file-name "modules/editor/avy.el" user-emacs-directory))
-(load-file (expand-file-name "modules/editor/completion.el" user-emacs-directory))
-(load-file (expand-file-name "modules/editor/consult.el" user-emacs-directory))
-(load-file (expand-file-name "modules/editor/embark.el" user-emacs-directory))
-(load-file (expand-file-name "modules/editor/magit.el" user-emacs-directory))
-(load-file (expand-file-name "modules/editor/treesitter.el" user-emacs-directory))
-
-;;; Load Languages
-(load-file (expand-file-name "modules/lang/markdown.el" user-emacs-directory))
-(load-file (expand-file-name "modules/lang/org.el" user-emacs-directory))
-(load-file (expand-file-name "modules/lang/ledger.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/devdocs.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
+
+;;; Load Languages
+(load-file (expand-file-name "modules/lang/markdown.el" user-emacs-directory))
+(load-file (expand-file-name "modules/lang/org.el" user-emacs-directory))
+(load-file (expand-file-name "modules/lang/ledger.el" user-emacs-directory))
 (load-file (expand-file-name "modules/lang/clojure.el" user-emacs-directory))
 
 ;;load defaults
 
 (load-file (expand-file-name "modules/config/default.el" user-emacs-directory))
+
+(fido-mode 1)
+(fido-vertical-mode 1)
+(ido-mode 1)
+(ido-everywhere 1)
+
+(use-package emacs
+  :config
+  ;; Treesitter config
+
+  ;; Tell Emacs to prefer the treesitter mode
+  ;; You'll want to run the command `M-x treesit-install-language-grammar' before editing.
+  (setq major-mode-remap-alist
+        '((yaml-mode . yaml-ts-mode)
+          (bash-mode . bash-ts-mode)
+          (js2-mode . js-ts-mode)
+	      (html-mode . html-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (json-mode . json-ts-mode)
+          (css-mode . css-ts-mode)
+          (python-mode . python-ts-mode)
+))
+
+  
+  :hook
+  ;; Auto parenthesis matching
+  ((prog-mode . electric-pair-mode)))
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+     (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
+     (clojure "https://github.com/sogaiu/tree-sitter-clojure")
+     ))
+
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,8 +268,8 @@ If the new path's directories does not exist, create them."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("24b6ade0e3cabdfee9fa487961b089d059e048d77fe13137ea4788c1b62bd99d"
-     default))
+    '("24b6ade0e3cabdfee9fa487961b089d059e048d77fe13137ea4788c1b62bd99d"
+      default))
  '(hledger-currency-string "EUR")
  '(hledger-extra-args "")
  '(hledger-extrapolate-savings-period 12)
@@ -289,7 +278,7 @@ If the new path's directories does not exist, create them."
  '(hledger-ratios-debt-accounts "Liabilities")
  '(hledger-ratios-essential-expense-accounts "")
  '(hledger-ratios-income-accounts
-   "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds")
+    "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds")
  '(hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings")
  '(hledger-show-expanded-report t)
  '(hledger-top-asset-account "Assets")
@@ -297,45 +286,45 @@ If the new path's directories does not exist, create them."
  '(hledger-top-income-account "Revenue")
  '(hledger-year-of-birth 1997)
  '(org-agenda-files
-   '("/Users/taradruffel/org/albion/albion.org"
-     "/Users/taradruffel/org/configs/config.org"
-     "/Users/taradruffel/org/configs/contacts.org"
-     "/Users/taradruffel/org/contacts/contacts.org"
-     "/Users/taradruffel/org/notes/areas/clojure/clojure_faq.org"
-     "/Users/taradruffel/org/notes/areas/cooking/recipes.org"
-     "/Users/taradruffel/org/notes/areas/fitness/exercise.org"
-     "/Users/taradruffel/org/notes/areas/work/meetings/estimations.org"
-     "/Users/taradruffel/org/notes/areas/work/meetings/notes.org"
-     "/Users/taradruffel/org/notes/areas/work/mysql.org"
-     "/Users/taradruffel/org/notes/areas/work/notes.org"
-     "/Users/taradruffel/org/notes/areas/work/other_links.org"
-     "/Users/taradruffel/org/notes/areas/inventur.org"
-     "/Users/taradruffel/org/notes/projects/game/README.org"
-     "/Users/taradruffel/org/notes/projects/projects.org"
-     "/Users/taradruffel/org/notes/resources/codesign.org"
-     "/Users/taradruffel/org/notes/resources/morning-routine.org"
-     "/Users/taradruffel/org/notes/resources/quality_brands.org"
-     "/Users/taradruffel/org/notes/resources/reading_list.org"
-     "/Users/taradruffel/org/notes/index.org"
-     "/Users/taradruffel/org/calendar_work.org"
-     "/Users/taradruffel/org/inbox.org"
-     "/Users/taradruffel/org/inventur.org"
-     "/Users/taradruffel/org/link.org"
-     "/Users/taradruffel/org/recurring_calendar.org"
-     "/Users/taradruffel/org/todos.org"))
+    '("/Users/taradruffel/org/albion/albion.org"
+      "/Users/taradruffel/org/configs/config.org"
+      "/Users/taradruffel/org/configs/contacts.org"
+      "/Users/taradruffel/org/contacts/contacts.org"
+      "/Users/taradruffel/org/notes/areas/clojure/clojure_faq.org"
+      "/Users/taradruffel/org/notes/areas/cooking/recipes.org"
+      "/Users/taradruffel/org/notes/areas/fitness/exercise.org"
+      "/Users/taradruffel/org/notes/areas/work/meetings/estimations.org"
+      "/Users/taradruffel/org/notes/areas/work/meetings/notes.org"
+      "/Users/taradruffel/org/notes/areas/work/mysql.org"
+      "/Users/taradruffel/org/notes/areas/work/notes.org"
+      "/Users/taradruffel/org/notes/areas/work/other_links.org"
+      "/Users/taradruffel/org/notes/areas/inventur.org"
+      "/Users/taradruffel/org/notes/projects/game/README.org"
+      "/Users/taradruffel/org/notes/projects/projects.org"
+      "/Users/taradruffel/org/notes/resources/codesign.org"
+      "/Users/taradruffel/org/notes/resources/morning-routine.org"
+      "/Users/taradruffel/org/notes/resources/quality_brands.org"
+      "/Users/taradruffel/org/notes/resources/reading_list.org"
+      "/Users/taradruffel/org/notes/index.org"
+      "/Users/taradruffel/org/calendar_work.org"
+      "/Users/taradruffel/org/inbox.org"
+      "/Users/taradruffel/org/inventur.org"
+      "/Users/taradruffel/org/link.org"
+      "/Users/taradruffel/org/recurring_calendar.org"
+      "/Users/taradruffel/org/todos.org"))
  '(org-safe-remote-resources
-   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"
-     "\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-bigblow\\.setup\\'"))
+    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"
+      "\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-bigblow\\.setup\\'"))
  '(org-timeblock-current-time-indicator t)
  '(org-timeblock-scale-options nil)
  '(package-selected-packages
-   '(all-the-icons avy calfw calfw-org cape catppuccin-theme cider
-                   consult corfu-terminal devdocs eat elfeed
-                   exec-path-from-shell expand-region gptel
-                   hledger-mode kind-icon ledger-mode magit
-                   markdown-mode nerd-icons orderless org-cliplink
-                   org-contacts org-modern org-super-agenda
-                   org-timeblock org-vcard toc-org vertico wgrep)))
+    '(avy calfw calfw-org cape catppuccin-theme cider consult
+          corfu-terminal devdocs eat elfeed emacs-everywhere
+          exec-path-from-shell expand-region gptel hledger-mode
+          kind-icon ledger-mode magit markdown-mode
+          modus-operandi-tinted-palette orderless org-cliplink
+          org-contacts org-modern org-super-agenda org-timeblock
+          toc-org vertico wgrep)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

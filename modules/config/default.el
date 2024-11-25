@@ -25,7 +25,6 @@
 (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
 (recentf-mode 1)
-(cua-mode -1)
 ;; Package setup
 (use-package expand-region
   :ensure t)
