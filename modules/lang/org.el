@@ -1,6 +1,9 @@
 (use-package org-timeblock :ensure t)
 (use-package calfw :ensure t)
 (use-package calfw-org :ensure t)
+(use-package org-modern :ensure t)
+
+(with-eval-after-load 'org (global-org-modern-mode))
 
 ;; Agenda variables
 (setq org-directory "~/org/") ; Non-absolute paths for agenda and
@@ -139,7 +142,6 @@
                      ))
            ))))
 (org-super-agenda-mode)
-(add-hook 'org-mode-hook #'org-modern-mode)
 
 (use-package toc-org ; auto-table of contents
   :ensure t

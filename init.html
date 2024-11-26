@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-11-26 Di 10:46 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs Configuration</title>
+<meta name="author" content="Tara Druffel" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<link rel="stylesheet" type="text/css" href="src/readtheorg_theme/css/search.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/search.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Emacs Configuration</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1b0beca">1. Basic Settings</a></li>
+<li><a href="#org0843049">2. Searching</a></li>
+<li><a href="#orgb6340c6">3. Save History</a></li>
+<li><a href="#orgacbfd49">4. Window Management</a></li>
+<li><a href="#orgd6cbbb9">5. Text Settings</a></li>
+<li><a href="#org4a56edb">6. Context Menu</a></li>
+<li><a href="#org7cdedf6">7. Backup Settings</a></li>
+<li><a href="#org765c3d8">8. Discovery Aids</a></li>
+<li><a href="#org81d2c9f">9. Minibuffer and Completion</a></li>
+<li><a href="#org4443c50">10. Interface Enhancements</a></li>
+<li><a href="#orgd4f218d">11. Tab Bar</a></li>
+<li><a href="#org95acb72">12. Theme</a></li>
+<li><a href="#org171dfa1">13. Language Configurations</a></li>
+<li><a href="#orgd2953d5">14. Tools</a></li>
+<li><a href="#orgec99380">15. Treesitter</a></li>
+<li><a href="#orga4a218a">16. Package Setup</a></li>
+<li><a href="#orgd8787e8">17. Indentation Settings</a></li>
+<li><a href="#orge9e3a49">18. Keybinds</a>
+<ul>
+<li><a href="#org6326498">18.1. Which-Key Configuration</a></li>
+<li><a href="#org4f766fb">18.2. File Keybindings</a></li>
+<li><a href="#orgd3111b3">18.3. Level 1 Keybindings (Global)</a></li>
+<li><a href="#org58ebc3a">18.4. Level 2 Keybindings (Grouped Actions)</a></li>
+<li><a href="#orgb02d77e">18.5. GPT/AI Keybindings</a></li>
+<li><a href="#orgf1189c1">18.6. Code-Related Keybindings</a></li>
+<li><a href="#org5fc2fd0">18.7. Ledger Keybindings</a></li>
+<li><a href="#orge008572">18.8. Disable Auto-Indent on ENTER</a></li>
+<li><a href="#org986a9a9">18.9. Org-Mode and Notes Keybindings</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1b0beca" class="outline-2">
+<h2 id="org1b0beca"><span class="section-number-2">1.</span> Basic Settings</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+These settings configure the startup behavior of Emacs, default modes, and auto-refresh options:
+</p>
+<ul class="org-ul">
+<li>Disable the splash screen to avoid distractions during startup.</li>
+<li>Set the default mode of the <b>scratch</b> buffer to Fundamental mode.</li>
+<li>Do not display system load averages in the mode line.</li>
+<li>Disable the creation of backup files to keep the filesystem clean.</li>
+<li>Enable auto-refresh of buffers when files change externally.</li>
+<li>Prevent constant polling for file changes and set a short interval for checking.</li>
+<li>Enable version control information checks during auto-refresh.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(<span style="color: #531ab6;">setopt</span> inhibit-splash-screen t)
+(<span style="color: #531ab6;">setopt</span> initial-major-mode 'fundamental-mode)
+(<span style="color: #531ab6;">setopt</span> display-time-default-load-average nil)
+(<span style="color: #531ab6;">setq</span> make-backup-files nil)
+(<span style="color: #531ab6;">setq</span> global-auto-revert-mode 1)
+(<span style="color: #531ab6;">setopt</span> auto-revert-avoid-polling t)
+(<span style="color: #531ab6;">setopt</span> auto-revert-interval 5)
+(<span style="color: #531ab6;">setopt</span> auto-revert-check-vc-info t)
+(delete-selection-mode 1)
+
+(global-display-line-numbers-mode)
+
+(add-hook 'org-timeblock-mode-hook (<span style="color: #531ab6;">lambda</span> () (display-line-numbers-mode 0)))
+(add-hook 'org-mode-hook (<span style="color: #531ab6;">lambda</span> () (display-line-numbers-mode 0)))
+(add-hook 'prog-mode-hook (<span style="color: #531ab6;">lambda</span> () (display-line-numbers-mode 1)))
+
+(recentf-mode 1)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org0843049" class="outline-2">
+<h2 id="org0843049"><span class="section-number-2">2.</span> Searching</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Configuration for search-related tools and behaviors:
+</p>
+<ul class="org-ul">
+<li>Use ripgrep (rg) as the search backend for faster and more efficient searching.</li>
+<li>Customize the ripgrep command to display results in a compact format.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(<span style="color: #531ab6;">setq</span> xref-search-program 'ripgrep)
+(<span style="color: #531ab6;">setq</span> grep-command <span style="color: #3548cf;">"rg -nS --noheading"</span>)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb6340c6" class="outline-2">
+<h2 id="orgb6340c6"><span class="section-number-2">3.</span> Save History</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Enable saving of minibuffer history across sessions for improved usability.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(savehist-mode)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgacbfd49" class="outline-2">
+<h2 id="orgacbfd49"><span class="section-number-2">4.</span> Window Management</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Configure shortcuts for easier navigation between windows:
+</p>
+<ul class="org-ul">
+<li>Use `Ctrl` and arrow keys to switch between Emacs windows.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(windmove-default-keybindings 'control)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd6cbbb9" class="outline-2">
+<h2 id="orgd6cbbb9"><span class="section-number-2">5.</span> Text Settings</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Set text editing preferences:
+</p>
+<ul class="org-ul">
+<li>Configure sentences to end with a single space instead of a double space.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setopt</span> sentence-end-double-space nil)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4a56edb" class="outline-2">
+<h2 id="org4a56edb"><span class="section-number-2">6.</span> Context Menu</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Enable a graphical context menu for easier interaction:
+</p>
+<ul class="org-ul">
+<li>Display a context menu when right-clicking in graphical Emacs.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">when</span> (display-graphic-p)
+  (context-menu-mode))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7cdedf6" class="outline-2">
+<h2 id="org7cdedf6"><span class="section-number-2">7.</span> Backup Settings</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Organize and manage backup files:
+</p>
+<ul class="org-ul">
+<li>Store all backup files in a dedicated directory within the Emacs configuration folder.</li>
+<li>Automatically create missing directories for backup files.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">defun</span> <span style="color: #721045;">bedrock--backup-file-name</span> (fpath)
+  (<span style="color: #531ab6;">let*</span> ((backupRootDir (concat user-emacs-directory <span style="color: #3548cf;">"emacs-backup/"</span>))
+         (filePath (replace-regexp-in-string <span style="color: #3548cf;">"[A-Za-z]:"</span> <span style="color: #3548cf;">""</span> fpath))
+         (backupFilePath (replace-regexp-in-string <span style="color: #3548cf;">"//"</span> <span style="color: #3548cf;">"/"</span> (concat backupRootDir filePath <span style="color: #3548cf;">"~"</span>))))
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath))
+(<span style="color: #531ab6;">setopt</span> make-backup-file-name-function 'bedrock--backup-file-name)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org765c3d8" class="outline-2">
+<h2 id="org765c3d8"><span class="section-number-2">8.</span> Discovery Aids</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Enhance discoverability of keybindings and features:
+</p>
+<ul class="org-ul">
+<li>Show possible keybindings in a popup when typing incomplete key sequences.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">use-package</span> which-key
+  <span style="color: #8f0075;">:ensure</span> t
+  <span style="color: #8f0075;">:config</span>
+  (which-key-mode))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org81d2c9f" class="outline-2">
+<h2 id="org81d2c9f"><span class="section-number-2">9.</span> Minibuffer and Completion</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+Improve the minibuffer completion experience:
+</p>
+<ul class="org-ul">
+<li>Allow nested minibuffer usage for recursive commands.</li>
+<li>Enable cycling through completion candidates with the TAB key.</li>
+<li>Display detailed annotations for completion candidates.</li>
+<li>Prioritize completion over indentation when pressing TAB.</li>
+<li>Group and organize completion suggestions for better readability.</li>
+<li>Automatically select a candidate after the second TAB press.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setopt</span> enable-recursive-minibuffers t)
+(<span style="color: #531ab6;">setopt</span> completion-cycle-threshold 1)
+(<span style="color: #531ab6;">setopt</span> completions-detailed t)
+(<span style="color: #531ab6;">setopt</span> tab-always-indent 'complete)
+(<span style="color: #531ab6;">setopt</span> completion-styles '(basic initials substring))
+(<span style="color: #531ab6;">setopt</span> completion-auto-help 'always)
+(<span style="color: #531ab6;">setopt</span> completions-max-height 20)
+(<span style="color: #531ab6;">setopt</span> completions-format 'one-column)
+(<span style="color: #531ab6;">setopt</span> completions-group t)
+(<span style="color: #531ab6;">setopt</span> completion-auto-select 'second-tab)
+(keymap-set minibuffer-mode-map <span style="color: #3548cf;">"TAB"</span> 'minibuffer-complete)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4443c50" class="outline-2">
+<h2 id="org4443c50"><span class="section-number-2">10.</span> Interface Enhancements</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Visual and interactive improvements:
+</p>
+<ul class="org-ul">
+<li>Show line and column numbers in the mode line.</li>
+<li>Enable relative line numbers globally for easier navigation.</li>
+<li>Improve underline appearance for better readability.</li>
+<li>Highlight current lines in text and programming modes.</li>
+<li>Enable smooth and precise scrolling with the mouse.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setopt</span> line-number-mode t)
+(<span style="color: #531ab6;">setopt</span> column-number-mode t)
+(global-display-line-numbers-mode)
+(<span style="color: #531ab6;">setq</span> display-line-numbers-type 'relative)
+(<span style="color: #531ab6;">setopt</span> x-underline-at-descent-line nil)
+(<span style="color: #531ab6;">setopt</span> switch-to-buffer-obey-display-actions t)
+(<span style="color: #531ab6;">setopt</span> show-trailing-whitespace nil)
+(<span style="color: #531ab6;">setopt</span> indicate-buffer-boundaries 'left)
+(<span style="color: #531ab6;">setopt</span> mouse-wheel-tilt-scroll t)
+(<span style="color: #531ab6;">setopt</span> mouse-wheel-flip-direction t)
+(blink-cursor-mode -1)
+(pixel-scroll-precision-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(<span style="color: #531ab6;">setopt</span> display-line-numbers-width 3)
+(add-hook 'text-mode-hook 'visual-line-mode)
+(<span style="color: #531ab6;">let</span> ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+  (mapc (<span style="color: #531ab6;">lambda</span> (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd4f218d" class="outline-2">
+<h2 id="orgd4f218d"><span class="section-number-2">11.</span> Tab Bar</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+Tab bar configurations:
+</p>
+<ul class="org-ul">
+<li>Show the tab bar when tab functions are invoked.</li>
+<li>Display the current date and time on the tab bar.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setopt</span> tab-bar-show 1)
+(add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+(add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+(<span style="color: #531ab6;">setopt</span> display-time-format <span style="color: #3548cf;">"%a %F %T"</span>)
+(<span style="color: #531ab6;">setopt</span> display-time-interval 1)
+(display-time-mode)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org95acb72" class="outline-2">
+<h2 id="org95acb72"><span class="section-number-2">12.</span> Theme</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+Configure and apply a theme:
+</p>
+<ul class="org-ul">
+<li>Load the `modus-operandi-tinted` theme.</li>
+<li>Apply the theme consistently when running as a daemon.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">defun</span> <span style="color: #721045;">apply-modus-operandi-tinted-palette</span> (frame)
+  (<span style="color: #531ab6;">with-selected-frame</span> frame
+    (load-theme 'modus-operandi-tinted t)))
+(<span style="color: #531ab6;">if</span> (daemonp)
+    (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+  (load-theme 'modus-operandi-tinted t))
+
+(<span style="color: #531ab6;">defun</span> <span style="color: #721045;">set-default-font</span> (frame)
+  <span style="color: #2a5045;">"Set the default font for the FRAME."</span>
+  (<span style="color: #531ab6;">with-selected-frame</span> frame
+    (set-face-attribute 'default nil
+                        <span style="color: #8f0075;">:family</span> <span style="color: #3548cf;">"Monaspace Neon Var"</span> <span style="color: #7f0000;">; </span><span style="color: #7f0000;">Replace with your font name</span>
+                        <span style="color: #8f0075;">:height</span> 160
+                        )))         <span style="color: #7f0000;">; </span><span style="color: #7f0000;">Adjust the height as needed</span>
+
+(<span style="color: #531ab6;">if</span> (daemonp)
+    (add-hook 'after-make-frame-functions #'set-default-font)
+  (set-default-font (selected-frame)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org171dfa1" class="outline-2">
+<h2 id="org171dfa1"><span class="section-number-2">13.</span> Language Configurations</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+Load language-specific configurations for various modes:
+</p>
+<ul class="org-ul">
+<li>Markdown</li>
+<li>Org</li>
+<li>Ledger</li>
+<li>Clojure</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(load-file (expand-file-name <span style="color: #3548cf;">"modules/lang/markdown.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/lang/org.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/lang/ledger.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/lang/clojure.el"</span> user-emacs-directory))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd2953d5" class="outline-2">
+<h2 id="orgd2953d5"><span class="section-number-2">14.</span> Tools</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+Load additional tools for productivity:
+</p>
+<ul class="org-ul">
+<li>Include tools for LSP (Eglot), documentation, terminal, GPT, and RSS feeds.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/eglot.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/devdocs.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/term.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/work/work.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/gptel.el"</span> user-emacs-directory))
+(load-file (expand-file-name <span style="color: #3548cf;">"modules/tools/rss.el"</span> user-emacs-directory))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgec99380" class="outline-2">
+<h2 id="orgec99380"><span class="section-number-2">15.</span> Treesitter</h2>
+<div class="outline-text-2" id="text-15">
+<p>
+Enable Treesitter for improved syntax highlighting and parsing:
+</p>
+<ul class="org-ul">
+<li>Map language modes to their Treesitter equivalents.</li>
+<li>Configure Treesitter grammars for supported languages.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">use-package</span> emacs
+  <span style="color: #8f0075;">:config</span>
+  (<span style="color: #531ab6;">setq</span> major-mode-remap-alist
+        '((yaml-mode . yaml-ts-mode)
+          (bash-mode . bash-ts-mode)
+          (js2-mode . js-ts-mode)
+          (html-mode . html-ts-mode)
+          (mhtml-mode . html-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (json-mode . json-ts-mode)
+          (css-mode . css-ts-mode)
+          (python-mode . python-ts-mode)))
+  <span style="color: #8f0075;">:hook</span>
+  ((prog-mode . electric-pair-mode)))
+
+(<span style="color: #531ab6;">setq</span> treesit-language-source-alist
+      '((bash <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-bash"</span>)
+        (cmake <span style="color: #3548cf;">"https://github.com/uyha/tree-sitter-cmake"</span>)
+        (css <span style="color: #3548cf;">"https://github.com/tree-sitter-tree-sitter-css"</span>)
+        (elisp <span style="color: #3548cf;">"https://github.com/Wilfred/tree-sitter-elisp"</span>)
+        (go <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-go"</span>)
+        (html <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-html"</span>)
+        (javascript <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-javascript"</span> <span style="color: #3548cf;">"master"</span> <span style="color: #3548cf;">"src"</span>)
+        (json <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-json"</span>)
+        (make <span style="color: #3548cf;">"https://github.com/alemuller/tree-sitter-make"</span>)
+        (markdown <span style="color: #3548cf;">"https://github.com/ikatyang/tree-sitter-markdown"</span>)
+        (python <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-python"</span>)
+        (tsx <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-typescript"</span> <span style="color: #3548cf;">"master"</span> <span style="color: #3548cf;">"tsx/src"</span>)
+        (typescript <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-typescript"</span> <span style="color: #3548cf;">"master"</span> <span style="color: #3548cf;">"typescript/src"</span>)
+        (yaml <span style="color: #3548cf;">"https://github.com/ikatyang/tree-sitter-yaml"</span>)
+        (java <span style="color: #3548cf;">"https://github.com/tree-sitter/tree-sitter-java"</span> <span style="color: #3548cf;">"master"</span> <span style="color: #3548cf;">"src"</span>)
+        (clojure <span style="color: #3548cf;">"https://github.com/sogaiu/tree-sitter-clojure"</span>)))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga4a218a" class="outline-2">
+<h2 id="orga4a218a"><span class="section-number-2">16.</span> Package Setup</h2>
+<div class="outline-text-2" id="text-16">
+<p>
+This section sets up key packages like `expand-region` and `exec-path-from-shell`.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">use-package</span> expand-region
+  <span style="color: #8f0075;">:ensure</span> t)
+(<span style="color: #531ab6;">require</span> '<span style="color: #0000b0;">expand-region</span>)
+
+(<span style="color: #531ab6;">use-package</span> exec-path-from-shell <span style="color: #8f0075;">:ensure</span> t)
+(<span style="color: #531ab6;">when</span> (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd8787e8" class="outline-2">
+<h2 id="orgd8787e8"><span class="section-number-2">17.</span> Indentation Settings</h2>
+<div class="outline-text-2" id="text-17">
+<p>
+Set global indentation preferences.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setq-default</span> indent-tabs-mode nil)
+(<span style="color: #531ab6;">setq-default</span> tab-width 4)
+(<span style="color: #531ab6;">setq</span> indent-line-function 'insert-tab)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge9e3a49" class="outline-2">
+<h2 id="orge9e3a49"><span class="section-number-2">18.</span> Keybinds</h2>
+<div class="outline-text-2" id="text-18">
+</div>
+<div id="outline-container-org6326498" class="outline-3">
+<h3 id="org6326498"><span class="section-number-3">18.1.</span> Which-Key Configuration</h3>
+<div class="outline-text-3" id="text-18-1">
+<p>
+Configure `which-key` for improved keybinding discovery.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">setq</span> which-key-sort-order 'which-key-key-order-alpha)
+(<span style="color: #531ab6;">setq</span> which-key-max-display-columns 2)
+(<span style="color: #531ab6;">setq</span> which-key-popup-type 'side-window)
+(<span style="color: #531ab6;">setq</span> which-key-side-window-location 'right)
+(<span style="color: #531ab6;">setq</span> which-key-side-window-max-height 0.25)
+(<span style="color: #531ab6;">setq</span> which-key-side-window-max-width 0.33)
+
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-x 3"</span> <span style="color: #3548cf;">"Open Split"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-x C-f"</span> <span style="color: #3548cf;">"[F]ile"</span>)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4f766fb" class="outline-3">
+<h3 id="org4f766fb"><span class="section-number-3">18.2.</span> File Keybindings</h3>
+<div class="outline-text-3" id="text-18-2">
+<p>
+Define keybindings for file-related operations.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(define-prefix-command 'file-prefix-map)
+(global-set-key (kbd <span style="color: #3548cf;">"C-x C-f"</span>) 'file-prefix-map)
+(define-key file-prefix-map (kbd <span style="color: #3548cf;">"f"</span>) 'find-file)           <span style="color: #7f0000;">; </span><span style="color: #7f0000;">Open file</span>
+(define-key file-prefix-map (kbd <span style="color: #3548cf;">"r"</span>) 'recentf)            <span style="color: #7f0000;">; </span><span style="color: #7f0000;">Open recent files</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd3111b3" class="outline-3">
+<h3 id="orgd3111b3"><span class="section-number-3">18.3.</span> Level 1 Keybindings (Global)</h3>
+<div class="outline-text-3" id="text-18-3">
+<p>
+Keybindings for general operations like selection expansion, scrolling, and searching.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #3548cf;">"C-="</span>) (cons <span style="color: #3548cf;">"Expand Selection"</span> 'er/expand-region))
+(global-set-key (kbd <span style="color: #3548cf;">"s-v"</span>) 'cua-paste)
+(global-set-key (kbd <span style="color: #3548cf;">"C-v"</span>) 'scroll-up-command)
+(global-set-key (kbd <span style="color: #3548cf;">"M-s g"</span>) 'grep-find)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org58ebc3a" class="outline-3">
+<h3 id="org58ebc3a"><span class="section-number-3">18.4.</span> Level 2 Keybindings (Grouped Actions)</h3>
+<div class="outline-text-3" id="text-18-4">
+<p>
+Group related keybindings under prefixes like `C-c o` (open), `C-c c` (code), and more.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c o"</span> <span style="color: #3548cf;">"[O]pen"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c c"</span> <span style="color: #3548cf;">"[C]ode"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c j"</span> <span style="color: #3548cf;">"[J]ump to"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c l"</span> <span style="color: #3548cf;">"[L]edger"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c n"</span> <span style="color: #3548cf;">"[N]otes"</span>)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c x"</span> <span style="color: #3548cf;">"[X] Capture"</span>)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb02d77e" class="outline-3">
+<h3 id="orgb02d77e"><span class="section-number-3">18.5.</span> GPT/AI Keybindings</h3>
+<div class="outline-text-3" id="text-18-5">
+<p>
+Keybindings for GPT-related operations.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(define-prefix-command 'gptel-prefix-map)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c oc"</span>) 'gptel-prefix-map)
+(which-key-add-key-based-replacements <span style="color: #3548cf;">"C-c oc"</span> <span style="color: #3548cf;">"AI [C]hat"</span>)
+(define-key gptel-prefix-map (kbd <span style="color: #3548cf;">"m"</span>) (cons <span style="color: #3548cf;">"Open AI [M]enu"</span> 'gptel-menu))
+(define-key gptel-prefix-map (kbd <span style="color: #3548cf;">"s"</span>) (cons <span style="color: #3548cf;">"[S]end to AI"</span> 'gptel-send))
+(define-key gptel-prefix-map (kbd <span style="color: #3548cf;">"C"</span>) (cons <span style="color: #3548cf;">"AI [C]hat"</span> 'gptel))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf1189c1" class="outline-3">
+<h3 id="orgf1189c1"><span class="section-number-3">18.6.</span> Code-Related Keybindings</h3>
+<div class="outline-text-3" id="text-18-6">
+<p>
+Keybindings for programming and code-related actions.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #3548cf;">"C-c cf"</span>) 'eglot-format)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c cc"</span>) 'compile)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c ca"</span>) 'eglot-code-actions)
+(global-set-key (kbd <span style="color: #3548cf;">"M-["</span>) 'flymake-goto-prev-error)
+(global-set-key (kbd <span style="color: #3548cf;">"M-]"</span>) 'flymake-goto-next-error)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5fc2fd0" class="outline-3">
+<h3 id="org5fc2fd0"><span class="section-number-3">18.7.</span> Ledger Keybindings</h3>
+<div class="outline-text-3" id="text-18-7">
+<p>
+Keybindings for Hledger-related operations.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #3548cf;">"C-c lr"</span>) 'hledger-run-command)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c le"</span>) 'hledger-jentry)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge008572" class="outline-3">
+<h3 id="orge008572"><span class="section-number-3">18.8.</span> Disable Auto-Indent on ENTER</h3>
+<div class="outline-text-3" id="text-18-8">
+<p>
+Disable automatic indentation when pressing ENTER.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #531ab6;">when</span> (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org986a9a9" class="outline-3">
+<h3 id="org986a9a9"><span class="section-number-3">18.9.</span> Org-Mode and Notes Keybindings</h3>
+<div class="outline-text-3" id="text-18-9">
+<p>
+Keybindings for Org-mode and notes management.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #3548cf;">"C-c ns"</span>) 'org-search-view)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c ncd"</span>) 'org-timeblock)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c ncm"</span>) 'cfw:open-org-calendar)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c na"</span>) 'org-agenda)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c x"</span>) 'org-capture)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c nf"</span>) 'ido-find-file-in-dir)
+(global-set-key (kbd <span style="color: #3548cf;">"C-c n f"</span>) (<span style="color: #531ab6;">lambda</span> () (<span style="color: #531ab6;">interactive</span>) (find-file <span style="color: #3548cf;">"~/org"</span>)))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Tara Druffel</p>
+<p class="date">Created: 2024-11-26 Di 10:46</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
