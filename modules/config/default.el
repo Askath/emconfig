@@ -1,5 +1,3 @@
-
-
 (defun set-default-font (frame)
   "Set the default font for the FRAME."
   (with-selected-frame frame
@@ -53,6 +51,7 @@
 (global-set-key (kbd "C-=") (cons "Expand Selection" 'er/expand-region))
 (global-set-key (kbd "s-v") 'cua-paste)
 (global-set-key (kbd "C-v") 'scroll-up-command)
+(global-set-key (kbd "M-s g") 'grep-find)
 
 ;; Level 2 keys
 (which-key-add-key-based-replacements "C-c o" "[O]pen")

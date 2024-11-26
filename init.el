@@ -6,6 +6,8 @@
 (setopt inhibit-splash-screen t)
 (setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
 (setopt display-time-default-load-average nil) ; this information is useless for most
+(setq make-backup-files nil)
+(setq global-auto-revert-mode 1)    ;; Refresh buffers with changed local files
 
 ;; Automatically reread from disk if the underlying file changes
 (setopt auto-revert-avoid-polling t)
@@ -13,7 +15,17 @@
 ;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
 (setopt auto-revert-interval 5)
 (setopt auto-revert-check-vc-info t)
-(global-auto-revert-mode)
+(setq global-auto-revert-mode)
+
+  ;; Make sure ripgrep is used everywhere
+(setq xref-search-program 'ripgrep)
+(setq grep-command "rg -nS --noheading")
+
+
+  ;; Move customization settings out of init.el
+; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+; (when (file-exists-p custom-file)
+  ; (load custom-file t))
 
 ;; Save history of minibuffer
 (savehist-mode)
@@ -27,7 +39,6 @@
 ;; Make right-click do something sensible
 (when (display-graphic-p)
   (context-menu-mode))
-
 ;; Don't litter file system with *~ backup files; put them all inside
 ;; ~/.emacs.d/backup or wherever
 (defun bedrock--backup-file-name (fpath)
@@ -223,70 +234,57 @@ If the new path's directories does not exist, create them."
      (clojure "https://github.com/sogaiu/tree-sitter-clojure")
      ))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Built-in customization framework
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq hledger-currency-string "EUR")
+(setq hledger-ratios-assets-accounts "Assets")
+(setq hledger-ratios-debt-accounts "Liabilities")
+(setq hledger-ratios-essential-expense-accounts "")
+(setq hledger-ratios-income-accounts "Gehalt Sonstiges Netflix Refunds")
+(setq hledger-ratios-liquid-asset-accounts "assets:bank assets:wallet Assets:Checking Assets:Savings")
+(setq hledger-show-expanded-report t)
+(setq hledger-top-asset-account "Assets")
+(setq hledger-top-expense-account "Expenses")
+(setq hledger-top-income-account "Revenue")
+
+(setq org-timeblock-current-time-indicator t)
+(setq org-timeblock-scale-options nil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-    '("24b6ade0e3cabdfee9fa487961b089d059e048d77fe13137ea4788c1b62bd99d"
-      default))
- '(hledger-currency-string "EUR")
- '(hledger-extra-args "")
- '(hledger-extrapolate-savings-period 12)
- '(hledger-extrapolate-savings-rate 7.0)
- '(hledger-ratios-assets-accounts "Assets")
- '(hledger-ratios-debt-accounts "Liabilities")
- '(hledger-ratios-essential-expense-accounts "")
- '(hledger-ratios-income-accounts
-    "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds")
- '(hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings")
- '(hledger-show-expanded-report t)
- '(hledger-top-asset-account "Assets")
- '(hledger-top-expense-account "Expenses")
- '(hledger-top-income-account "Revenue")
- '(hledger-year-of-birth 1997)
  '(org-agenda-files
-    '("/Users/taradruffel/org/albion/albion.org"
-      "/Users/taradruffel/org/configs/config.org"
-      "/Users/taradruffel/org/configs/contacts.org"
-      "/Users/taradruffel/org/contacts/contacts.org"
-      "/Users/taradruffel/org/notes/areas/clojure/clojure_faq.org"
-      "/Users/taradruffel/org/notes/areas/cooking/recipes.org"
-      "/Users/taradruffel/org/notes/areas/fitness/exercise.org"
-      "/Users/taradruffel/org/notes/areas/work/meetings/estimations.org"
-      "/Users/taradruffel/org/notes/areas/work/meetings/notes.org"
-      "/Users/taradruffel/org/notes/areas/work/mysql.org"
-      "/Users/taradruffel/org/notes/areas/work/notes.org"
-      "/Users/taradruffel/org/notes/areas/work/other_links.org"
-      "/Users/taradruffel/org/notes/areas/inventur.org"
-      "/Users/taradruffel/org/notes/projects/game/README.org"
-      "/Users/taradruffel/org/notes/projects/projects.org"
-      "/Users/taradruffel/org/notes/resources/codesign.org"
-      "/Users/taradruffel/org/notes/resources/morning-routine.org"
-      "/Users/taradruffel/org/notes/resources/quality_brands.org"
-      "/Users/taradruffel/org/notes/resources/reading_list.org"
-      "/Users/taradruffel/org/notes/index.org"
-      "/Users/taradruffel/org/calendar_work.org"
-      "/Users/taradruffel/org/inbox.org"
-      "/Users/taradruffel/org/inventur.org"
-      "/Users/taradruffel/org/link.org"
-      "/Users/taradruffel/org/recurring_calendar.org"
-      "/Users/taradruffel/org/todos.org"))
+   '("/Users/taradruffel/org/albion/albion.org"
+     "/Users/taradruffel/org/configs/config.org"
+     "/Users/taradruffel/org/configs/contacts.org"
+     "/Users/taradruffel/org/contacts/contacts.org"
+     "/Users/taradruffel/org/notes/areas/clojure/clojure_faq.org"
+     "/Users/taradruffel/org/notes/areas/cooking/recipes.org"
+     "/Users/taradruffel/org/notes/areas/fitness/exercise.org"
+     "/Users/taradruffel/org/notes/areas/work/meetings/estimations.org"
+     "/Users/taradruffel/org/notes/areas/work/meetings/notes.org"
+     "/Users/taradruffel/org/notes/areas/work/meetings/team-meeting.org"
+     "/Users/taradruffel/org/notes/areas/work/mysql.org"
+     "/Users/taradruffel/org/notes/areas/work/notes.org"
+     "/Users/taradruffel/org/notes/areas/work/other_links.org"
+     "/Users/taradruffel/org/notes/areas/inventur.org"
+     "/Users/taradruffel/org/notes/projects/game/README.org"
+     "/Users/taradruffel/org/notes/projects/projects.org"
+     "/Users/taradruffel/org/notes/resources/codesign.org"
+     "/Users/taradruffel/org/notes/resources/morning-routine.org"
+     "/Users/taradruffel/org/notes/resources/quality_brands.org"
+     "/Users/taradruffel/org/notes/resources/reading_list.org"
+     "/Users/taradruffel/org/notes/index.org"
+     "/Users/taradruffel/org/calendar_work.org"
+     "/Users/taradruffel/org/inbox.org"
+     "/Users/taradruffel/org/inventur.org"
+     "/Users/taradruffel/org/link.org"
+     "/Users/taradruffel/org/recurring_calendar.org"
+     "/Users/taradruffel/org/todos.org"))
  '(org-safe-remote-resources
-    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"
-      "\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-bigblow\\.setup\\'"))
- '(org-timeblock-current-time-indicator t)
- '(org-timeblock-scale-options nil)
+   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
