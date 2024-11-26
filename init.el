@@ -1,20 +1,41 @@
 (setopt inhibit-splash-screen t)
-(setopt initial-major-mode 'fundamental-mode)
-(setopt display-time-default-load-average nil)
-(setq make-backup-files nil)
-(setq global-auto-revert-mode 1)
-(setopt auto-revert-avoid-polling t)
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
-(delete-selection-mode 1)
+  (setopt initial-major-mode 'fundamental-mode)
+  (setopt display-time-default-load-average nil)
+  (setq make-backup-files nil)
+  (setq global-auto-revert-mode 1)
+  (setopt auto-revert-avoid-polling t)
+  (setopt auto-revert-interval 5)
+  (setopt auto-revert-check-vc-info t)
+  (delete-selection-mode 1)
 
-(global-display-line-numbers-mode)
+  (global-display-line-numbers-mode)
 
-(add-hook 'org-timeblock-mode-hook (lambda () (display-line-numbers-mode 0)))
-(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
-(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
+  (add-hook 'org-timeblock-mode-hook (lambda () (display-line-numbers-mode 0)))
+  (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
+  (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
-(recentf-mode 1)
+  (recentf-mode 1)
+
+  (add-to-list 'package-archives
+               '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+  (package-initialize)
+
+(use-package casual-suite :ensure t)
+(require 'casual-suite)
+(keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
+(keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
+(keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
+(keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+(keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+(keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+(keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
+(keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+(keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
+(keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
+(keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+(keymap-global-set "M-g" #'casual-avy-tmenu)
+(keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
+(keymap-global-set "C-o" #'casual-editkit-main-tmenu)
 
 (setq xref-search-program 'ripgrep)
 (setq grep-command "rg -nS --noheading")
@@ -81,40 +102,82 @@
 (display-time-mode)
 
 (use-package modus-themes
-    :custom
-    (modus-themes-italic-constructs t)
-    (modus-themes-bold-constructs t)
-    (modus-themes-mixed-fonts t)
-    (modus-themes-headings '((1 . (1.5))
-                             (2 . (1.3))
-                             (t . (1.1))))
-    (modus-themes-to-toggle
-     '(modus-operandi-tinted modus-vivendi-tinted))
-    :bind
-    (("C-c w m" . modus-themes-toggle)
-     ("C-c w M" . modus-themes-select)))
+      :custom
+      (modus-themes-italic-constructs t)
+      (modus-themes-bold-constructs t)
+      (modus-themes-mixed-fonts t)
+      (modus-themes-headings '((1 . (1.5))
+                               (2 . (1.3))
+                               (t . (1.1))))
+      (modus-themes-to-toggle
+       '(modus-operandi-tinted modus-vivendi-tinted))
+      :bind
+      (("C-c w m" . modus-themes-toggle)
+       ("C-c w M" . modus-themes-select)))
 
-(use-package ef-themes :ensure t)
-(setq custom-theme 'modus-vivendi-tinted)
+  (use-package ef-themes :ensure t)
+  (setq custom-theme 'modus-operandi-tinted)
 
-(defun apply-modus-operandi-tinted-palette (frame)
-  (with-selected-frame frame
-    (load-theme custom-theme t)))
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
-  (load-theme custom-theme t))
+  (defun apply-modus-operandi-tinted-palette (frame)
+    (with-selected-frame frame
+      (load-theme custom-theme t)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+    (load-theme custom-theme t))
 
-(defun set-default-font (frame)
-  "Set the default font for the FRAME."
-  (with-selected-frame frame
-    (set-face-attribute 'default nil
-                        :family "Monaspace Neon Var" ; Replace with your font name
-                        :height 180
-                        )))         ; Adjust the height as needed
+  (defun set-default-font (frame)
+    "Set the default font for the FRAME."
+    (with-selected-frame frame
+      (set-face-attribute 'default nil
+                          :family "Monaspace Neon Var" ; Replace with your font name
+                          :height 160
+                          )))         ; Adjust the height as needed
 
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'set-default-font)
-  (set-default-font (selected-frame)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'set-default-font)
+    (set-default-font (selected-frame)))
+
+
+
+    ;; Distraction-free writing
+    (defun ews-distraction-free ()
+      "Distraction-free writing environment using Olivetti package."
+      (interactive)
+      (if (equal olivetti-mode nil)
+          (progn
+            (window-configuration-to-register 1)
+            (delete-other-windows)
+            (text-scale-set 1)
+            (olivetti-mode t))
+        (progn
+          (if (eq (length (window-list)) 1)
+              (jump-to-register 1))
+          (olivetti-mode 0)
+          (text-scale-set 0))))
+
+    (use-package olivetti
+      :ensure t
+      :demand t
+      :bind
+      (("<f9>" . ews-distraction-free)))
+
+(use-package spacious-padding :ensure t)
+(require 'spacious-padding)
+
+;; These are the default values, but I keep them here for visibility.
+(setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8
+         :fringe-width 8))
+
+(spacious-padding-mode 1)
+
+;; Set a key binding if you need to toggle spacious padding.
+(define-key global-map (kbd "<f8>") #'spacious-padding-mode)
 
 (load-file (expand-file-name "modules/lang/markdown.el" user-emacs-directory))
 (load-file (expand-file-name "modules/lang/org.el" user-emacs-directory))

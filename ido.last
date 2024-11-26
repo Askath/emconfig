@@ -11,9 +11,9 @@
 
 ;; ----- ido-work-directory-list -----
 (
+ "/Users/taradruffel/.emacs.d/"
  "/Users/taradruffel/.workspace/repos/phoenix-frontend/src/app/modules/pages/client/components/client-base-data/client-sidebar/"
  "/Users/taradruffel/org/"
- "/Users/taradruffel/.emacs.d/"
  "/Users/taradruffel/.emacs.d/modules/config/"
  "/Users/taradruffel/.emacs.d/modules/lang/"
  "/Users/taradruffel/.emacs.d/elpa/org-timeblock-20241027.805/"
@@ -22,25 +22,27 @@
 
 ;; ----- ido-work-file-list -----
 (
+ "init.org"
+ "early-init.el"
  "client-sidebar.component.html"
  "inbox.pdf"
  "inbox.tex"
  "init.el"
- "init.org"
  "default.el"
  "org.el"
  "org-timeblock-pkg.el"
  "org-timeblock-autoloads.el"
- ".#emacs-manual.org"
 )
 
 ;; ----- ido-dir-file-cache -----
 (
- ("/Users/taradruffel/.emacs.d/" (26437 51598 326563 684000) "modules/" ".git/" "elpa/" "recentf" "early-init.el" "history" "lombok.jar" ".org-id-locations" "package.json" ".gitignore" "bookmarks" "install.el" "init.el" "url/" "auto-save-list/" "emacs-backup/" "transient/" "install.sh" "tramp" "projects" "makefile" "init.org" "eshell/" "init.html" "tree-sitter/" "ido.last" "../" "./")
+ ("/Users/taradruffel/.emacs.d/" (26438 1569 978317 973000) "#init.org#" "modules/" ".git/" "elpa/" "recentf" "early-init.el" "history" "lombok.jar" ".org-id-locations" "package.json" ".gitignore" "bookmarks" "install.el" "init.el" "url/" "auto-save-list/" "emacs-backup/" "transient/" "install.sh" "tramp" "projects" "makefile" "init.org" "eshell/" "init.html" "tree-sitter/" "ido.last" "../" "./")
+
+ ("/Users/taradruffel/org/" (26438 1587 980621 689000) "dependencies.html" "dependencies.org" "#link.org#" "emacs-manual.org" ".git/" "dependencies.pdf" "finance/" "dependencies.tex" "configs/" "calendar_work.org" ".gitignore" "notes/" "inbox.log" "inbox.aux" "taradruffel@MacBook-Air-von-Tara-2.local.62289:1732532810" "inbox.org" "#recurring_calendar.org#" "org-mode-default-keybindings.org" "inbox.pdf" "contacts/" "calendar_work.ics" "inventur.org" "todos.org" "recurring_calendar.org" "calendar.ics" "inbox.tex" "inbox.toc" "albion/" "#todos.org#" "link.org" "inbox.out" "../" "./")
+
+ ("/Users/taradruffel/" (26437 57743 705325 495000) "RMAIL" ".zsh_sessions/" ".viminfo" ".bash_history" ".folders" ".tig_history" ".gitconfig" ".cache/" "Downloads/" "alfred/" ".m2/" ".mysql_history" ".gitlibs/" ".tmux/" ".roswell/" ".gitmessage" "Documents/" ".npm/" ".zcompdump" ".tldrc/" ".gitflow_export" ".Trash/" ".data/" ".cljs/" ".profile" "Applications/" "Movies/" ".ssh/" "scripts/" ".ansible/" ".cisco/" ".zshenv" "package-lock.json" ".ideavimrc" "Public/" "Creative Cloud Files Personal Account d.roehrich@optadata.de E29756CE5FB262E60A495E2B@AdobeID/" ".gitignore_global" ".android/" ".elfeed/" ".node_repl_history" ".quicklisp/" ".emacs.d/" "iCloud Drive (Archive)/" ".doom.d/" ".lesshst" ".npmrc" ".vpn/" "Library/" "Desktop/" ".zsh_history" ".git-completion.zsh" ".clojure_history" ".zprofile" ".bun/" "Pictures/" ".local/" ".mix/" "Mail/" "org/" ".sbclrc" ".zshrc" ".bashrc" ".workspace/" "bin/" ".wget-hsts" ".hgignore_global" ".stCommitMsg" ".angular-config.json" ".CFUserTextEncoding" "calendar.ics" "lombok/" ".gnupg/" ".czrc" ".DS_Store" "go/" ".terminfo/" ".vim/" ".anyconnect" ".docker/" ".clojure/" "Developer/" ".my.cnf" "puffin" ".ansible_async/" "Music/" ".config/" "../" "./")
 
  ("/Users/taradruffel/.workspace/repos/phoenix-frontend/src/app/modules/pages/client/components/client-base-data/client-sidebar/" (26436 14171 206897 839000) "client-sidebar.component.ts" "client-sidebar.component.html" "client-sidebar.component.scss" "../" "./")
-
- ("/Users/taradruffel/org/" (26437 46736 30613 726000) "#link.org#" "emacs-manual.org" ".git/" "finance/" "configs/" "calendar_work.org" ".gitignore" "notes/" "inbox.log" "inbox.aux" "taradruffel@MacBook-Air-von-Tara-2.local.62289:1732532810" "inbox.org" "#recurring_calendar.org#" "inbox.pdf" "contacts/" "calendar_work.ics" "inventur.org" "todos.org" "recurring_calendar.org" "calendar.ics" "inbox.tex" "inbox.toc" "albion/" "link.org" "inbox.out" "../" "./")
 
  ("/Users/taradruffel/.emacs.d/modules/editor/" (26437 36605 996407 260000) "consult.elc" "magit.elc" "treesitter.el" "completion.elc" "treesitter.elc" "avy.elc" "completion.el" "avy.el" "magit.el" "embark.elc" "consult.el" "embark.el" "../" "./")
 
@@ -55,8 +57,6 @@
  ("/Users/taradruffel/.emacs.d/modules/config/" (26437 36349 495703 698000) "default.elc" "default.el" "#default.elc#" "../" "./")
 
  ("/Users/taradruffel/.workspace/repos/phoenix-frontend/src/app/modules/pages/client/documents/pain-protocoll/" (26437 36309 163704 305000) "pain-protocoll.service.ts" "pain-protocoll.component.ts" "pain-protocoll.component.html" "pain-protocoll.component.scss" "pain-protocoll.component.spec.ts" "../" "./")
-
- ("/Users/taradruffel/" (26437 35273 718238 841000) "RMAIL" ".zsh_sessions/" ".viminfo" ".bash_history" ".folders" ".tig_history" ".gitconfig" ".cache/" "Downloads/" "alfred/" ".m2/" ".mysql_history" ".gitlibs/" ".tmux/" ".roswell/" ".gitmessage" "Documents/" ".npm/" ".zcompdump" ".tldrc/" ".gitflow_export" ".Trash/" ".data/" ".cljs/" ".profile" "Applications/" "Movies/" ".ssh/" "scripts/" ".ansible/" ".cisco/" ".zshenv" "package-lock.json" ".ideavimrc" "Public/" "Creative Cloud Files Personal Account d.roehrich@optadata.de E29756CE5FB262E60A495E2B@AdobeID/" ".gitignore_global" ".android/" ".elfeed/" ".node_repl_history" ".quicklisp/" ".emacs.d/" "iCloud Drive (Archive)/" ".doom.d/" ".lesshst" ".npmrc" ".vpn/" "Library/" "Desktop/" ".zsh_history" ".git-completion.zsh" ".clojure_history" ".zprofile" ".bun/" "Pictures/" ".local/" ".mix/" "Mail/" "org/" ".sbclrc" ".zshrc" ".bashrc" ".workspace/" "bin/" ".wget-hsts" ".hgignore_global" ".stCommitMsg" ".angular-config.json" ".CFUserTextEncoding" "calendar.ics" "lombok/" ".gnupg/" ".czrc" ".DS_Store" "go/" ".terminfo/" ".vim/" ".anyconnect" ".docker/" ".clojure/" "Developer/" ".my.cnf" "puffin" ".ansible_async/" "Music/" ".config/" "../" "./")
 
  ("/Users/taradruffel/.workspace/repos/phoenix-frontend/src/app/modules/pages/client/documents/" (26436 14171 253189 574000) "shift-interference-modal/" "wund-doku/" "document-footer/" "vital-signs/" "anamnesis/" "diabetes-progress-report/" "oral-nutrition/" "medicationtype-modal/" "report-sheet/" "pain-protocoll/" "nebenakte/" "sis-ambulant/" "plan-of-measures/" "file-management/" "aedl-pflege/" "fall-protocol/" "liquid-balancing/" "doctor-communication/" "biography/" "medication-plan/" "../" "./")
 
