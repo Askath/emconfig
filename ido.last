@@ -36,11 +36,11 @@
 
 ;; ----- ido-dir-file-cache -----
 (
+ ("/Users/taradruffel/.emacs.d/" (26437 51598 326563 684000) "modules/" ".git/" "elpa/" "recentf" "early-init.el" "history" "lombok.jar" ".org-id-locations" "package.json" ".gitignore" "bookmarks" "install.el" "init.el" "url/" "auto-save-list/" "emacs-backup/" "transient/" "install.sh" "tramp" "projects" "makefile" "init.org" "eshell/" "init.html" "tree-sitter/" "ido.last" "../" "./")
+
  ("/Users/taradruffel/.workspace/repos/phoenix-frontend/src/app/modules/pages/client/components/client-base-data/client-sidebar/" (26436 14171 206897 839000) "client-sidebar.component.ts" "client-sidebar.component.html" "client-sidebar.component.scss" "../" "./")
 
  ("/Users/taradruffel/org/" (26437 46736 30613 726000) "#link.org#" "emacs-manual.org" ".git/" "finance/" "configs/" "calendar_work.org" ".gitignore" "notes/" "inbox.log" "inbox.aux" "taradruffel@MacBook-Air-von-Tara-2.local.62289:1732532810" "inbox.org" "#recurring_calendar.org#" "inbox.pdf" "contacts/" "calendar_work.ics" "inventur.org" "todos.org" "recurring_calendar.org" "calendar.ics" "inbox.tex" "inbox.toc" "albion/" "link.org" "inbox.out" "../" "./")
-
- ("/Users/taradruffel/.emacs.d/" (26437 42897 497600 879000) "modules/" ".git/" "elpa/" "recentf" "early-init.el" "history" "lombok.jar" ".org-id-locations" "package.json" ".gitignore" "bookmarks" "install.el" "init.el" "url/" "auto-save-list/" "emacs-backup/" "transient/" "install.sh" "tramp" "projects" "makefile" "init.org" "init.html" "tree-sitter/" "ido.last" "../" "./")
 
  ("/Users/taradruffel/.emacs.d/modules/editor/" (26437 36605 996407 260000) "consult.elc" "magit.elc" "treesitter.el" "completion.elc" "treesitter.elc" "avy.elc" "completion.el" "avy.el" "magit.el" "embark.elc" "consult.el" "embark.el" "../" "./")
 

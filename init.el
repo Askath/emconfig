@@ -128,6 +128,22 @@
 (load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
 (load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
 
+(setq hledger-currency-string "EUR"
+      hledger-extra-args ""
+      hledger-extrapolate-savings-period 12
+      hledger-extrapolate-savings-rate 7.0
+      hledger-ratios-assets-accounts "Assets"
+      hledger-ratios-debt-accounts "Liabilities"
+      hledger-ratios-essential-expense-accounts ""
+      hledger-ratios-income-accounts
+      "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
+      hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
+      hledger-show-expanded-report t
+      hledger-top-asset-account "Assets"
+      hledger-top-expense-account "Expenses"
+      hledger-top-income-account "Revenue"
+      hledger-year-of-birth 1997)
+
 (use-package emacs
   :config
   (setq major-mode-remap-alist
