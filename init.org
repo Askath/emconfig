@@ -258,6 +258,7 @@ Configure and apply a theme:
       :demand t
       :bind
       (("<f9>" . ews-distraction-free)))
+(setq olivetti-minium-Body-width 60)
 
 (use-package spacious-padding :ensure t)
 (require 'spacious-padding)
