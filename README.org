@@ -2,6 +2,12 @@
 #+PROPERTY: header-args :tangle ~/.emacs.d/init.el
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
 
+* Install
+
+#+begin_src shell tangle: no
+git clone https://github.com/Askath/emconfig.git ~/.emacs.d
+#+end_src
+
 * Basic Settings
 These settings configure the startup behavior of Emacs, default modes, and auto-refresh options:
 - Disable the splash screen to avoid distractions during startup.
