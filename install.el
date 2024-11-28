@@ -1,5 +1,7 @@
 (require 'package)
 (package-initialize)
+(require 'org)
+
 
 ;; Add your package archives
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -10,6 +12,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(org-babel-tangle-file "init.org")
 ;; Load your configuration file
 (load-file "~/.emacs.d/init.el")
 
