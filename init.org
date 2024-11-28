@@ -51,10 +51,117 @@ These settings configure the startup behavior of Emacs, default modes, and auto-
   (keymap-global-set "M-g" #'casual-avy-tmenu)
   (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
   (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+
+(use-package delsel
+  :ensure nil ; no need to install it as it is built-in
+  :hook (after-init . delete-selection-mode))
+
 #+END_SRC
 
 #+RESULTS:
 : casual-editkit-main-tmenu
+
+* Theme
+
+
+Configure and apply a theme:
+- Load the `modus-operandi-tinted` theme.
+- Apply the theme consistently when running as a daemon.
+
+#+BEGIN_SRC emacs-lisp
+
+    (use-package modus-themes
+      :custom
+      (modus-themes-italic-constructs t)
+      (modus-themes-bold-constructs t)
+      (modus-themes-mixed-fonts t)
+      (modus-themes-headings '((1 . (1.5))
+                               (2 . (1.3))
+                               (t . (1.1))))
+      (modus-themes-to-toggle
+       '(modus-operandi-tinted modus-vivendi-tinted))
+      :bind
+      (("C-c w m" . modus-themes-toggle)
+       ("C-c w M" . modus-themes-select)))
+
+  (use-package ef-themes :ensure t)
+  (setq custom-theme 'modus-operandi-tinted)
+
+  (defun apply-modus-operandi-tinted-palette (frame)
+    (with-selected-frame frame
+      (load-theme custom-theme t)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+    (load-theme custom-theme t))
+
+  (defun set-default-font (frame)
+    "Set the default font for the FRAME."
+    (with-selected-frame frame
+      (set-face-attribute 'default nil
+                          :family "Iosevka Aile" ; Replace with your font name
+                          :height 160
+                          )))         ; Adjust the height as needed
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'set-default-font)
+    (set-default-font (selected-frame)))
+
+
+
+    ;; Distraction-free writing
+    (defun ews-distraction-free ()
+      "Distraction-free writing environment using Olivetti package."
+      (interactive)
+      (if (equal olivetti-mode nil)
+          (progn
+            (window-configuration-to-register 1)
+            (delete-other-windows)
+            (text-scale-set 1)
+            (olivetti-mode t))
+        (progn
+          (if (eq (length (window-list)) 1)
+              (jump-to-register 1))
+          (olivetti-mode 0)
+          (text-scale-set 0))))
+
+    (use-package olivetti
+      :ensure t
+      :demand t
+      :bind
+      (("<f9>" . ews-distraction-free)))
+(setq olivetti-body-width 90)
+(setq olivetti-minium-Body-width 60)
+
+(use-package spacious-padding :ensure t)
+(require 'spacious-padding)
+
+;; These are the default values, but I keep them here for visibility.
+(setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8
+         :fringe-width 8))
+
+(spacious-padding-mode 1)
+
+;; Set a key binding if you need to toggle spacious padding.
+(define-key global-map (kbd "<f8>") #'spacious-padding-mode)
+
+#+END_SRC
+
+#+RESULTS:
+: spacious-padding-mode
+
+* Text Settings
+Set text editing preferences:
+- Configure sentences to end with a single space instead of a double space.
+
+#+BEGIN_SRC emacs-lisp
+(setopt sentence-end-double-space nil)
+#+END_SRC
 
 * Searching
 Configuration for search-related tools and behaviors:
@@ -79,14 +186,6 @@ Configure shortcuts for easier navigation between windows:
 
 #+BEGIN_SRC elisp
 (windmove-default-keybindings 'control)
-#+END_SRC
-
-* Text Settings
-Set text editing preferences:
-- Configure sentences to end with a single space instead of a double space.
-
-#+BEGIN_SRC emacs-lisp
-(setopt sentence-end-double-space nil)
 #+END_SRC
 
 * Context Menu
@@ -191,185 +290,6 @@ Tab bar configurations:
 (display-time-mode)
 #+END_SRC
 
-* Theme
-
-Configure and apply a theme:
-- Load the `modus-operandi-tinted` theme.
-- Apply the theme consistently when running as a daemon.
-
-#+BEGIN_SRC emacs-lisp
-
-    (use-package modus-themes
-      :custom
-      (modus-themes-italic-constructs t)
-      (modus-themes-bold-constructs t)
-      (modus-themes-mixed-fonts t)
-      (modus-themes-headings '((1 . (1.5))
-                               (2 . (1.3))
-                               (t . (1.1))))
-      (modus-themes-to-toggle
-       '(modus-operandi-tinted modus-vivendi-tinted))
-      :bind
-      (("C-c w m" . modus-themes-toggle)
-       ("C-c w M" . modus-themes-select)))
-
-  (use-package ef-themes :ensure t)
-  (setq custom-theme 'modus-operandi-tinted)
-
-  (defun apply-modus-operandi-tinted-palette (frame)
-    (with-selected-frame frame
-      (load-theme custom-theme t)))
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
-    (load-theme custom-theme t))
-
-  (defun set-default-font (frame)
-    "Set the default font for the FRAME."
-    (with-selected-frame frame
-      (set-face-attribute 'default nil
-                          :family "Monaspace Neon Var" ; Replace with your font name
-                          :height 160
-                          )))         ; Adjust the height as needed
-
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions #'set-default-font)
-    (set-default-font (selected-frame)))
-
-
-
-    ;; Distraction-free writing
-    (defun ews-distraction-free ()
-      "Distraction-free writing environment using Olivetti package."
-      (interactive)
-      (if (equal olivetti-mode nil)
-          (progn
-            (window-configuration-to-register 1)
-            (delete-other-windows)
-            (text-scale-set 1)
-            (olivetti-mode t))
-        (progn
-          (if (eq (length (window-list)) 1)
-              (jump-to-register 1))
-          (olivetti-mode 0)
-          (text-scale-set 0))))
-
-    (use-package olivetti
-      :ensure t
-      :demand t
-      :bind
-      (("<f9>" . ews-distraction-free)))
-(setq olivetti-minium-Body-width 60)
-
-(use-package spacious-padding :ensure t)
-(require 'spacious-padding)
-
-;; These are the default values, but I keep them here for visibility.
-(setq spacious-padding-widths
-      '( :internal-border-width 15
-         :header-line-width 4
-         :mode-line-width 6
-         :tab-width 4
-         :right-divider-width 30
-         :scroll-bar-width 8
-         :fringe-width 8))
-
-(spacious-padding-mode 1)
-
-;; Set a key binding if you need to toggle spacious padding.
-(define-key global-map (kbd "<f8>") #'spacious-padding-mode)
-
-#+END_SRC
-
-#+RESULTS:
-: spacious-padding-mode
-
-* Language Configurations
-Load language-specific configurations for various modes:
-- Markdown
-- Org
-- Ledger
-- Clojure 
-
-#+BEGIN_SRC emacs-lisp
-(load-file (expand-file-name "modules/lang/markdown.el" user-emacs-directory))
-(load-file (expand-file-name "modules/lang/org.el" user-emacs-directory))
-(load-file (expand-file-name "modules/lang/ledger.el" user-emacs-directory))
-(load-file (expand-file-name "modules/lang/clojure.el" user-emacs-directory))
-#+END_SRC
-
-* Tools
-Load additional tools for productivity:
-- Include tools for LSP (Eglot), documentation, terminal, GPT, and RSS feeds.
-
-#+BEGIN_SRC emacs-lisp
-(load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
-(load-file (expand-file-name "modules/tools/devdocs.el" user-emacs-directory))
-(load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
-(load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
-(load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
-(load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
-#+END_SRC
-** Hledger
-#+begin_src elisp
-(setq hledger-currency-string "EUR"
-      hledger-extra-args ""
-      hledger-extrapolate-savings-period 12
-      hledger-extrapolate-savings-rate 7.0
-      hledger-ratios-assets-accounts "Assets"
-      hledger-ratios-debt-accounts "Liabilities"
-      hledger-ratios-essential-expense-accounts ""
-      hledger-ratios-income-accounts
-      "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
-      hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
-      hledger-show-expanded-report t
-      hledger-top-asset-account "Assets"
-      hledger-top-expense-account "Expenses"
-      hledger-top-income-account "Revenue"
-      hledger-year-of-birth 1997)
-#+end_src
-
-#+RESULTS:
-: 1997
-
-* Treesitter
-Enable Treesitter for improved syntax highlighting and parsing:
-- Map language modes to their Treesitter equivalents.
-- Configure Treesitter grammars for supported languages.
-
-#+BEGIN_SRC emacs-lisp
-(use-package emacs
-  :config
-  (setq major-mode-remap-alist
-        '((yaml-mode . yaml-ts-mode)
-          (bash-mode . bash-ts-mode)
-          (js2-mode . js-ts-mode)
-          (html-mode . html-ts-mode)
-          (mhtml-mode . html-ts-mode)
-          (typescript-mode . typescript-ts-mode)
-          (json-mode . json-ts-mode)
-          (css-mode . css-ts-mode)
-          (python-mode . python-ts-mode)))
-  :hook
-  ((prog-mode . electric-pair-mode)))
-
-(setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (cmake "https://github.com/uyha/tree-sitter-cmake")
-        (css "https://github.com/tree-sitter-tree-sitter-css")
-        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-        (go "https://github.com/tree-sitter/tree-sitter-go")
-        (html "https://github.com/tree-sitter/tree-sitter-html")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-        (json "https://github.com/tree-sitter/tree-sitter-json")
-        (make "https://github.com/alemuller/tree-sitter-make")
-        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-        (python "https://github.com/tree-sitter/tree-sitter-python")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-        (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
-        (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
-#+END_SRC
 * Package Setup
 This section sets up key packages like `expand-region` and `exec-path-from-shell`.
 
@@ -426,7 +346,11 @@ Keybindings for general operations like selection expansion, scrolling, and sear
 (global-set-key (kbd "s-v") 'cua-paste)
 (global-set-key (kbd "C-v") 'scroll-up-command)
 (global-set-key (kbd "M-s g") 'grep-find)
+(global-set-key (kbd "C-x ,") 'ibuffer)
 #+END_SRC
+
+#+RESULTS:
+: ibuffer
 
 ** Level 2 Keybindings (Grouped Actions)
 Group related keybindings under prefixes like `C-c o` (open), `C-c c` (code), and more.
@@ -488,6 +412,110 @@ Keybindings for Org-mode and notes management.
 (global-set-key (kbd "C-c na") 'org-agenda)
 (global-set-key (kbd "C-c x") 'org-capture)
 #+END_SRC
+
+* Language Support
+** eglot
+#+begin_src elisp
+(load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
+#+end_src
+** Markdown
+#+begin_src elisp
+(load-file (expand-file-name "modules/lang/markdown.el" user-emacs-directory))
+#+end_src
+**  Org Mode
+#+begin_src elisp
+(load-file (expand-file-name "modules/lang/org.el" user-emacs-directory))
+#+end_src
+** Ledger
+#+begin_src elisp
+(load-file (expand-file-name "modules/lang/ledger.el" user-emacs-directory))
+#+end_src
+** Clojure
+#+begin_src elisp
+(load-file (expand-file-name "modules/lang/clojure.el" user-emacs-directory))
+#+end_src
+** Common Lisp
+#+begin_src elisp
+(use-package sly :ensure t)
+#+end_src
+
+#+RESULTS:
+
+* Tools 
+** Magit
+| keybind | description |
+|---------+-------------|
+| C-x g   | Open Magit status |
+#+begin_src elisp
+      (use-package magit :ensure t
+        :bind ((
+                "C-x g" . magit-status
+                ))
+        )
+#+end_src
+
+#+RESULTS:
+: magit-status
+
+** Treesitter
+Enable Treesitter for improved syntax highlighting and parsing:
+- Map language modes to their Treesitter equivalents.
+- Configure Treesitter grammars for supported languages.
+
+#+BEGIN_SRC emacs-lisp
+(use-package emacs
+  :config
+  (setq major-mode-remap-alist
+        '((yaml-mode . yaml-ts-mode)
+          (bash-mode . bash-ts-mode)
+          (js2-mode . js-ts-mode)
+          (html-mode . html-ts-mode)
+          (mhtml-mode . html-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (json-mode . json-ts-mode)
+          (css-mode . css-ts-mode)
+          (python-mode . python-ts-mode)))
+  :hook
+  ((prog-mode . electric-pair-mode)))
+
+(setq treesit-language-source-alist
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (css "https://github.com/tree-sitter-tree-sitter-css")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+        (go "https://github.com/tree-sitter/tree-sitter-go")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (python "https://github.com/tree-sitter/tree-sitter-python")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+        (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
+        (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
+#+END_SRC
+** terminal
+#+begin_src elisp
+(load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
+#+end_src
+** Work
+#+begin_src elisp
+(load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
+#+end_src
+
+#+RESULTS:
+: t
+
+** AI
+#+begin_src elisp
+(load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
+#+end_src
+** rss
+#+begin_src elisp
+(load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
+#+end_src
 * others
 #+begin_src elisp
 (setq org-safe-remote-resources
@@ -496,3 +524,6 @@ Keybindings for Org-mode and notes management.
 
 #+RESULTS:
 | \`https://fniessen\.github\.io/org-html-themes/org/theme-readtheorg\.setup\' |
+
+#+RESULTS:
+: test-btop
