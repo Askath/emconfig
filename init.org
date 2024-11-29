@@ -13,6 +13,9 @@ These settings configure the startup behavior of Emacs, default modes, and auto-
 - Enable version control information checks during auto-refresh.
 
 #+BEGIN_SRC elisp
+
+(when ( > emacs-major-version 30)
+  (error "Emacs Bedrock only works with Emacs 30 and newer; you have version %s" emacs-major-version))
     (setopt inhibit-splash-screen t)
     (setopt initial-major-mode 'fundamental-mode)
     (setopt display-time-default-load-average nil)
@@ -59,7 +62,7 @@ These settings configure the startup behavior of Emacs, default modes, and auto-
 #+END_SRC
 
 #+RESULTS:
-: casual-editkit-main-tmenu
+| delete-selection-mode | org-persist-load-all | tramp-register-archive-autoload-file-name-handler |
 
 * Theme
 
@@ -325,20 +328,22 @@ Configure `which-key` for improved keybinding discovery.
 (setq which-key-side-window-max-width 0.33)
 
 (which-key-add-key-based-replacements "C-x 3" "Open Split")
-(which-key-add-key-based-replacements "C-x C-f" "[F]ile")
+(which-key-add-key-based-replacements "C-x 1" "Close all but this")
+(which-key-add-key-based-replacements "C-x 1" "Close this")
 #+END_SRC
 
 ** File Keybindings
 Define keybindings for file-related operations.
 
 #+BEGIN_SRC emacs-lisp
+(which-key-add-key-based-replacements "C-x C-f" "[F]ile")
 (define-prefix-command 'file-prefix-map)
 (global-set-key (kbd "C-x C-f") 'file-prefix-map)
 (define-key file-prefix-map (kbd "f") 'find-file)           ; Open file
 (define-key file-prefix-map (kbd "r") 'recentf)            ; Open recent files
 #+END_SRC
 
-** Level 1 Keybindings (Global)
+** General Keybinds
 Keybindings for general operations like selection expansion, scrolling, and searching.
 
 #+BEGIN_SRC emacs-lisp
@@ -356,12 +361,13 @@ Keybindings for general operations like selection expansion, scrolling, and sear
 Group related keybindings under prefixes like `C-c o` (open), `C-c c` (code), and more.
 
 #+BEGIN_SRC emacs-lisp
-(which-key-add-key-based-replacements "C-c o" "[O]pen")
-(which-key-add-key-based-replacements "C-c c" "[C]ode")
-(which-key-add-key-based-replacements "C-c j" "[J]ump to")
-(which-key-add-key-based-replacements "C-c l" "[L]edger")
-(which-key-add-key-based-replacements "C-c n" "[N]otes")
-(which-key-add-key-based-replacements "C-c x" "[X] Capture")
+  (which-key-add-key-based-relpacements "C-c m" "[M]ajor mode")
+  (which-key-add-key-based-replacements "C-c o" "[O]pen")
+  (which-key-add-key-based-replacements "C-c c" "[C]ode")
+  (which-key-add-key-based-replacements "C-c j" "[J]ump to")
+  (which-key-add-key-based-replacements "C-c l" "[L]edger")
+  (which-key-add-key-based-replacements "C-c n" "[N]otes")
+  (which-key-add-key-based-replacements "C-c x" "[X] Capture")
 #+END_SRC
 
 ** GPT/AI Keybindings
@@ -370,7 +376,7 @@ Keybindings for GPT-related operations.
 #+BEGIN_SRC emacs-lisp
 (define-prefix-command 'gptel-prefix-map)
 (global-set-key (kbd "C-c oc") 'gptel-prefix-map)
-(which-key-add-key-based-replacements "C-c oc" "AI [C]hat")
+(which-key-add-key-based-replacements "C-c A" "[A]I Chat")
 (define-key gptel-prefix-map (kbd "m") (cons "Open AI [M]enu" 'gptel-menu))
 (define-key gptel-prefix-map (kbd "s") (cons "[S]end to AI" 'gptel-send))
 (define-key gptel-prefix-map (kbd "C") (cons "AI [C]hat" 'gptel))
@@ -391,8 +397,7 @@ Keybindings for programming and code-related actions.
 Keybindings for Hledger-related operations.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c lr") 'hledger-run-command)
-(global-set-key (kbd "C-c le") 'hledger-jentry)
+(global-set-key (kbd "C-x R") 'hledger-run-command)
 #+END_SRC
 
 ** Disable Auto-Indent on ENTER
@@ -406,12 +411,15 @@ Disable automatic indentation when pressing ENTER.
 Keybindings for Org-mode and notes management.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c ns") 'org-search-view)
-(global-set-key (kbd "C-c ncd") 'org-timeblock)
-(global-set-key (kbd "C-c ncm") 'cfw:open-org-calendar)
-(global-set-key (kbd "C-c na") 'org-agenda)
-(global-set-key (kbd "C-c x") 'org-capture)
+  (global-set-key (kbd "C-c ns") 'org-search-view)
+  (global-set-key (kbd "C-c na") 'org-agenda)
+  (global-set-key (kbd "C-c x") 'org-capture)
+  (global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
+  (global-set-key (kbd "C-c oct") 'org-timeblock)
 #+END_SRC
+
+#+RESULTS:
+: cfw:open-org-calendar
 
 * Language Support
 ** eglot
@@ -635,10 +643,9 @@ Keybindings for Org-mode and notes management.
 
 (use-package hledger-mode
 :ensure t)
-
+(require 'hledger-mode)
 ;; To open files with .journal extension in hledger-mode
 (add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
-
 ;; Provide the path to you journal file.
 ;; The default location is too opinionated.
 (setq hledger-jfile "~/org/finance/2024.ledger")
