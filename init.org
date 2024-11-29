@@ -246,10 +246,13 @@ Improve the minibuffer completion experience:
 (setopt completions-format 'one-column)
 (setopt completions-group t)
 (setopt completion-auto-select 'second-tab)
-(ido-mode 1)
+(ido-mode 0)
 (fido-vertical-mode 1)
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
 #+END_SRC
+
+#+RESULTS:
+: minibuffer-complete
 
 * Interface Enhancements
 Visual and interactive improvements:
@@ -352,6 +355,7 @@ Keybindings for general operations like selection expansion, scrolling, and sear
 (global-set-key (kbd "C-v") 'scroll-up-command)
 (global-set-key (kbd "M-s g") 'grep-find)
 (global-set-key (kbd "C-x ,") 'ibuffer)
+(global-set-key (kbd "C-c a") 'embark-act)
 #+END_SRC
 
 #+RESULTS:
@@ -361,7 +365,7 @@ Keybindings for general operations like selection expansion, scrolling, and sear
 Group related keybindings under prefixes like `C-c o` (open), `C-c c` (code), and more.
 
 #+BEGIN_SRC emacs-lisp
-  (which-key-add-key-based-relpacements "C-c m" "[M]ajor mode")
+  (which-key-add-key-based-replacements "C-c m" "[M]ajor mode")
   (which-key-add-key-based-replacements "C-c o" "[O]pen")
   (which-key-add-key-based-replacements "C-c c" "[C]ode")
   (which-key-add-key-based-replacements "C-c j" "[J]ump to")
@@ -726,6 +730,15 @@ Enable Treesitter for improved syntax highlighting and parsing:
         (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
         (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
 #+END_SRC
+
+*** Install all servers listed (has to be executed manually)
+#+begin_src elisp :tangle no
+(mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+#+end_src
+
+#+RESULTS:
+| bash | cmake | css | elisp | go | html | javascript | json | make | markdown | python | tsx | typescript | yaml | java | clojure |
+
 ** terminal
 #+begin_src elisp
 (load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
@@ -757,3 +770,16 @@ Enable Treesitter for improved syntax highlighting and parsing:
 
 #+RESULTS:
 : test-btop
+
+* Embark 
+Installs embark for context. 
+Press C-c a to open embark action. 
+
+use (prefix + C-h) to search for keybind in menu
+#+begin_src elisp
+  (use-package embark
+    :ensure t)
+  (setq prefix-help-command #'embark-prefix-help-command)
+#+end_src
+
+#+RESULTS:
