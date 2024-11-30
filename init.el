@@ -1,19 +1,3 @@
-#+TITLE: Emacs Configuration
-#+PROPERTY: header-args :tangle ~/.emacs.d/init.el
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
-
-* Basic Settings
-These settings configure the startup behavior of Emacs, default modes, and auto-refresh options:
-- Disable the splash screen to avoid distractions during startup.
-- Set the default mode of the *scratch* buffer to Fundamental mode.
-- Do not display system load averages in the mode line.
-- Disable the creation of backup files to keep the filesystem clean.
-- Enable auto-refresh of buffers when files change externally.
-- Prevent constant polling for file changes and set a short interval for checking.
-- Enable version control information checks during auto-refresh.
-
-#+BEGIN_SRC elisp
-
 (when ( > emacs-major-version 30)
   (error "Emacs Bedrock only works with Emacs 30 and newer; you have version %s" emacs-major-version))
     (setopt inhibit-splash-screen t)
@@ -59,153 +43,98 @@ These settings configure the startup behavior of Emacs, default modes, and auto-
   :ensure nil ; no need to install it as it is built-in
   :hook (after-init . delete-selection-mode))
 
-#+END_SRC
+(use-package modus-themes
+      :custom
+      (modus-themes-italic-constructs t)
+      (modus-themes-bold-constructs t)
+      (modus-themes-mixed-fonts t)
+      (modus-themes-headings '((1 . (1.5))
+                               (2 . (1.3))
+                               (t . (1.1))))
+      (modus-themes-to-toggle
+       '(modus-operandi-tinted modus-vivendi-tinted))
+      :bind
+      (("C-c w m" . modus-themes-toggle)
+       ("C-c w M" . modus-themes-select)))
 
-#+RESULTS:
-| delete-selection-mode | org-persist-load-all | tramp-register-archive-autoload-file-name-handler |
+  (use-package ef-themes :ensure t)
+  (setq custom-theme 'modus-operandi-tinted)
 
-* Theme
+  (defun apply-modus-operandi-tinted-palette (frame)
+    (with-selected-frame frame
+      (load-theme custom-theme t)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+    (load-theme custom-theme t))
 
+  (defun set-default-font (frame)
+    "Set the default font for the FRAME."
+    (with-selected-frame frame
+      (set-face-attribute 'default nil
+                          :family "Iosevka SS08" ; Replace with your font name
+                          :height 180
+                          )))         ; Adjust the height as needed
 
-Configure and apply a theme:
-- Load the `modus-operandi-tinted` theme.
-- Apply the theme consistently when running as a daemon.
-
-#+BEGIN_SRC emacs-lisp
-
-      (use-package modus-themes
-        :custom
-        (modus-themes-italic-constructs t)
-        (modus-themes-bold-constructs t)
-        (modus-themes-mixed-fonts t)
-        (modus-themes-headings '((1 . (1.5))
-                                 (2 . (1.3))
-                                 (t . (1.1))))
-        (modus-themes-to-toggle
-         '(modus-operandi-tinted modus-vivendi-tinted))
-        :bind
-        (("C-c w m" . modus-themes-toggle)
-         ("C-c w M" . modus-themes-select)))
-
-    (use-package ef-themes :ensure t)
-    (setq custom-theme 'modus-operandi-tinted)
-
-    (defun apply-modus-operandi-tinted-palette (frame)
-      (with-selected-frame frame
-        (load-theme custom-theme t)))
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
-      (load-theme custom-theme t))
-
-    (defun set-default-font (frame)
-      "Set the default font for the FRAME."
-      (with-selected-frame frame
-        (set-face-attribute 'default nil
-                            :family "Iosevka SS08" ; Replace with your font name
-                            :height 180
-                            )))         ; Adjust the height as needed
-
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions #'set-default-font)
-      (set-default-font (selected-frame)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'set-default-font)
+    (set-default-font (selected-frame)))
 
 
 
-      ;; Distraction-free writing
-      (defun ews-distraction-free ()
-        "Distraction-free writing environment using Olivetti package."
-        (interactive)
-        (if (equal olivetti-mode nil)
-            (progn
-              (window-configuration-to-register 1)
-              (delete-other-windows)
-              (text-scale-set 1)
-              (olivetti-mode t))
+    ;; Distraction-free writing
+    (defun ews-distraction-free ()
+      "Distraction-free writing environment using Olivetti package."
+      (interactive)
+      (if (equal olivetti-mode nil)
           (progn
-            (if (eq (length (window-list)) 1)
-                (jump-to-register 1))
-            (olivetti-mode 0)
-            (text-scale-set 0))))
+            (window-configuration-to-register 1)
+            (delete-other-windows)
+            (text-scale-set 1)
+            (olivetti-mode t))
+        (progn
+          (if (eq (length (window-list)) 1)
+              (jump-to-register 1))
+          (olivetti-mode 0)
+          (text-scale-set 0))))
 
-      (use-package olivetti
-        :ensure t
-        :demand t
-        :bind
-        (("<f9>" . ews-distraction-free)))
-  (setq olivetti-body-width 90)
-  (setq olivetti-minium-Body-width 60)
+    (use-package olivetti
+      :ensure t
+      :demand t
+      :bind
+      (("<f9>" . ews-distraction-free)))
+(setq olivetti-body-width 90)
+(setq olivetti-minium-Body-width 60)
 
-  (use-package spacious-padding :ensure t)
-  (require 'spacious-padding)
+(use-package spacious-padding :ensure t)
+(require 'spacious-padding)
 
-  ;; These are the default values, but I keep them here for visibility.
-  (setq spacious-padding-widths
-        '( :internal-border-width 15
-           :header-line-width 4
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8
-           :fringe-width 8))
+;; These are the default values, but I keep them here for visibility.
+(setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8
+         :fringe-width 8))
 
-  (spacious-padding-mode 1)
+(spacious-padding-mode 1)
 
-  ;; Set a key binding if you need to toggle spacious padding.
-  (define-key global-map (kbd "<f8>") #'spacious-padding-mode)
+;; Set a key binding if you need to toggle spacious padding.
+(define-key global-map (kbd "<f8>") #'spacious-padding-mode)
 
-#+END_SRC
-
-#+RESULTS:
-: spacious-padding-mode
-
-* Text Settings
-Set text editing preferences:
-- Configure sentences to end with a single space instead of a double space.
-
-#+BEGIN_SRC emacs-lisp
 (setopt sentence-end-double-space nil)
-#+END_SRC
 
-* Searching
-Configuration for search-related tools and behaviors:
-- Use ripgrep (rg) as the search backend for faster and more efficient searching.
-- Customize the ripgrep command to display results in a compact format.
-
-#+BEGIN_SRC elisp
 (setq xref-search-program 'ripgrep)
 (setq grep-command "rg -nS --noheading")
-#+END_SRC
-       
-* Save History
-Enable saving of minibuffer history across sessions for improved usability.
 
-#+BEGIN_SRC elisp
 (savehist-mode)
-#+END_SRC
 
-* Window Management
-Configure shortcuts for easier navigation between windows:
-- Use `Ctrl` and arrow keys to switch between Emacs windows.
-
-#+BEGIN_SRC elisp
 (windmove-default-keybindings 'control)
-#+END_SRC
 
-* Context Menu
-Enable a graphical context menu for easier interaction:
-- Display a context menu when right-clicking in graphical Emacs.
-
-#+BEGIN_SRC emacs-lisp
 (when (display-graphic-p)
   (context-menu-mode))
-#+END_SRC
 
-* Backup Settings
-Organize and manage backup files:
-- Store all backup files in a dedicated directory within the Emacs configuration folder.
-- Automatically create missing directories for backup files.
-
-#+BEGIN_SRC emacs-lisp
 (defun bedrock--backup-file-name (fpath)
   (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
          (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath))
@@ -213,29 +142,12 @@ Organize and manage backup files:
     (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
     backupFilePath))
 (setopt make-backup-file-name-function 'bedrock--backup-file-name)
-#+END_SRC
 
-* Discovery Aids
-Enhance discoverability of keybindings and features:
-- Show possible keybindings in a popup when typing incomplete key sequences.
-
-#+BEGIN_SRC emacs-lisp
 (use-package which-key
   :ensure t
   :config
   (which-key-mode))
-#+END_SRC
 
-* Minibuffer and Completion
-Improve the minibuffer completion experience:
-- Allow nested minibuffer usage for recursive commands.
-- Enable cycling through completion candidates with the TAB key.
-- Display detailed annotations for completion candidates.
-- Prioritize completion over indentation when pressing TAB.
-- Group and organize completion suggestions for better readability.
-- Automatically select a candidate after the second TAB press.
-
-#+BEGIN_SRC emacs-lisp
 (setopt enable-recursive-minibuffers t)
 (setopt completion-cycle-threshold 1)
 (setopt completions-detailed t)
@@ -249,20 +161,7 @@ Improve the minibuffer completion experience:
 (ido-mode 0)
 (fido-vertical-mode 1)
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
-#+END_SRC
 
-#+RESULTS:
-: minibuffer-complete
-
-* Interface Enhancements
-Visual and interactive improvements:
-- Show line and column numbers in the mode line.
-- Enable relative line numbers globally for easier navigation.
-- Improve underline appearance for better readability.
-- Highlight current lines in text and programming modes.
-- Enable smooth and precise scrolling with the mouse.
-
-#+BEGIN_SRC emacs-lisp
 (setopt line-number-mode t)
 (setopt column-number-mode t)
 (global-display-line-numbers-mode)
@@ -280,26 +179,14 @@ Visual and interactive improvements:
 (add-hook 'text-mode-hook 'visual-line-mode)
 (let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
-#+END_SRC
 
-* Tab Bar
-Tab bar configurations:
-- Show the tab bar when tab functions are invoked.
-- Display the current date and time on the tab bar.
-
-#+BEGIN_SRC emacs-lisp
 (setopt tab-bar-show 1)
 (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
 (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
 (setopt display-time-format "%a %F %T")
 (setopt display-time-interval 1)
 (display-time-mode)
-#+END_SRC
 
-* Package Setup
-This section sets up key packages like `expand-region` and `exec-path-from-shell`.
-
-#+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :ensure t)
 (require 'expand-region)
@@ -307,22 +194,11 @@ This section sets up key packages like `expand-region` and `exec-path-from-shell
 (use-package exec-path-from-shell :ensure t)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
-#+END_SRC
 
-* Indentation Settings
-Set global indentation preferences.
-
-#+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
-#+END_SRC
 
-* Keybinds
-** Which-Key Configuration
-Configure `which-key` for improved keybinding discovery.
-
-#+BEGIN_SRC emacs-lisp
 (setq which-key-sort-order 'which-key-key-order-alpha)
 (setq which-key-max-display-columns 2)
 (setq which-key-popup-type 'side-window)
@@ -333,111 +209,56 @@ Configure `which-key` for improved keybinding discovery.
 (which-key-add-key-based-replacements "C-x 3" "Open Split")
 (which-key-add-key-based-replacements "C-x 1" "Close all but this")
 (which-key-add-key-based-replacements "C-x 1" "Close this")
-#+END_SRC
 
-** File Keybindings
-Define keybindings for file-related operations.
-
-#+BEGIN_SRC emacs-lisp
 (which-key-add-key-based-replacements "C-x C-f" "[F]ile")
 (define-prefix-command 'file-prefix-map)
 (global-set-key (kbd "C-x C-f") 'file-prefix-map)
 (define-key file-prefix-map (kbd "f") 'find-file)           ; Open file
 (define-key file-prefix-map (kbd "r") 'recentf)            ; Open recent files
-#+END_SRC
 
-** General Keybinds
-Keybindings for general operations like selection expansion, scrolling, and searching.
-
-#+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-=") (cons "Expand Selection" 'er/expand-region))
 (global-set-key (kbd "s-v") 'cua-paste)
 (global-set-key (kbd "C-v") 'scroll-up-command)
 (global-set-key (kbd "M-s g") 'grep-find)
 (global-set-key (kbd "C-x ,") 'ibuffer)
 (global-set-key (kbd "C-c a") 'embark-act)
-#+END_SRC
 
-#+RESULTS:
-: ibuffer
+(which-key-add-key-based-replacements "C-c m" "[M]ajor mode")
+(which-key-add-key-based-replacements "C-c o" "[O]pen")
+(which-key-add-key-based-replacements "C-c c" "[C]ode")
+(which-key-add-key-based-replacements "C-c j" "[J]ump to")
+(which-key-add-key-based-replacements "C-c l" "[L]edger")
+(which-key-add-key-based-replacements "C-c n" "[N]otes")
+(which-key-add-key-based-replacements "C-c x" "[X] Capture")
 
-** Level 2 Keybindings (Grouped Actions)
-Group related keybindings under prefixes like `C-c o` (open), `C-c c` (code), and more.
-
-#+BEGIN_SRC emacs-lisp
-  (which-key-add-key-based-replacements "C-c m" "[M]ajor mode")
-  (which-key-add-key-based-replacements "C-c o" "[O]pen")
-  (which-key-add-key-based-replacements "C-c c" "[C]ode")
-  (which-key-add-key-based-replacements "C-c j" "[J]ump to")
-  (which-key-add-key-based-replacements "C-c l" "[L]edger")
-  (which-key-add-key-based-replacements "C-c n" "[N]otes")
-  (which-key-add-key-based-replacements "C-c x" "[X] Capture")
-#+END_SRC
-
-** GPT/AI Keybindings
-Keybindings for GPT-related operations.
-
-#+BEGIN_SRC emacs-lisp
 (define-prefix-command 'gptel-prefix-map)
 (global-set-key (kbd "C-c oc") 'gptel-prefix-map)
 (which-key-add-key-based-replacements "C-c A" "[A]I Chat")
 (define-key gptel-prefix-map (kbd "m") (cons "Open AI [M]enu" 'gptel-menu))
 (define-key gptel-prefix-map (kbd "s") (cons "[S]end to AI" 'gptel-send))
 (define-key gptel-prefix-map (kbd "C") (cons "AI [C]hat" 'gptel))
-#+END_SRC
 
-** Code-Related Keybindings
-Keybindings for programming and code-related actions.
-
-#+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c cf") 'eglot-format)
 (global-set-key (kbd "C-c cc") 'compile)
 (global-set-key (kbd "C-c ca") 'eglot-code-actions)
 (global-set-key (kbd "M-[") 'flymake-goto-prev-error)
 (global-set-key (kbd "M-]") 'flymake-goto-next-error)
-#+END_SRC
 
-** Ledger Keybindings
-Keybindings for Hledger-related operations.
-
-#+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x R") 'hledger-run-command)
-#+END_SRC
 
-** Disable Auto-Indent on ENTER
-Disable automatic indentation when pressing ENTER.
-
-#+BEGIN_SRC emacs-lisp
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
-#+END_SRC
 
-** Org-Mode and Notes Keybindings
-Keybindings for Org-mode and notes management.
+(global-set-key (kbd "C-c ns") 'org-search-view)
+(global-set-key (kbd "C-c na") 'org-agenda)
+(global-set-key (kbd "C-c x") 'org-capture)
+(global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
+(global-set-key (kbd "C-c oct") 'org-timeblock)
 
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c ns") 'org-search-view)
-  (global-set-key (kbd "C-c na") 'org-agenda)
-  (global-set-key (kbd "C-c x") 'org-capture)
-  (global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
-  (global-set-key (kbd "C-c oct") 'org-timeblock)
-#+END_SRC
-
-#+RESULTS:
-: cfw:open-org-calendar
-
-* Language Support
-** eglot
-#+begin_src elisp
 (load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
-#+end_src
-** Markdown
-#+begin_src elisp
+
 (use-package markdown-mode
 :ensure t
   :hook ((markdown-mode . visual-line-mode)))
-#+end_src
-**  Org Mode
-#+begin_src elisp
 
 (use-package org-timeblock :ensure t)
 (use-package calfw :ensure t)
@@ -641,10 +462,6 @@ Keybindings for Org-mode and notes management.
 
 (add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
 
-#+end_src
-** Ledger
-#+begin_src elisp
-
 (use-package hledger-mode
 :ensure t)
 (require 'hledger-mode)
@@ -670,13 +487,6 @@ Keybindings for Org-mode and notes management.
       hledger-top-expense-account "Expenses"
       hledger-top-income-account "Revenue"
       hledger-year-of-birth 1997)
-#+end_src
-
-#+RESULTS:
-: 1997
-
-** Clojure
-#+begin_src elisp
 
 (unless (package-installed-p 'clojure-mode)
   (package-install 'clojure-mode))
@@ -686,36 +496,15 @@ Keybindings for Org-mode and notes management.
 
 (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
-#+end_src
-** Common Lisp
-#+begin_src elisp
+
 (use-package sly :ensure t)
-#+end_src
 
-#+RESULTS:
+(use-package magit :ensure t
+  :bind ((
+          "C-x g" . magit-status
+          ))
+  )
 
-* Tools 
-** Magit
-| keybind | description |
-|---------+-------------|
-| C-x g   | Open Magit status |
-#+begin_src elisp
-      (use-package magit :ensure t
-        :bind ((
-                "C-x g" . magit-status
-                ))
-        )
-#+end_src
-
-#+RESULTS:
-: magit-status
-
-** Treesitter
-Enable Treesitter for improved syntax highlighting and parsing:
-- Map language modes to their Treesitter equivalents.
-- Configure Treesitter grammars for supported languages.
-
-#+BEGIN_SRC emacs-lisp
 (use-package emacs
   :config
   (setq major-mode-remap-alist
@@ -748,57 +537,18 @@ Enable Treesitter for improved syntax highlighting and parsing:
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")
         (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
         (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
-#+END_SRC
 
-*** Install all servers listed (has to be executed manually)
-#+begin_src elisp :tangle no
-(mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
-#+end_src
-
-#+RESULTS:
-| bash | cmake | css | elisp | go | html | javascript | json | make | markdown | python | tsx | typescript | yaml | java | clojure |
-
-** terminal
-#+begin_src elisp
 (load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
-#+end_src
-** Work
-#+begin_src elisp
+
 (load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
-#+end_src
 
-#+RESULTS:
-: t
-
-** AI
-#+begin_src elisp
 (load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
-#+end_src
-** rss
-#+begin_src elisp
+
 (load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
-#+end_src
-* others
-#+begin_src elisp
+
 (setq org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
-#+end_src
 
-#+RESULTS:
-| \`https://fniessen\.github\.io/org-html-themes/org/theme-readtheorg\.setup\' |
-
-#+RESULTS:
-: test-btop
-
-* Embark 
-Installs embark for context. 
-Press C-c a to open embark action. 
-
-use (prefix + C-h) to search for keybind in menu
-#+begin_src elisp
-  (use-package embark
-    :ensure t)
-  (setq prefix-help-command #'embark-prefix-help-command)
-#+end_src
-
-#+RESULTS:
+(use-package embark
+  :ensure t)
+(setq prefix-help-command #'embark-prefix-help-command)
