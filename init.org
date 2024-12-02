@@ -101,7 +101,7 @@ Configure and apply a theme:
     "Set the default font for the FRAME."
     (with-selected-frame frame
       (set-face-attribute 'default nil
-                          :family "Iosevka Aile" ; Replace with your font name
+                          :family "Iosevka SS08" ; Replace with your font name
                           :height 160
                           )))         ; Adjust the height as needed
 
