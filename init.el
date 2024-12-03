@@ -12,7 +12,7 @@
 
     (global-display-line-numbers-mode)
 
-    (add-hook 'org-timeblock-mode-hook (lambda () (display-line-numbers-mode 0)))
+    
     (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
     (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
@@ -135,6 +135,8 @@
 (when (display-graphic-p)
   (context-menu-mode))
 
+(setq imenu-flatten 'prefix)
+
 (defun bedrock--backup-file-name (fpath)
   (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
          (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath))
@@ -222,6 +224,7 @@
 (global-set-key (kbd "M-s g") 'grep-find)
 (global-set-key (kbd "C-x ,") 'ibuffer)
 (global-set-key (kbd "C-c a") 'embark-act)
+(global-set-key (kbd "M-i") 'imenu)
 
 (which-key-add-key-based-replacements "C-c m" "[M]ajor mode")
 (which-key-add-key-based-replacements "C-c o" "[O]pen")
@@ -232,8 +235,8 @@
 (which-key-add-key-based-replacements "C-c x" "[X] Capture")
 
 (define-prefix-command 'gptel-prefix-map)
-(global-set-key (kbd "C-c oc") 'gptel-prefix-map)
-(which-key-add-key-based-replacements "C-c A" "[A]I Chat")
+(global-set-key (kbd "C-c A") 'gptel-prefix-map)
+;; (which-key-add-key-based-replacements "C-c A" "[A]I Chat")
 (define-key gptel-prefix-map (kbd "m") (cons "Open AI [M]enu" 'gptel-menu))
 (define-key gptel-prefix-map (kbd "s") (cons "[S]end to AI" 'gptel-send))
 (define-key gptel-prefix-map (kbd "C") (cons "AI [C]hat" 'gptel))
@@ -248,11 +251,13 @@
 
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 
+(define-prefix-command 'calendar-prefix-map)
+(which-key-add-key-based-replacements "C-c oc" "[C]alendar")
+(which-key-add-key-based-replacements "C-c c" "[C]ode")
 (global-set-key (kbd "C-c ns") 'org-search-view)
 (global-set-key (kbd "C-c na") 'org-agenda)
 (global-set-key (kbd "C-c x") 'org-capture)
 (global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
-(global-set-key (kbd "C-c oct") 'org-timeblock)
 
 (load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
 
@@ -260,7 +265,6 @@
 :ensure t
   :hook ((markdown-mode . visual-line-mode)))
 
-(use-package org-timeblock :ensure t)
 (use-package calfw :ensure t)
 (use-package calfw-org :ensure t)
 (use-package org-modern :ensure t)
@@ -304,8 +308,8 @@
         ("r" "Recurring" entry (file "~/org/recurring_calendar.org")
          "** TODO  %?\n "
          )
-        ("l" "Link" entry (file+headline "~/org/link.org" "inbox")
-         "** %\n"
+        ("l" "Link" entry (file+headline "~/org/link.org" "to watch/read")
+         "** \n"
          )
         ("n" "Note" entry (file "~/org/inbox.org")
          "* %?"
@@ -349,7 +353,7 @@
   (setq org-agenda-warning-days 90)
   (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
   (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
-(setq org-agenda-start-with-log-mode t)
+(setq org-agenda-start-with-log-mode nil)
   (setq org-agenda-custom-commands
         '(
           ("c" "Today"
@@ -552,3 +556,46 @@
 (use-package embark
   :ensure t)
 (setq prefix-help-command #'embark-prefix-help-command)
+
+(use-package org-upcoming-modeline
+  :config
+  (org-upcoming-modeline-mode))
+
+;; Calendar showing org-agenda entries
+(defun my-open-calendar-agenda ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "medium purple"))
+   :view 'block-week))
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-blocks")
+
+(require 'calfw)
+(require 'calfw-org)
+(require 'calfw-blocks)
+
+(defun my-calfw-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources (list (cfw:org-create-source "Green"))
+   :view 'block-week))
+
+
+(defun my-calfw-set-view (view)
+  (interactive)
+  (setq cfw:current-view view)
+  (cfw:refresh-calendar-buffer nil))
+
+(define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
+(define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
+(define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
+(define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
+(define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
+(define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
+(define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
+(define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
+(define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
+
+(setq calfw-blocks-default-event-length 0.25)
