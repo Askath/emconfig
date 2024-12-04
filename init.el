@@ -1,5 +1,123 @@
+;; Ensure local packages are added to load path for compilation
+(let ((default-directory "~/.emacs.d/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+
+(eval-when-compile
+  (require 'use-package))
+
+;; Built-in packages
+(use-package delsel
+  :ensure nil
+  :hook (after-init . delete-selection-mode))
+
+;; Local packages
+(eval-and-compile
+  (require 'casual-suite))
+(use-package casual-suite :ensure nil)
+
+;; Theme configuration
+(use-package modus-themes
+  :custom
+  (modus-themes-italic-constructs t)
+  (modus-themes-bold-constructs t)
+  (modus-themes-mixed-fonts t)
+  (modus-themes-headings '((1 . (1.5))
+                           (2 . (1.3))
+                           (t . (1.1))))
+  (modus-themes-to-toggle
+   '(modus-operandi-tinted modus-vivendi-tinted))
+  :bind (("C-c w m" . modus-themes-toggle)
+         ("C-c w M" . modus-themes-select)))
+
+;; Utility packages
+(use-package which-key
+  :ensure nil
+  :config
+  (which-key-mode))
+
+(use-package expand-region
+  :ensure nil
+  :commands er/expand-region
+  :bind (("C-=" . er/expand-region)))
+
+(use-package exec-path-from-shell :ensure nil)
+
+;; Markdown mode
+(use-package markdown-mode
+  :ensure nil
+  :hook (markdown-mode . visual-line-mode))
+
+;; Calendar and org-mode extensions
+(use-package calfw :ensure nil)
+(use-package calfw-org :ensure nil)
+
+(use-package org-modern :ensure nil)
+(use-package org-contacts :ensure nil)
+
+(use-package org
+  :hook ((org-mode . visual-line-mode))
+  :bind (:map global-map)
+  :config
+  (require 'oc-csl) ; citation support
+  (add-to-list 'org-export-backends 'md)
+  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
+  (setq org-export-with-smart-quotes t))
+
+(use-package org-super-agenda :ensure nil)
+(use-package toc-org
+  :ensure nil
+  :hook (org-mode . toc-org-enable)
+  :config
+  (setq toc-org-hrefify-default "gh"))
+(use-package org-cliplink :ensure nil)
+(use-package org-upcoming-modeline
+  :config
+  (org-upcoming-modeline-mode))
+
+;; Finance
+(use-package hledger-mode :ensure nil)
+
+;; Clojure development
+(use-package clojure-mode
+  :ensure nil)
+(use-package cider :ensure nil)
+
+;; Common Lisp development
+(use-package sly :ensure nil)
+
+;; Git integration
+(use-package magit
+  :ensure nil
+  :bind (("C-x g" . magit-status)))
+(use-package elfeed 
+  :ensure nil)
+;; Other utilities
+(use-package embark :ensure nil)
+
+(use-package eshell
+  :ensure nil
+  :init
+  (defun bedrock/setup-eshell ()
+    ;; Something funny is going on with how Eshell sets up its keymaps; this is
+    ;; a work-around to make C-r bound in the keymap
+    (keymap-set eshell-mode-map "C-r" 'consult-history))
+  :hook ((eshell-mode . bedrock/setup-eshell)))
+
+;; Eat: Emulate A Terminal
+(use-package eat
+  :ensure nil
+  :custom
+  (eat-term-name "iterm")
+  :config
+  (eat-eshell-mode)                     ; use Eat to handle term codes in program output
+  (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
+
+(use-package gptel 
+:ensure nil)
+
 (when ( > emacs-major-version 30)
-  (error "Emacs Bedrock only works with Emacs 30 and newer; you have version %s" emacs-major-version))
+  (error "This Emacs config  only works with Emacs 30 and newer; you have version %s" emacs-major-version))
+
     (setopt inhibit-splash-screen t)
     (setopt initial-major-mode 'fundamental-mode)
     (setopt display-time-default-load-average nil)
@@ -12,53 +130,13 @@
 
     (global-display-line-numbers-mode)
 
-    
+    ;;Disable line numbers
     (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
     (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
     (recentf-mode 1)
 
-    (add-to-list 'package-archives
-                 '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-    (package-initialize)
-
-  (use-package casual-suite :ensure t)
-  (require 'casual-suite)
-  (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
-  (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
-  (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
-  (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
-  (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
-  (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
-  (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
-  (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
-  (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
-  (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
-  (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
-  (keymap-global-set "M-g" #'casual-avy-tmenu)
-  (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
-  (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
-
-(use-package delsel
-  :ensure nil ; no need to install it as it is built-in
-  :hook (after-init . delete-selection-mode))
-
-(use-package modus-themes
-      :custom
-      (modus-themes-italic-constructs t)
-      (modus-themes-bold-constructs t)
-      (modus-themes-mixed-fonts t)
-      (modus-themes-headings '((1 . (1.5))
-                               (2 . (1.3))
-                               (t . (1.1))))
-      (modus-themes-to-toggle
-       '(modus-operandi-tinted modus-vivendi-tinted))
-      :bind
-      (("C-c w m" . modus-themes-toggle)
-       ("C-c w M" . modus-themes-select)))
-
-  (use-package ef-themes :ensure t)
-  (setq custom-theme 'modus-operandi-tinted)
+(setq custom-theme 'modus-operandi-tinted)
 
   (defun apply-modus-operandi-tinted-palette (frame)
     (with-selected-frame frame
@@ -97,15 +175,7 @@
           (olivetti-mode 0)
           (text-scale-set 0))))
 
-    (use-package olivetti
-      :ensure t
-      :demand t
-      :bind
-      (("<f9>" . ews-distraction-free)))
-(setq olivetti-body-width 90)
-(setq olivetti-minium-Body-width 60)
 
-(use-package spacious-padding :ensure t)
 (require 'spacious-padding)
 
 ;; These are the default values, but I keep them here for visibility.
@@ -145,10 +215,7 @@
     backupFilePath))
 (setopt make-backup-file-name-function 'bedrock--backup-file-name)
 
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode))
+
 
 (setopt enable-recursive-minibuffers t)
 (setopt completion-cycle-threshold 1)
@@ -189,11 +256,6 @@
 (setopt display-time-interval 1)
 (display-time-mode)
 
-(use-package expand-region
-  :ensure t)
-(require 'expand-region)
-
-(use-package exec-path-from-shell :ensure t)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 
@@ -251,23 +313,109 @@
 
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 
-(define-prefix-command 'calendar-prefix-map)
-(which-key-add-key-based-replacements "C-c oc" "[C]alendar")
-(which-key-add-key-based-replacements "C-c c" "[C]ode")
-(global-set-key (kbd "C-c ns") 'org-search-view)
-(global-set-key (kbd "C-c na") 'org-agenda)
-(global-set-key (kbd "C-c x") 'org-capture)
-(global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
+;; Calendar showing org-agenda entries
+(defun my-open-calendar-agenda ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "medium purple"))
+   :view 'block-week))
 
-(load-file (expand-file-name "modules/tools/eglot.el" user-emacs-directory))
+(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-blocks")
 
-(use-package markdown-mode
-:ensure t
-  :hook ((markdown-mode . visual-line-mode)))
+(require 'calfw)
+(require 'calfw-org)
+(require 'calfw-blocks)
+(defun my-calfw-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources (list (cfw:org-create-source "Green"))
+   :view 'block-week))
 
-(use-package calfw :ensure t)
-(use-package calfw-org :ensure t)
-(use-package org-modern :ensure t)
+
+(defun my-calfw-set-view (view)
+  (interactive)
+  (setq cfw:current-view view)
+  (cfw:refresh-calendar-buffer nil))
+
+(define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
+(define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
+(define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
+(define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
+(define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
+(define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
+(define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
+(define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
+(define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
+
+(setq calfw-blocks-default-event-length 0.25)
+
+  (define-prefix-command 'calendar-prefix-map)
+  (which-key-add-key-based-replacements "C-c oc" "[C]alendar")
+  (which-key-add-key-based-replacements "C-c c" "[C]ode")
+  (global-set-key (kbd "C-c ns") 'org-search-view)
+  (global-set-key (kbd "C-c na") 'org-agenda)
+  (global-set-key (kbd "C-c x") 'org-capture)
+  (global-set-key (kbd "C-c ocm") 'my-calfw-open-calendar)
+
+ (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
+  (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
+  (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
+  (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+  (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+  (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+  (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
+  (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+  (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
+  (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
+  (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+  (keymap-global-set "M-g" #'casual-avy-tmenu)
+  (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
+  (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+
+(setq lombok-library-path (concat user-emacs-directory "lombok.jar"))
+(unless (file-exists-p lombok-library-path)
+  (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
+
+(use-package eglot
+  ;; no :ensure t here because it's built-in
+
+  ;; Configure hooks to automatically turn on eglot for selected modes
+  :hook
+  ((js-ts-mode . eglot-ensure)
+   (tsx-ts-mode . eglot-ensure)
+   (typescript-ts-mode . eglot-ensure)
+   (java-ts-mode . eglot-ensure)
+   (html-ts-mode . eglot-ensure)
+   (clojure-mode . eglot-ensure)
+   (clojurescript-mode . eglot-ensure)
+   )
+
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-extend-to-xref t) ; activate Eglot in referenced non-project files
+
+  :config
+  (fset #'jsonrpc--log-event #'ignore) ; massive perf boost---don't log every event
+  (add-to-list 'eglot-server-programs
+               `(java-ts-mode . ("jdtls" "-data" "~/jdtls"
+                                 "-javaagent:" ,lombok-library-path
+                                 "-Xbootclasspath/a:" ,lombok-library-path
+                                 "--jvm-arg=-XX:+UseG1GC"
+                                 "--jvm-arg=-XX:+UseStringDeduplication"
+                                 "-Djava.format.settings.url=file:///home/user/code-format.xml"
+                                 "-Djava.format.settings.profile=myown")))
+  (add-to-list 'eglot-server-programs
+               `(html-ts-mode . ("node" "/opt/homebrew/lib/node_modules/@angular/language-server/" "--ngProbeLocations"
+                                 "/opt/homebrew/lib/node_modules" "--tsProbeLocations"
+                                 "/opt/homebrew/lib/node_modules/" "--stdio"))))
+
+
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.java\\'" . java-ts-mode))
+
+
 
 (with-eval-after-load 'org (global-org-modern-mode))
 
@@ -276,26 +424,10 @@
 
 (setq org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
 
-(use-package org
-  :hook ((org-mode . visual-line-mode) )    ; spell checking!
 
-  :bind (:map global-map)
-  :config
-  (require 'oc-csl)                     ; citation support
-  (add-to-list 'org-export-backends 'md)
-
-  ;; Make org-open-at-point follow file links in the same window
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-
-  ;; Make exporting quotes better
-  (setq org-export-with-smart-quotes t)
-  )
 (setq org-startup-folded 'fold)
 
 (setq org-contacts-vcard-file "contacts.vcard")
-(use-package org-contacts
-  :ensure t)
-
 
 
 (setq org-capture-templates
@@ -335,8 +467,7 @@
 (setq org-contacts-files (list "~/org/contacts/contacts.org"))
 (setq org-contacts-vcard-file "contacts.vcard")
 
-(use-package org-super-agenda
-  :ensure t)
+
 
 (use-package org-super-agenda
   :after org-agenda
@@ -353,7 +484,7 @@
   (setq org-agenda-warning-days 90)
   (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
   (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
-(setq org-agenda-start-with-log-mode nil)
+  (setq org-agenda-start-with-log-mode nil)
   (setq org-agenda-custom-commands
         '(
           ("c" "Today"
@@ -409,11 +540,7 @@
            ))))
 (org-super-agenda-mode)
 
-(use-package toc-org ; auto-table of contents
-  :ensure t
-  :hook (org-mode . toc-org-enable)
-  :config
-  (setq toc-org-hrefify-default "gh"))
+
 
 ;; Default t
 (setq org-todo-keywords
@@ -445,8 +572,7 @@
         ("PROJ" . +org-todo-project)
         ("KILL" . +org-todo-cancel)))
 
-(use-package org-cliplink 
-  :ensure t)
+
 
 (global-set-key (kbd "C-x p i") 'org-cliplink)
 (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
@@ -466,8 +592,6 @@
 
 (add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
 
-(use-package hledger-mode
-:ensure t)
 (require 'hledger-mode)
 ;; To open files with .journal extension in hledger-mode
 (add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
@@ -492,22 +616,10 @@
       hledger-top-income-account "Revenue"
       hledger-year-of-birth 1997)
 
-(unless (package-installed-p 'clojure-mode)
-  (package-install 'clojure-mode))
-
-(use-package cider
-  :ensure t)
-
 (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
 
-(use-package sly :ensure t)
 
-(use-package magit :ensure t
-  :bind ((
-          "C-x g" . magit-status
-          ))
-  )
 
 (use-package emacs
   :config
@@ -542,60 +654,100 @@
         (java "https://github.com/tree-sitter/tree-sitter-java" "master" "src")
         (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
 
-(load-file (expand-file-name "modules/tools/term.el" user-emacs-directory))
+(defun vendor/open-iterm2 ()
+  "Open Puffin in a new iTerm window."
+  (interactive)
+  (let ((dir (expand-file-name default-directory)))
+    (do-applescript
+     (format
+      "tell application \"iTerm\"
+        create window with default profile
+        tell current session of current window
+          write text \"cd %s\"
+        end tell
+      end tell" dir))))
 
-(load-file (expand-file-name "modules/tools/work/work.el" user-emacs-directory))
+(global-set-key (kbd "C-c ot") 'vendor/open-iterm2)
 
-(load-file (expand-file-name "modules/tools/gptel.el" user-emacs-directory))
+(defun org-download-work-calendar (link output)
+  (let ((command (list "wget" link "-O" output)))
+    (with-temp-buffer
+      (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
+        (if (= exit-code 0)
+            (message "Downloaded calendar")
+          (message "Failed to download calendar with exit code %d" exit-code))))))
 
-(load-file (expand-file-name "modules/tools/rss.el" user-emacs-directory))
+(defun org-convert-work-calendar (input output)
+  (let ((command (list "ical2orgpy" input output)))
+    (with-temp-buffer
+      (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
+        (if (= exit-code 0)
+            (message "Converted calendar")
+          (message "Failed to convert calendar with exit code %d" exit-code)))
+      (let ((command (list "rm" "-rf" input)))
+        (apply 'call-process (car command) nil t nil (cdr command))
+        )
+      )))
+
+(defun org-refresh-work-calendar ()
+  (interactive)
+  (org-download-work-calendar "https://outlook.office365.com/owa/calendar/5a510932ff8a4fd6b4d73fa1203d4683@optadata.de/f18ceea7bff54438ab2e6fd922b669bc5942294383520341840/calendar.ics"
+                              (expand-file-name "~/org/calendar_work.ical"))
+  (org-convert-work-calendar (expand-file-name "~/org/calendar_work.ical")
+                             (expand-file-name "~/org/calendar_work.org")))
+
+
+
+(defun vpn/status ()
+  (interactive)
+x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
+    (with-current-buffer output-buffer
+      (erase-buffer)
+      (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "status")))
+        (if (= exit 0)
+            (insert "VPN connection status: worked\n")
+          (insert "VPN connection status: failed\n"))))
+    (pop-to-buffer output-buffer)))
+
+
+(defun vpn/disconnect ()
+  (interactive)
+  (let ((output-buffer (get-buffer-create "*VPN Status*")))
+    (with-current-buffer output-buffer
+      (erase-buffer)
+      (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "disconnect")))
+        (if (= exit 0)
+            (insert "VPN connection status: worked\n")
+          (insert "VPN connection status: failed\n"))))
+    (pop-to-buffer output-buffer)))
+
+(defun vpn/connect ()
+  (interactive)
+  (let ((output-buffer (get-buffer-create "*VPN Status*")))
+    (with-current-buffer output-buffer
+      (erase-buffer)
+      (let ((exit (call-process "/Users/taradruffel/.workspace/scripts/connect_vpn.clj" nil t nil)))
+        (if (= exit 0)
+            (insert "VPN connection status: worked\n")
+          (insert "VPN connection status: failed\n"))))
+    (pop-to-buffer output-buffer)))
+
+(setq gptel-default-mode 'text-mode)
+(setq gptel-api-key "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")
+
+;; keybinds for chat gpt in emacs with C-c c as prefix
+
+(global-set-key (kbd "C-x w") 'elfeed)
+
+
+;; Somewhere in your .emacs file
+(setq elfeed-feeds
+      '(
+        "https://planet.emacslife.com/atom.xml"
+        )
+)
 
 (setq org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
 
-(use-package embark
-  :ensure t)
 (setq prefix-help-command #'embark-prefix-help-command)
-
-(use-package org-upcoming-modeline
-  :config
-  (org-upcoming-modeline-mode))
-
-;; Calendar showing org-agenda entries
-(defun my-open-calendar-agenda ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources
-   (list
-    (cfw:org-create-source "medium purple"))
-   :view 'block-week))
-
-(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-blocks")
-
-(require 'calfw)
-(require 'calfw-org)
-(require 'calfw-blocks)
-
-(defun my-calfw-open-calendar ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources (list (cfw:org-create-source "Green"))
-   :view 'block-week))
-
-
-(defun my-calfw-set-view (view)
-  (interactive)
-  (setq cfw:current-view view)
-  (cfw:refresh-calendar-buffer nil))
-
-(define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
-(define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
-(define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
-(define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
-(define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
-(define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
-(define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
-(define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
-(define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
-
-(setq calfw-blocks-default-event-length 0.25)
