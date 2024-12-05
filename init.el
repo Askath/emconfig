@@ -50,6 +50,7 @@
 ;; Calendar and org-mode extensions
 (use-package calfw :ensure nil)
 (use-package calfw-org :ensure nil)
+(use-package calfw-blocks :ensure t)
 
 (use-package org-modern :ensure nil)
 (use-package org-contacts :ensure nil)
@@ -330,11 +331,9 @@
     (cfw:org-create-source "medium purple"))
    :view 'block-week))
 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-blocks")
 
 (require 'calfw)
 (require 'calfw-org)
-(require 'calfw-blocks)
 (defun my-calfw-open-calendar ()
   (interactive)
   (cfw:open-calendar-buffer
@@ -759,23 +758,3 @@ x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
 
 (setq prefix-help-command #'embark-prefix-help-command)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("b41d0a9413fb0034cea34eb8c9f89f6e243bdd76bccecf8292eb1fefa42eaf0a"
-     "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
-     default))
- '(package-selected-packages
-   '(calfw calfw-org casual-suite cider clojure-mode download-packages
-           eat ef-themes elfeed embark exec-path-from-shell
-           expand-region gptel htmlize magit markdown-mode
-           org-contacts org-modern org-super-agenda sly toc-org)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(tab-line-tab-active ((t))))
