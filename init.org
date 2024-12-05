@@ -13,13 +13,13 @@
 
   ;; Built-in packages
   (use-package delsel
-    :ensure nil
+    :ensure t
     :hook (after-init . delete-selection-mode))
 
   ;; Local packages
   (eval-and-compile
     (require 'casual-suite))
-  (use-package casual-suite :ensure nil)
+  (use-package casual-suite :ensure t)
 
   ;; Theme configuration
   (use-package modus-themes
@@ -37,29 +37,29 @@
 
   ;; Utility packages
   (use-package which-key
-    :ensure nil
+    :ensure t
     :config
     (which-key-mode))
 
   (use-package expand-region
-    :ensure nil
+    :ensure t
     :commands er/expand-region
     :bind (("C-=" . er/expand-region)))
 
-  (use-package exec-path-from-shell :ensure nil)
+  (use-package exec-path-from-shell :ensure t)
 
   ;; Markdown mode
   (use-package markdown-mode
-    :ensure nil
+    :ensure t
     :hook (markdown-mode . visual-line-mode))
 
   ;; Calendar and org-mode extensions
-  (use-package calfw :ensure nil)
-  (use-package calfw-org :ensure nil)
-  (use-package calfw-blocks :ensure t)
+  (use-package calfw :ensure t)
+  (use-package calfw-org :ensure t)
+  (use-package calfw-blocks :ensure nil)
 
-  (use-package org-modern :ensure nil)
-  (use-package org-contacts :ensure nil)
+  (use-package org-modern :ensure t)
+  (use-package org-contacts :ensure t)
 
   (use-package org
     :hook ((org-mode . visual-line-mode))
@@ -70,39 +70,39 @@
     (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
     (setq org-export-with-smart-quotes t))
 
-  (use-package org-super-agenda :ensure nil)
+  (use-package org-super-agenda :ensure t)
   (use-package toc-org
-    :ensure nil
+    :ensure t
     :hook (org-mode . toc-org-enable)
     :config
     (setq toc-org-hrefify-default "gh"))
-  (use-package org-cliplink :ensure nil)
+  (use-package org-cliplink :ensure t)
   (use-package org-upcoming-modeline
     :config
     (org-upcoming-modeline-mode))
 
   ;; Finance
-  (use-package hledger-mode :ensure nil)
+  (use-package hledger-mode :ensure t)
 
   ;; Clojure development
   (use-package clojure-mode
-    :ensure nil)
-  (use-package cider :ensure nil)
+    :ensure t)
+  (use-package cider :ensure t)
 
   ;; Common Lisp development
-  (use-package sly :ensure nil)
+  (use-package sly :ensure t)
 
   ;; Git integration
   (use-package magit
-    :ensure nil
+    :ensure t
     :bind (("C-x g" . magit-status)))
   (use-package elfeed 
-    :ensure nil)
+    :ensure t)
   ;; Other utilities
-  (use-package embark :ensure nil)
+  (use-package embark :ensure t)
 
   (use-package eshell
-    :ensure nil
+    :ensure t
     :init
     (defun bedrock/setup-eshell ()
       ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -112,7 +112,7 @@
 
   ;; Eat: Emulate A Terminal
   (use-package eat
-    :ensure nil
+    :ensure t
     :custom
     (eat-term-name "iterm")
     :config
@@ -120,10 +120,10 @@
     (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
   (use-package gptel 
-  :ensure nil)
+  :ensure t)
 
   (use-package ef-themes
-  :ensure nil)
+  :ensure t)
 
   (let ((site-lisp-dir "~/.emacs.d/site-lisp"))
     (when (file-directory-p site-lisp-dir)
@@ -576,7 +576,7 @@ Keybindings for Org-mode and notes management.
   (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
 
 (use-package eglot
-  ;; no :ensure nil here because it's built-in
+  ;; no :ensure t here because it's built-in
 
   ;; Configure hooks to automatically turn on eglot for selected modes
   :hook
