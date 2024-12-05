@@ -115,6 +115,14 @@
 (use-package gptel 
 :ensure nil)
 
+(use-package ef-themes
+:ensure nil)
+
+(let ((site-lisp-dir "~/.emacs.d/site-lisp"))
+  (when (file-directory-p site-lisp-dir)
+    (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
+      (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
+
 (when ( > emacs-major-version 30)
   (error "This Emacs config  only works with Emacs 30 and newer; you have version %s" emacs-major-version))
 
@@ -379,7 +387,7 @@
   (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
 
 (use-package eglot
-  ;; no :ensure t here because it's built-in
+  ;; no :ensure nil here because it's built-in
 
   ;; Configure hooks to automatically turn on eglot for selected modes
   :hook
@@ -751,3 +759,23 @@ x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
 
 (setq prefix-help-command #'embark-prefix-help-command)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("b41d0a9413fb0034cea34eb8c9f89f6e243bdd76bccecf8292eb1fefa42eaf0a"
+     "ea4dd126d72d30805c083421a50544e235176d9698c8c541b824b60912275ba1"
+     default))
+ '(package-selected-packages
+   '(calfw calfw-org casual-suite cider clojure-mode download-packages
+           eat ef-themes elfeed embark exec-path-from-shell
+           expand-region gptel htmlize magit markdown-mode
+           org-contacts org-modern org-super-agenda sly toc-org)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(tab-line-tab-active ((t))))

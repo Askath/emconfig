@@ -4,125 +4,134 @@
 
 * Packages
 #+begin_src elisp
-;; Ensure local packages are added to load path for compilation
-(let ((default-directory "~/.emacs.d/site-lisp/"))
-  (normal-top-level-add-subdirs-to-load-path))
+  ;; Ensure local packages are added to load path for compilation
+  (let ((default-directory "~/.emacs.d/site-lisp/"))
+    (normal-top-level-add-subdirs-to-load-path))
 
-(eval-when-compile
-  (require 'use-package))
+  (eval-when-compile
+    (require 'use-package))
 
-;; Built-in packages
-(use-package delsel
-  :ensure nil
-  :hook (after-init . delete-selection-mode))
+  ;; Built-in packages
+  (use-package delsel
+    :ensure nil
+    :hook (after-init . delete-selection-mode))
 
-;; Local packages
-(eval-and-compile
-  (require 'casual-suite))
-(use-package casual-suite :ensure nil)
+  ;; Local packages
+  (eval-and-compile
+    (require 'casual-suite))
+  (use-package casual-suite :ensure nil)
 
-;; Theme configuration
-(use-package modus-themes
-  :custom
-  (modus-themes-italic-constructs t)
-  (modus-themes-bold-constructs t)
-  (modus-themes-mixed-fonts t)
-  (modus-themes-headings '((1 . (1.5))
-                           (2 . (1.3))
-                           (t . (1.1))))
-  (modus-themes-to-toggle
-   '(modus-operandi-tinted modus-vivendi-tinted))
-  :bind (("C-c w m" . modus-themes-toggle)
-         ("C-c w M" . modus-themes-select)))
+  ;; Theme configuration
+  (use-package modus-themes
+    :custom
+    (modus-themes-italic-constructs t)
+    (modus-themes-bold-constructs t)
+    (modus-themes-mixed-fonts t)
+    (modus-themes-headings '((1 . (1.5))
+                             (2 . (1.3))
+                             (t . (1.1))))
+    (modus-themes-to-toggle
+     '(modus-operandi-tinted modus-vivendi-tinted))
+    :bind (("C-c w m" . modus-themes-toggle)
+           ("C-c w M" . modus-themes-select)))
 
-;; Utility packages
-(use-package which-key
-  :ensure nil
-  :config
-  (which-key-mode))
+  ;; Utility packages
+  (use-package which-key
+    :ensure nil
+    :config
+    (which-key-mode))
 
-(use-package expand-region
-  :ensure nil
-  :commands er/expand-region
-  :bind (("C-=" . er/expand-region)))
+  (use-package expand-region
+    :ensure nil
+    :commands er/expand-region
+    :bind (("C-=" . er/expand-region)))
 
-(use-package exec-path-from-shell :ensure nil)
+  (use-package exec-path-from-shell :ensure nil)
 
-;; Markdown mode
-(use-package markdown-mode
-  :ensure nil
-  :hook (markdown-mode . visual-line-mode))
+  ;; Markdown mode
+  (use-package markdown-mode
+    :ensure nil
+    :hook (markdown-mode . visual-line-mode))
 
-;; Calendar and org-mode extensions
-(use-package calfw :ensure nil)
-(use-package calfw-org :ensure nil)
+  ;; Calendar and org-mode extensions
+  (use-package calfw :ensure nil)
+  (use-package calfw-org :ensure nil)
 
-(use-package org-modern :ensure nil)
-(use-package org-contacts :ensure nil)
+  (use-package org-modern :ensure nil)
+  (use-package org-contacts :ensure nil)
 
-(use-package org
-  :hook ((org-mode . visual-line-mode))
-  :bind (:map global-map)
-  :config
-  (require 'oc-csl) ; citation support
-  (add-to-list 'org-export-backends 'md)
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-  (setq org-export-with-smart-quotes t))
+  (use-package org
+    :hook ((org-mode . visual-line-mode))
+    :bind (:map global-map)
+    :config
+    (require 'oc-csl) ; citation support
+    (add-to-list 'org-export-backends 'md)
+    (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
+    (setq org-export-with-smart-quotes t))
 
-(use-package org-super-agenda :ensure nil)
-(use-package toc-org
-  :ensure nil
-  :hook (org-mode . toc-org-enable)
-  :config
-  (setq toc-org-hrefify-default "gh"))
-(use-package org-cliplink :ensure nil)
-(use-package org-upcoming-modeline
-  :config
-  (org-upcoming-modeline-mode))
+  (use-package org-super-agenda :ensure nil)
+  (use-package toc-org
+    :ensure nil
+    :hook (org-mode . toc-org-enable)
+    :config
+    (setq toc-org-hrefify-default "gh"))
+  (use-package org-cliplink :ensure nil)
+  (use-package org-upcoming-modeline
+    :config
+    (org-upcoming-modeline-mode))
 
-;; Finance
-(use-package hledger-mode :ensure nil)
+  ;; Finance
+  (use-package hledger-mode :ensure nil)
 
-;; Clojure development
-(use-package clojure-mode
+  ;; Clojure development
+  (use-package clojure-mode
+    :ensure nil)
+  (use-package cider :ensure nil)
+
+  ;; Common Lisp development
+  (use-package sly :ensure nil)
+
+  ;; Git integration
+  (use-package magit
+    :ensure nil
+    :bind (("C-x g" . magit-status)))
+  (use-package elfeed 
+    :ensure nil)
+  ;; Other utilities
+  (use-package embark :ensure nil)
+
+  (use-package eshell
+    :ensure nil
+    :init
+    (defun bedrock/setup-eshell ()
+      ;; Something funny is going on with how Eshell sets up its keymaps; this is
+      ;; a work-around to make C-r bound in the keymap
+      (keymap-set eshell-mode-map "C-r" 'consult-history))
+    :hook ((eshell-mode . bedrock/setup-eshell)))
+
+  ;; Eat: Emulate A Terminal
+  (use-package eat
+    :ensure nil
+    :custom
+    (eat-term-name "iterm")
+    :config
+    (eat-eshell-mode)                     ; use Eat to handle term codes in program output
+    (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
+
+  (use-package gptel 
   :ensure nil)
-(use-package cider :ensure nil)
 
-;; Common Lisp development
-(use-package sly :ensure nil)
-
-;; Git integration
-(use-package magit
-  :ensure nil
-  :bind (("C-x g" . magit-status)))
-(use-package elfeed 
+  (use-package ef-themes
   :ensure nil)
-;; Other utilities
-(use-package embark :ensure nil)
 
-(use-package eshell
-  :ensure nil
-  :init
-  (defun bedrock/setup-eshell ()
-    ;; Something funny is going on with how Eshell sets up its keymaps; this is
-    ;; a work-around to make C-r bound in the keymap
-    (keymap-set eshell-mode-map "C-r" 'consult-history))
-  :hook ((eshell-mode . bedrock/setup-eshell)))
-
-;; Eat: Emulate A Terminal
-(use-package eat
-  :ensure nil
-  :custom
-  (eat-term-name "iterm")
-  :config
-  (eat-eshell-mode)                     ; use Eat to handle term codes in program output
-  (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
-
-(use-package gptel 
-:ensure nil)
-
-
+  (let ((site-lisp-dir "~/.emacs.d/site-lisp"))
+    (when (file-directory-p site-lisp-dir)
+      (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
+        (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
 #+end_src
+
+#+RESULTS:
+
 * Basic Settings
 These settings configure the startup behavior of Emacs, default modes, and auto-refresh options:
 - Disable the splash screen to avoid distractions during startup.
@@ -568,7 +577,7 @@ Keybindings for Org-mode and notes management.
   (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
 
 (use-package eglot
-  ;; no :ensure t here because it's built-in
+  ;; no :ensure nil here because it's built-in
 
   ;; Configure hooks to automatically turn on eglot for selected modes
   :hook
