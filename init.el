@@ -145,7 +145,7 @@
 
     (recentf-mode 1)
 
-(setq custom-theme 'modus-operandi-tinted)
+(setq custom-theme 'modus-vivendi-tinted)
 
   (defun apply-modus-operandi-tinted-palette (frame)
     (with-selected-frame frame
@@ -580,7 +580,6 @@
         ("KILL" . +org-todo-cancel)))
 
 
-
 (global-set-key (kbd "C-x p i") 'org-cliplink)
 (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
 
@@ -646,7 +645,6 @@
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
-        (css "https://github.com/tree-sitter-tree-sitter-css")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
         (go "https://github.com/tree-sitter/tree-sitter-go")
         (html "https://github.com/tree-sitter/tree-sitter-html")
