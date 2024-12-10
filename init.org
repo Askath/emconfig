@@ -17,8 +17,7 @@
     :hook (after-init . delete-selection-mode))
 
   ;; Local packages
-  (eval-and-compile
-    (require 'casual-suite))
+
   (use-package casual-suite :ensure t)
 
   ;; Theme configuration
@@ -120,16 +119,115 @@
     (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
   (use-package gptel 
-  :ensure t)
+    :ensure t)
 
   (use-package ef-themes
-  :ensure t)
+    :ensure t)
+
+  (use-package corfu
+    :ensure t
+    ;; Optional customizations
+    ;; :custom
+    ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+    ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+    ;; be used globally (M-/).  See also the customization variable
+    ;; `global-corfu-modes' to exclude certain modes.
+    :init
+    (global-corfu-mode))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :custom
+    ;; TAB cycle if there are only few candidates
+    ;; (completion-cycle-threshold 3)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (tab-always-indent 'complete)
+
+    ;; Emacs 30 and newer: Disable Ispell completion function.
+    ;; Try `cape-dict' as an alternative.
+    (text-mode-ispell-word-completion nil)
+
+    ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+    ;; commands are hidden, since they are not used via M-x. This setting is
+    ;; useful beyond Corfu.
+    (read-extended-command-predicate #'command-completion-default-include-p))
+
+  ;; Use Dabbrev with Corfu!
+  (use-package dabbrev
+    ;; Swap M-/ and C-M-/
+    :bind (("M-/" . dabbrev-completion)
+           ("C-M-/" . dabbrev-expand))
+    :config
+    (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+    ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+    (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+
+  ;; Optionally use the `orderless' completion style.
+  (use-package orderless
+    :ensure t
+    :custom
+    ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+    ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+
+  ;; Enable auto completion and configure quitting
+  (setq corfu-auto t
+        corfu-quit-no-match 'separator) ;; or t
+
+  (use-package copilot
+    :ensure t
+    :vc (:url "https://github.com/copilot-emacs/copilot.el"
+              :rev :newest
+              :branch "main"))
+  (add-hook 'prog-mode-hook 'copilot-mode)
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+
+  ;; Add extensions
+  (use-package cape
+    :ensure t
+    ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+    ;; Press C-c p ? to for help.
+    :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+    ;; Alternatively bind Cape commands individually.
+    ;; :bind (("C-c p d" . cape-dabbrev)
+    ;;        ("C-c p h" . cape-history)
+    ;;        ("C-c p f" . cape-file)
+    ;;        ...)
+    :init
+    ;; Add to the global default value of `completion-at-point-functions' which is
+    ;; used by `completion-at-point'.  The order of the functions matters, the
+    ;; first function returning a result wins.  Note that the list of buffer-local
+    ;; completion functions takes precedence over the global list.
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block)
+    ;; (add-hook 'completion-at-point-functions #'cape-history)
+    ;; ...
+    )
 
   (let ((site-lisp-dir "~/.emacs.d/site-lisp"))
     (when (file-directory-p site-lisp-dir)
       (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
         (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
-#+end_src
+    #+end_src
 
 #+RESULTS:
 
@@ -145,31 +243,32 @@ These settings configure the startup behavior of Emacs, default modes, and auto-
 
 #+BEGIN_SRC elisp
 
-(when ( > emacs-major-version 30)
-  (error "This Emacs config  only works with Emacs 30 and newer; you have version %s" emacs-major-version))
+  (when ( > emacs-major-version 30)
+    (error "This Emacs config  only works with Emacs 30 and newer; you have version %s" emacs-major-version))
 
-    (setopt inhibit-splash-screen t)
-    (setopt initial-major-mode 'fundamental-mode)
-    (setopt display-time-default-load-average nil)
-    (setq make-backup-files nil)
-    (setq global-auto-revert-mode 1)
-    (setopt auto-revert-avoid-polling t)
-    (setopt auto-revert-interval 5)
-    (setopt auto-revert-check-vc-info t)
-    (delete-selection-mode 1)
+  (setopt inhibit-splash-screen t)
+  (setopt initial-major-mode 'fundamental-mode)
+  (setopt display-time-default-load-average nil)
+  (setq make-backup-files nil)
+  (setq global-auto-revert-mode 1)
+  (setopt auto-revert-avoid-polling t)
+  (setopt auto-revert-interval 5)
+  (setopt auto-revert-check-vc-info t)
+  (delete-selection-mode 1)
 
-    (global-display-line-numbers-mode)
+  (global-display-line-numbers-mode)
 
-    ;;Disable line numbers
-    (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
-    (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
+  ;;Disable line numbers
+  (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
+  (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
 
-    (recentf-mode 1)
- 
+  (recentf-mode 1)
+  (setq make-backup-files nil)
+
+
 #+END_SRC
 
 #+RESULTS:
-| delete-selection-mode | org-persist-load-all | tramp-register-archive-autoload-file-name-handler |
 
 * Theme
 
@@ -180,46 +279,46 @@ Configure and apply a theme:
 
 #+BEGIN_SRC emacs-lisp
 
-      
-
-    (setq custom-theme 'modus-vivendi-tinted)
-
-    (defun apply-modus-operandi-tinted-palette (frame)
-      (with-selected-frame frame
-        (load-theme custom-theme t)))
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
-      (load-theme custom-theme t))
-
-    (defun set-default-font (frame)
-      "Set the default font for the FRAME."
-      (with-selected-frame frame
-        (set-face-attribute 'default nil
-                            :family "Iosevka SS08" ; Replace with your font name
-                            :height 180
-                            )))         ; Adjust the height as needed
-
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions #'set-default-font)
-      (set-default-font (selected-frame)))
 
 
+  (setq custom-theme 'modus-vivendi-tinted)
 
-      ;; Distraction-free writing
-      (defun ews-distraction-free ()
-        "Distraction-free writing environment using Olivetti package."
-        (interactive)
-        (if (equal olivetti-mode nil)
-            (progn
-              (window-configuration-to-register 1)
-              (delete-other-windows)
-              (text-scale-set 1)
-              (olivetti-mode t))
-          (progn
-            (if (eq (length (window-list)) 1)
-                (jump-to-register 1))
-            (olivetti-mode 0)
-            (text-scale-set 0))))
+  (defun apply-modus-operandi-tinted-palette (frame)
+    (with-selected-frame frame
+      (load-theme custom-theme t)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'apply-modus-operandi-tinted-palette)
+    (load-theme custom-theme t))
+
+  (defun set-default-font (frame)
+    "Set the default font for the FRAME."
+    (with-selected-frame frame
+      (set-face-attribute 'default nil
+                          :family "Iosevka SS08" ; Replace with your font name
+                          :height 180
+                          )))         ; Adjust the height as needed
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions #'set-default-font)
+    (set-default-font (selected-frame)))
+
+
+
+  ;; Distraction-free writing
+  (defun ews-distraction-free ()
+    "Distraction-free writing environment using Olivetti package."
+    (interactive)
+    (if (equal olivetti-mode nil)
+        (progn
+          (window-configuration-to-register 1)
+          (delete-other-windows)
+          (text-scale-set 1)
+          (olivetti-mode t))
+      (progn
+        (if (eq (length (window-list)) 1)
+            (jump-to-register 1))
+        (olivetti-mode 0)
+        (text-scale-set 0))))
 
 
   (require 'spacious-padding)
@@ -249,7 +348,7 @@ Set text editing preferences:
 - Configure sentences to end with a single space instead of a double space.
 
 #+BEGIN_SRC emacs-lisp
-(setopt sentence-end-double-space nil)
+  (setopt sentence-end-double-space nil)
 #+END_SRC
 
 * Searching
@@ -258,15 +357,15 @@ Configuration for search-related tools and behaviors:
 - Customize the ripgrep command to display results in a compact format.
 
 #+BEGIN_SRC elisp
-(setq xref-search-program 'ripgrep)
-(setq grep-command "rg -nS --noheading")
+  (setq xref-search-program 'ripgrep)
+  (setq grep-command "rg -nS --noheading")
 #+END_SRC
        
 * Save History
 Enable saving of minibuffer history across sessions for improved usability.
 
 #+BEGIN_SRC elisp
-(savehist-mode)
+  (savehist-mode)
 #+END_SRC
 
 * Window Management
@@ -274,7 +373,7 @@ Configure shortcuts for easier navigation between windows:
 - Use `Ctrl` and arrow keys to switch between Emacs windows.
 
 #+BEGIN_SRC elisp
-(windmove-default-keybindings 'control)
+  (windmove-default-keybindings 'control)
 #+END_SRC
 
 * Context Menu
@@ -297,13 +396,13 @@ Organize and manage backup files:
 - Automatically create missing directories for backup files.
 
 #+BEGIN_SRC emacs-lisp
-(defun bedrock--backup-file-name (fpath)
-  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
-         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath))
-         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~"))))
-    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
-    backupFilePath))
-(setopt make-backup-file-name-function 'bedrock--backup-file-name)
+  (defun bedrock--backup-file-name (fpath)
+    (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
+           (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath))
+           (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~"))))
+      (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+      backupFilePath))
+  (setopt make-backup-file-name-function 'bedrock--backup-file-name)
 #+END_SRC
 
 * Discovery Aids
@@ -324,19 +423,19 @@ Improve the minibuffer completion experience:
 - Automatically select a candidate after the second TAB press.
 
 #+BEGIN_SRC emacs-lisp
-(setopt enable-recursive-minibuffers t)
-(setopt completion-cycle-threshold 1)
-(setopt completions-detailed t)
-(setopt tab-always-indent 'complete)
-(setopt completion-styles '(basic initials substring))
-(setopt completion-auto-help 'always)
-(setopt completions-max-height 20)
-(setopt completions-format 'one-column)
-(setopt completions-group t)
-(setopt completion-auto-select 'second-tab)
-(ido-mode 0)
-(fido-vertical-mode 1)
-(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
+  (setopt enable-recursive-minibuffers t)
+  (setopt completion-cycle-threshold 1)
+  (setopt completions-detailed t)
+  (setopt tab-always-indent 'complete)
+  (setopt completion-styles '(basic initials substring))
+  (setopt completion-auto-help 'always)
+  (setopt completions-max-height 20)
+  (setopt completions-format 'one-column)
+  (setopt completions-group t)
+  (setopt completion-auto-select 'second-tab)
+  (ido-mode 0)
+  (fido-vertical-mode 1)
+  (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
 #+END_SRC
 
 #+RESULTS:
@@ -351,23 +450,23 @@ Visual and interactive improvements:
 - Enable smooth and precise scrolling with the mouse.
 
 #+BEGIN_SRC emacs-lisp
-(setopt line-number-mode t)
-(setopt column-number-mode t)
-(global-display-line-numbers-mode)
-(setq display-line-numbers-type 'relative)
-(setopt x-underline-at-descent-line nil)
-(setopt switch-to-buffer-obey-display-actions t)
-(setopt show-trailing-whitespace nil)
-(setopt indicate-buffer-boundaries 'left)
-(setopt mouse-wheel-tilt-scroll t)
-(setopt mouse-wheel-flip-direction t)
-(blink-cursor-mode -1)
-(pixel-scroll-precision-mode)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setopt display-line-numbers-width 3)
-(add-hook 'text-mode-hook 'visual-line-mode)
-(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
-  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+  (setopt line-number-mode t)
+  (setopt column-number-mode t)
+  (global-display-line-numbers-mode)
+  (setq display-line-numbers-type 'relative)
+  (setopt x-underline-at-descent-line nil)
+  (setopt switch-to-buffer-obey-display-actions t)
+  (setopt show-trailing-whitespace nil)
+  (setopt indicate-buffer-boundaries 'left)
+  (setopt mouse-wheel-tilt-scroll t)
+  (setopt mouse-wheel-flip-direction t)
+  (blink-cursor-mode -1)
+  (pixel-scroll-precision-mode)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (setopt display-line-numbers-width 3)
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  (let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+    (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 #+END_SRC
 
 * Tab Bar
@@ -376,12 +475,12 @@ Tab bar configurations:
 - Display the current date and time on the tab bar.
 
 #+BEGIN_SRC emacs-lisp
-(setopt tab-bar-show 1)
-(add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
-(add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
-(setopt display-time-format "%a %F %T")
-(setopt display-time-interval 1)
-(display-time-mode)
+  (setopt tab-bar-show 1)
+  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+  (setopt display-time-format "%a %F %T")
+  (setopt display-time-interval 1)
+  (display-time-mode)
 #+END_SRC
 
 * Package Setup
@@ -389,17 +488,17 @@ This section sets up key packages like `expand-region` and `exec-path-from-shell
 
 #+BEGIN_SRC emacs-lisp
 
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize))
 #+END_SRC
 
 * Indentation Settings
 Set global indentation preferences.
 
 #+BEGIN_SRC emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq indent-line-function 'insert-tab)
+  (setq-default indent-tabs-mode nil)
+  (setq-default tab-width 4)
+  (setq indent-line-function 'insert-tab)
 #+END_SRC
 
 * Keybinds
@@ -407,40 +506,40 @@ Set global indentation preferences.
 Configure `which-key` for improved keybinding discovery.
 
 #+BEGIN_SRC emacs-lisp
-(setq which-key-sort-order 'which-key-key-order-alpha)
-(setq which-key-max-display-columns 2)
-(setq which-key-popup-type 'side-window)
-(setq which-key-side-window-location 'right)
-(setq which-key-side-window-max-height 0.25)
-(setq which-key-side-window-max-width 0.33)
+  (setq which-key-sort-order 'which-key-key-order-alpha)
+  (setq which-key-max-display-columns 2)
+  (setq which-key-popup-type 'side-window)
+  (setq which-key-side-window-location 'right)
+  (setq which-key-side-window-max-height 0.25)
+  (setq which-key-side-window-max-width 0.33)
 
-(which-key-add-key-based-replacements "C-x 3" "Open Split")
-(which-key-add-key-based-replacements "C-x 1" "Close all but this")
-(which-key-add-key-based-replacements "C-x 1" "Close this")
+  (which-key-add-key-based-replacements "C-x 3" "Open Split")
+  (which-key-add-key-based-replacements "C-x 1" "Close all but this")
+  (which-key-add-key-based-replacements "C-x 1" "Close this")
 #+END_SRC
 
 ** File Keybindings
 Define keybindings for file-related operations.
 
 #+BEGIN_SRC emacs-lisp
-(which-key-add-key-based-replacements "C-x C-f" "[F]ile")
-(define-prefix-command 'file-prefix-map)
-(global-set-key (kbd "C-x C-f") 'file-prefix-map)
-(define-key file-prefix-map (kbd "f") 'find-file)           ; Open file
-(define-key file-prefix-map (kbd "r") 'recentf)            ; Open recent files
+  (which-key-add-key-based-replacements "C-x C-f" "[F]ile")
+  (define-prefix-command 'file-prefix-map)
+  (global-set-key (kbd "C-x C-f") 'file-prefix-map)
+  (define-key file-prefix-map (kbd "f") 'find-file)           ; Open file
+  (define-key file-prefix-map (kbd "r") 'recentf)            ; Open recent files
 #+END_SRC
 
 ** General Keybinds
 Keybindings for general operations like selection expansion, scrolling, and searching.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-=") (cons "Expand Selection" 'er/expand-region))
-(global-set-key (kbd "s-v") 'cua-paste)
-(global-set-key (kbd "C-v") 'scroll-up-command)
-(global-set-key (kbd "M-s g") 'grep-find)
-(global-set-key (kbd "C-x ,") 'ibuffer)
-(global-set-key (kbd "C-c a") 'embark-act)
-(global-set-key (kbd "M-i") 'imenu)
+  (global-set-key (kbd "C-=") (cons "Expand Selection" 'er/expand-region))
+  (global-set-key (kbd "s-v") 'cua-paste)
+  (global-set-key (kbd "C-v") 'scroll-up-command)
+  (global-set-key (kbd "M-s g") 'grep-find)
+  (global-set-key (kbd "C-x ,") 'ibuffer)
+  (global-set-key (kbd "C-c a") 'embark-act)
+  (global-set-key (kbd "M-i") 'imenu)
 #+END_SRC
 
 #+RESULTS:
@@ -469,75 +568,76 @@ Keybindings for GPT-related operations.
   (define-key gptel-prefix-map (kbd "m") (cons "Open AI [M]enu" 'gptel-menu))
   (define-key gptel-prefix-map (kbd "s") (cons "[S]end to AI" 'gptel-send))
   (define-key gptel-prefix-map (kbd "C") (cons "AI [C]hat" 'gptel))
+  (define-key gptel-prefix-map (kbd "r") (cons "[R]efactor" 'gptel-rewrite))
 #+END_SRC
 
 #+RESULTS:
-: (AI [C]hat . gptel)
+: ([R]efactor . gptel-rewrite)
 
 ** Code-Related Keybindings
 Keybindings for programming and code-related actions.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c cf") 'eglot-format)
-(global-set-key (kbd "C-c cc") 'compile)
-(global-set-key (kbd "C-c ca") 'eglot-code-actions)
-(global-set-key (kbd "M-[") 'flymake-goto-prev-error)
-(global-set-key (kbd "M-]") 'flymake-goto-next-error)
+  (global-set-key (kbd "C-c cf") 'eglot-format)
+  (global-set-key (kbd "C-c cc") 'compile)
+  (global-set-key (kbd "C-c ca") 'eglot-code-actions)
+  (global-set-key (kbd "M-[") 'flymake-goto-prev-error)
+  (global-set-key (kbd "M-]") 'flymake-goto-next-error)
 #+END_SRC
 
 ** Ledger Keybindings
 Keybindings for Hledger-related operations.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x R") 'hledger-run-command)
+  (global-set-key (kbd "C-x R") 'hledger-run-command)
 #+END_SRC
 
 ** Disable Auto-Indent on ENTER
 Disable automatic indentation when pressing ENTER.
 
 #+BEGIN_SRC emacs-lisp
-(when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+  (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 #+END_SRC
 
 ** Org-Mode and Notes Keybindings
 Keybindings for Org-mode and notes management.
 
 #+BEGIN_SRC emacs-lisp
-;; Calendar showing org-agenda entries
-(defun my-open-calendar-agenda ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources
-   (list
-    (cfw:org-create-source "medium purple"))
-   :view 'block-week))
+  ;; Calendar showing org-agenda entries
+  (defun my-open-calendar-agenda ()
+    (interactive)
+    (cfw:open-calendar-buffer
+     :contents-sources
+     (list
+      (cfw:org-create-source "medium purple"))
+     :view 'block-week))
 
 
-(require 'calfw)
-(require 'calfw-org)
-(defun my-calfw-open-calendar ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources (list (cfw:org-create-source "Green"))
-   :view 'block-week))
+  (require 'calfw)
+  (require 'calfw-org)
+  (defun my-calfw-open-calendar ()
+    (interactive)
+    (cfw:open-calendar-buffer
+     :contents-sources (list (cfw:org-create-source "Green"))
+     :view 'block-week))
 
 
-(defun my-calfw-set-view (view)
-  (interactive)
-  (setq cfw:current-view view)
-  (cfw:refresh-calendar-buffer nil))
+  (defun my-calfw-set-view (view)
+    (interactive)
+    (setq cfw:current-view view)
+    (cfw:refresh-calendar-buffer nil))
 
-(define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
-(define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
-(define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
-(define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
-(define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
-(define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
-(define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
-(define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
-(define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
+  (define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
+  (define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
+  (define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
+  (define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
+  (define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
+  (define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
+  (define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
+  (define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
+  (define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
 
-(setq calfw-blocks-default-event-length 0.25)
+  (setq calfw-blocks-default-event-length 0.25)
 
   (define-prefix-command 'calendar-prefix-map)
   (which-key-add-key-based-replacements "C-c oc" "[C]alendar")
@@ -547,7 +647,7 @@ Keybindings for Org-mode and notes management.
   (global-set-key (kbd "C-c x") 'org-capture)
   (global-set-key (kbd "C-c ocm") 'my-calfw-open-calendar)
 
- (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
+  (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
   (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
   (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
   (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
@@ -561,7 +661,7 @@ Keybindings for Org-mode and notes management.
   (keymap-global-set "M-g" #'casual-avy-tmenu)
   (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
   (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
- 
+
 #+END_SRC
 
 #+RESULTS:
@@ -571,48 +671,99 @@ Keybindings for Org-mode and notes management.
 ** eglot
 #+begin_src elisp
 
-(setq lombok-library-path (concat user-emacs-directory "lombok.jar"))
-(unless (file-exists-p lombok-library-path)
-  (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
+    (setq lombok-library-path (concat user-emacs-directory "lombok.jar"))
+    (unless (file-exists-p lombok-library-path)
+      (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
 
-(use-package eglot
-  ;; no :ensure t here because it's built-in
+    (use-package eglot
+      ;; no :ensure t here because it's built-in
 
-  ;; Configure hooks to automatically turn on eglot for selected modes
-  :hook
-  ((js-ts-mode . eglot-ensure)
-   (tsx-ts-mode . eglot-ensure)
-   (typescript-ts-mode . eglot-ensure)
-   (java-ts-mode . eglot-ensure)
-   (html-ts-mode . eglot-ensure)
-   (clojure-mode . eglot-ensure)
-   (clojurescript-mode . eglot-ensure)
-   )
+      ;; Configure hooks to automatically turn on eglot for selected modes
+      :hook
+      ((js-ts-mode . eglot-ensure)
+       (tsx-ts-mode . eglot-ensure)
+       (typescript-ts-mode . eglot-ensure)
+       (java-ts-mode . eglot-ensure)
+       (html-ts-mode . eglot-ensure)
+       (clojure-mode . eglot-ensure)
+       (clojurescript-mode . eglot-ensure)
+       )
 
-  :custom
-  (eglot-send-changes-idle-time 0.1)
-  (eglot-extend-to-xref t) ; activate Eglot in referenced non-project files
+      :custom
+      (eglot-send-changes-idle-time 0.1)
+      (eglot-extend-to-xref t) ; activate Eglot in referenced non-project files
 
-  :config
-  (fset #'jsonrpc--log-event #'ignore) ; massive perf boost---don't log every event
-  (add-to-list 'eglot-server-programs
-               `(java-ts-mode . ("jdtls" "-data" "~/jdtls"
-                                 "-javaagent:" ,lombok-library-path
-                                 "-Xbootclasspath/a:" ,lombok-library-path
-                                 "--jvm-arg=-XX:+UseG1GC"
-                                 "--jvm-arg=-XX:+UseStringDeduplication"
-                                 "-Djava.format.settings.url=file:///home/user/code-format.xml"
-                                 "-Djava.format.settings.profile=myown")))
-  (add-to-list 'eglot-server-programs
-               `(html-ts-mode . ("node" "/opt/homebrew/lib/node_modules/@angular/language-server/" "--ngProbeLocations"
-                                 "/opt/homebrew/lib/node_modules" "--tsProbeLocations"
-                                 "/opt/homebrew/lib/node_modules/" "--stdio"))))
+      :config
+      (fset #'jsonrpc--log-event #'ignore) ; massive perf boost---don't log every event
+      (add-to-list 'eglot-server-programs
+                   `(typescript-ts-mode . ("typescript-language-server" "--stdio" :initializationOptions
+                                           (:preferences
+                                            (
+                                             ;; https://github.com/microsoft/TypeScript/blob/main/src/server/protocol.ts#L3410-L3539
+                                             :disableSuggestions                                    :json-false     ;; boolean
+                                             :quotePreference                                       "double"        ;; "auto" | "double" | "single"
+                                             :includeCompletionsForModuleExports                    t               ;; boolean
+                                             :includeCompletionsForImportStatements                 t               ;; boolean
+                                             :includeCompletionsWithSnippetText                     t               ;; boolean
+                                             :includeCompletionsWithInsertText                      t               ;; boolean
+                                             :includeAutomaticOptionalChainCompletions              t               ;; boolean
+                                             :includeCompletionsWithClassMemberSnippets             t               ;; boolean
+                                             :includeCompletionsWithObjectLiteralMethodSnippets     t               ;; boolean
+                                             :useLabelDetailsInCompletionEntries                    t               ;; boolean
+                                             :allowIncompleteCompletions                            t               ;; boolean
+                                             :importModuleSpecifierPreference                       "shortest"      ;; "shortest" | "project-relative" | "relative" | "non-relative"
+                                             :importModuleSpecifierEnding                           "minimal"       ;; "auto" | "minimal" | "index" | "js"
+                                             :allowTextChangesInNewFiles                            t               ;; boolean
+                                             ;; :lazyConfiguredProjectsFromExternalProject                          ;; boolean
+                                             :providePrefixAndSuffixTextForRename                   t               ;; boolean
+                                             :provideRefactorNotApplicableReason                    :json-false     ;; boolean
+                                             :allowRenameOfImportPath                               t               ;; boolean
+                                             ;; :includePackageJsonAutoImports                                      ;; "auto" | "on" | "off"
+                                             :jsxAttributeCompletionStyle                           "auto"          ;; "auto" | "braces" | "none"
+                                             :displayPartsForJSDoc                                  t               ;; boolean
+                                             :generateReturnInDocTemplate                           t               ;; boolean
+                                             :includeInlayParameterNameHints                        "all"           ;; "none" | "literals" | "all"
+                                             :includeInlayParameterNameHintsWhenArgumentMatchesName t               ;; boolean
+                                             :includeInlayFunctionParameterTypeHints                t               ;; boolean,
+                                             :includeInlayVariableTypeHints                         t               ;; boolean
+                                             :includeInlayVariableTypeHintsWhenTypeMatchesName      t               ;; boolean
+                                             :includeInlayPropertyDeclarationTypeHints              t               ;; boolean
+                                             :includeInlayFunctionLikeReturnTypeHints               t               ;; boolean
+                                             :includeInlayEnumMemberValueHints                      t               ;; boolean
+                                             ;; :autoImportFileExcludePatterns                                      ;; string[]
+                                             ;; :organizeImportsIgnoreCase                                          ;; "auto" | boolean
+                                             ;; :organizeImportsCollation                                           ;; "ordinal" | "unicode"
+                                             ;; :organizeImportsCollationLocale                                     ;; string
+                                             ;; :organizeImportsNumericCollation                                    ;; boolean
+                                             ;; :organizeImportsAccentCollation                                     ;; boolean
+                                             ;; :organizeImportsCaseFirst                                           ;; "upper" | "lower" | false
+                                             :removeUnusedImports  t
+                                             :disableLineTextInReferences                           :json-false                    
+                                             )))))
+                   (add-to-list 'eglot-server-programs
+                                `(java-ts-mode . ("jdtls" "-data" "~/jdtls"
+                                                  "-javaagent:" ,lombok-library-path
+                                                  "-Xbootclasspath/a:" ,lombok-library-path
+                                                  "--jvm-arg=-XX:+UseG1GC"
+                                                  "--jvm-arg=-XX:+UseStringDeduplication"
+                                                  "-Djava.format.settings.url=file:///home/user/code-format.xml"
+                                                  "-Djava.format.settings.profile=myown")))
+                   (add-to-list 'eglot-server-programs
+                                `(html-ts-mode . ("node" "/opt/homebrew/lib/node_modules/@angular/language-server/" "--ngProbeLocations"
+                                                  "/opt/homebrew/lib/node_modules" "--tsProbeLocations"
+                                                  "/opt/homebrew/lib/node_modules/" "--stdio"))))
 
 
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.java\\'" . java-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.java\\'" . java-ts-mode))
+  (eglot--code-action eglot-code-action-organize-imports-ts "source.organizeImports.ts")
+  (eglot--code-action eglot-code-action-unused-imports-ts "source.removeUnusedImports.ts")
 
 #+end_src
+
+#+RESULTS:
+: eglot-code-action-unused-imports-ts
+
 ** Markdown
 #+begin_src elisp
 #+end_src
@@ -620,179 +771,182 @@ Keybindings for Org-mode and notes management.
 #+begin_src elisp
 
 
-  (with-eval-after-load 'org (global-org-modern-mode))
+    (with-eval-after-load 'org (global-org-modern-mode))
 
-  ;; Agenda variables
-  (setq org-directory "~/org/") ; Non-absolute paths for agenda and
+    ;; Agenda variables
+    (setq org-directory "~/org/") ; Non-absolute paths for agenda and
 
-  (setq org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
-
-
-  (setq org-startup-folded 'fold)
-
-  (setq org-contacts-vcard-file "contacts.vcard")
+    (setq org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
 
 
-  (setq org-capture-templates
-        '(("a" "Appointment" entry (file+headline "~/org/todos.org" "schedules")
-           "* %?\n  %i\n")
-          ("t" "Todo Private" entry (file+headline "~/org/todos.org" "Private")
-           "** TODO %? :private:\n  %i\n")
-          ("T" "Todo Work" entry (file+headline "~/org/todos.org" "Work")
-           "** TODO %? :work:\n  %i\n")
-          ("r" "Recurring" entry (file "~/org/recurring_calendar.org")
-           "** TODO  %?\n "
-           )
-          ("l" "Link" entry (file+headline "~/org/link.org" "to watch/read")
-           "** \n"
-           )
-          ("n" "Note" entry (file "~/org/inbox.org")
-           "* %?"
-           )
-          ("m" "Meeting" entry (file "~/org/notes/areas/work/meetings/notes.org")
-           "* %? "
-           )
-          ("c" "Contacts" entry (file "~/org/contacts.org")
-           "* %(org-contacts-template-name)
-         :PROPERTIES:
-         :EMAIL: %(org-contacts-template-email)
-         :PHONE:
-         :ALIAS:
-         :NICKNAME:
-         :IGNORE:
-         :ICON:
-         :NOTE:
-         :ADDRESS:
-         :BIRTHDAY:
-         :END:"))
-        )
+    (setq org-startup-folded 'fold)
 
-  (setq org-contacts-files (list "~/org/contacts/contacts.org"))
-  (setq org-contacts-vcard-file "contacts.vcard")
+    (setq org-contacts-vcard-file "contacts.vcard")
 
 
-
-  (use-package org-super-agenda
-    :after org-agenda
-    :init
-    (setq org-agenda-skip-scheduled-if-done t
-          org-agenda-skip-deadline-if-done t
-          org-agenda-include-deadlines t
-          org-agenda-block-separator nil
-          org-agenda-compact-blocks t
-          org-agenda-start-day nil ;; i.e. today
-          org-agenda-span 7
-          org-agenda-start-on-weekday nil)
-    (setq org-deadline-warning-days 90)
-    (setq org-agenda-warning-days 90)
-    (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
-    (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
-    (setq org-agenda-start-with-log-mode nil)
-    (setq org-agenda-custom-commands
-          '(
-            ("c" "Today"
-             ((agenda "" (
-                          (org-agenda-span 1)
-                          (org-agenda-overriding-header "")
-                          (org-super-agenda-groups
-                           '((:name "NOTES"
-                                    :tag "marker"
-                                    :order 1
-                                    :transformer (--> it
-                                                      (upcase it)
-                                                      (propertize it 'face 
-                                                                  '(:background "goldenrod3" :foreground "black"))))
-                             (:name "Today"
-                                    :time-grid t
-                                    :scheduled today
-                                    :order 2)
-                             (:name "Recurring"
-                                    :tag "recurring" 
-                                    :order 3)
-                             (:name "Upcoming schedules"
-                                    :tag "appointment"
-                                    :deadline t
-                                    :time-grid t
-                                    :order 4)
-                             (:name "Morning Routine"
-                                    :tag "morning_routine"
-                                    :order 5)
-                             (:discard (:scheduled future :deadline t :tag "idle" :anything t))
-                             ))))
-              (alltodo "" ((org-agenda-overriding-header "")
-                           (org-super-agenda-groups
-                            '(
-                              (:name "Clocks"
-                                     :tag "clock"
-                                     :date today
-                                     :order 1)
-                              (:name "NEXT"
-                                     :todo "NEXT"
-                                     :order 2
-                                     :transformer (--> it 
-                                                       (propertize it 'face '(:background "blue"))))
-                              (:name "Private"
-                                     :and (:tag "private" :deadline nil)
-                                     :order 3)
-                              (:name "Work"
-                                     :tag "work"
-                                     :order 4)
-                              (:discard (:tag "recurring" :scheduled t :tag "appointment" :deadline t :tag "morning_routine" :tag "evening_routine"))
-                              )))
-                       ))
-             ))))
-  (org-super-agenda-mode)
-
-
-
-  ;; Default t
-  (setq org-todo-keywords
-        '((sequence
-           "TODO(t)"  ; A task that needs doing & is ready to do
-           "NEXT(n)"
-           "PROJ(p)"  ; A project, which usually contains other tasks
-           "RESC(r)"
-           "PROGR(s)"  ; A task that is in progress
-           "WAIT(w)"  ; Something external is holding up this task
-           "HOLD(h)"  ; This task is paused/on hold because of me
-           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "|"
-           "DONE(d)"  ; Task successfully completed
-           "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
-          (sequence
-           "[ ](T)"   ; A task that needs doing
-           "[-](S)"   ; Task is in progress
-           "[?](W)"   ; Task is being held up or paused
-           "|"
-           "[X](D)")  ; Task was completed
+    (setq org-capture-templates
+          '(("a" "Appointment" entry (file+headline "~/org/todos.org" "schedules")
+             "* %?\n  %i\n")
+            ("t" "Todo Private" entry (file+headline "~/org/todos.org" "Private")
+             "** TODO %? :private:\n  %i\n")
+            ("T" "Todo Work" entry (file+headline "~/org/todos.org" "Work")
+             "** TODO %? :work:\n  %i\n")
+            ("r" "Recurring" entry (file "~/org/recurring_calendar.org")
+             "** TODO  %?\n "
+             )
+            ("l" "Link" entry (file+headline "~/org/link.org" "to watch/read")
+             "** \n"
+             )
+            ("n" "Note" entry (file "~/org/inbox.org")
+             "* %?"
+             )
+            ("m" "Meeting" entry (file "~/org/notes/areas/work/meetings/notes.org")
+             "* %? "
+             )
+            ("c" "Contacts" entry (file "~/org/contacts/contacts.org")
+             "* %(org-contacts-template-name)
+           :PROPERTIES:
+:VERSION: 3
+           :EMAIL: %(org-contacts-template-email)
+           :PHONE:
+           :ALIAS:
+           :NICKNAME:
+           :IGNORE:
+           :ICON:
+           :NOTE:
+           :ADDRESS:
+           :END:"))
           )
-        org-todo-keyword-faces
-        '(("[-]"  . +org-todo-active)
-          ("STRT" . +org-todo-active)
-          ("[?]"  . +org-todo-onhold)
-          ("WAIT" . +org-todo-onhold)
-          ("HOLD" . +org-todo-onhold)
-          ("PROJ" . +org-todo-project)
-          ("KILL" . +org-todo-cancel)))
+
+    (setq org-contacts-files (list "~/org/contacts/contacts.org"))
+    (setq org-contacts-vcard-file "contacts.vcard")
 
 
-  (global-set-key (kbd "C-x p i") 'org-cliplink)
-  (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
 
-  (require 'org-clock)
-  (defun org-clock-todo-change ()
-    (cond
-     ((string= org-state "PROGR")
-      (org-clock-in))
-     ((string= org-state "DONE")
-      (unless (org-clocking-p)
+    (use-package org-super-agenda
+      :after org-agenda
+      :init
+      (setq org-agenda-skip-scheduled-if-done t
+            org-agenda-skip-deadline-if-done t
+            org-agenda-include-deadlines t
+            org-agenda-block-separator nil
+            org-agenda-compact-blocks t
+            org-agenda-start-day nil ;; i.e. today
+            org-agenda-span 7
+            org-agenda-start-on-weekday nil)
+      (setq org-deadline-warning-days 90)
+      (setq org-agenda-warning-days 90)
+      (setq org-agenda-deadline-leaders '("Due: " "Due in %d days: " "Overdue %d days ago: "))
+      (setq org-agenda-scheduled-leaders '("Scheduled: " "Scheduled in %d days: " "Scheduled %d days ago: "))
+      (setq org-agenda-start-with-log-mode nil)
+      (setq org-agenda-custom-commands
+            '(
+              ("c" "Today"
+               ((agenda "" (
+                            (org-agenda-span 1)
+                            (org-agenda-overriding-header "")
+                            (org-super-agenda-groups
+                             '((:name "NOTES"
+                                      :tag "marker"
+                                      :order 1
+                                      :transformer (--> it
+                                                        (upcase it)
+                                                        (propertize it 'face 
+                                                                    '(:background "goldenrod3" :foreground "black"))))
+                               (:name "Today"
+                                      :time-grid t
+                                      :scheduled today
+                                      :order 2)
+                               (:name "Recurring"
+                                      :tag "recurring" 
+                                      :order 3)
+                               (:name "Upcoming schedules"
+                                      :tag "appointment"
+                                      :deadline t
+                                      :time-grid t
+                                      :order 4)
+                               (:name "Morning Routine"
+                                      :tag "morning_routine"
+                                      :order 5)
+  (:name "Evening Routine"
+                                      :tag "evening_routine"
+                                      :order 6)
+                               (:discard (:scheduled future :deadline t :tag "idle" :anything t))
+                               ))))
+                (alltodo "" ((org-agenda-overriding-header "")
+                             (org-super-agenda-groups
+                              '(
+                                (:name "Clocks"
+                                       :tag "clock"
+                                       :date today
+                                       :order 1)
+                                (:name "NEXT"
+                                       :todo "NEXT"
+                                       :order 2
+                                       :transformer (--> it 
+                                                         (propertize it 'face '(:background "blue"))))
+                                (:name "Private"
+                                       :and (:tag "private" :deadline nil)
+                                       :order 3)
+                                (:name "Work"
+                                       :tag "work"
+                                       :order 4)
+                                (:discard (:tag "recurring" :scheduled t :tag "appointment" :deadline t :tag "morning_routine" :tag "evening_routine"))
+                                )))
+                         ))
+               ))))
+    (org-super-agenda-mode)
+
+
+
+    ;; Default t
+    (setq org-todo-keywords
+          '((sequence
+             "TODO(t)"  ; A task that needs doing & is ready to do
+             "NEXT(n)"
+             "PROJ(p)"  ; A project, which usually contains other tasks
+             "RESC(r)"
+             "PROGR(s)"  ; A task that is in progress
+             "WAIT(w)"  ; Something external is holding up this task
+             "HOLD(h)"  ; This task is paused/on hold because of me
+             "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+             "|"
+             "DONE(d)"  ; Task successfully completed
+             "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
+            (sequence
+             "[ ](T)"   ; A task that needs doing
+             "[-](S)"   ; Task is in progress
+             "[?](W)"   ; Task is being held up or paused
+             "|"
+             "[X](D)")  ; Task was completed
+            )
+          org-todo-keyword-faces
+          '(("[-]"  . +org-todo-active)
+            ("STRT" . +org-todo-active)
+            ("[?]"  . +org-todo-onhold)
+            ("WAIT" . +org-todo-onhold)
+            ("HOLD" . +org-todo-onhold)
+            ("PROJ" . +org-todo-project)
+            ("KILL" . +org-todo-cancel)))
+
+
+    (global-set-key (kbd "C-x p i") 'org-cliplink)
+    (global-set-key (kbd "C-c C") 'my-org-clock-in-default-task)
+
+    (require 'org-clock)
+    (defun org-clock-todo-change ()
+      (cond
+       ((string= org-state "PROGR")
         (org-clock-in))
-      (org-clock-out))
-     (t
-      (when (org-clocking-p)
-        (org-clock-out)))))
+       ((string= org-state "DONE")
+        (unless (org-clocking-p)
+          (org-clock-in))
+        (org-clock-out))
+       (t
+        (when (org-clocking-p)
+          (org-clock-out)))))
 
-  (add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
+    (add-hook 'org-after-todo-state-change-hook 'org-clock-todo-change)
 
 #+end_src
 
@@ -887,11 +1041,11 @@ Enable Treesitter for improved syntax highlighting and parsing:
 #+END_SRC
 
 *** Install all servers listed (has to be executed manually)
-#+begin_src elisp :tangle no
-(defun treesit-install-all () 
-(interactive)
-(mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
-)
+#+begin_src elisp
+  (defun treesit-install-all () 
+    (interactive)
+  (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  )
 
 #+end_src
 
@@ -989,10 +1143,14 @@ x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
 ** AI
 #+begin_src elisp
 (setq gptel-default-mode 'text-mode)
-(setq gptel-api-key "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")
+(setq gptel-api-key "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")
 
 ;; keybinds for chat gpt in emacs with C-c c as prefix
 #+end_src
+
+#+RESULTS:
+: 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
+
 ** rss
 #+begin_src elisp
 
