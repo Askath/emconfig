@@ -223,6 +223,17 @@
     ;; ...
     )
 
+(use-package paredit :ensure t
+:config
+(autoload 'enable-paredit-mode "paredit"
+  "Turn on pseudo-structural editing of Lisp code."
+  t)
+(add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           'enable-paredit-mode)
+(add-hook 'geiser-mode-hook           'enable-paredit-mode)
+)
   (let ((site-lisp-dir "~/.emacs.d/site-lisp"))
     (when (file-directory-p site-lisp-dir)
       (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
@@ -578,12 +589,21 @@ Keybindings for GPT-related operations.
 Keybindings for programming and code-related actions.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c cf") 'eglot-format)
-  (global-set-key (kbd "C-c cc") 'compile)
-  (global-set-key (kbd "C-c ca") 'eglot-code-actions)
+(global-set-key (kbd "C-c c r") 'eglot-rename)
+(global-set-key (kbd "C-c c a") 'eglot-code-actions)
+(global-set-key (kbd "C-c c f") 'eglot-format)
+(global-set-key (kbd "C-c c i") 'eglot-code-action-organize-imports)
+(global-set-key (kbd "C-c c I") 'eglot-code-action-unused-imports-ts)
+(global-set-key (kbd "C-c c t") 'eglot-find-typeDefinition)
+(global-set-key (kbd "C-c c e") 'eglot-reconnect)
+(global-set-key (kbd "C-c c q") 'eglot-shutdown)
+(global-set-key (kbd "C-c c c") 'compile)
   (global-set-key (kbd "M-[") 'flymake-goto-prev-error)
   (global-set-key (kbd "M-]") 'flymake-goto-next-error)
 #+END_SRC
+
+#+RESULTS:
+: flymake-goto-next-error
 
 ** Ledger Keybindings
 Keybindings for Hledger-related operations.
@@ -1072,68 +1092,68 @@ Enable Treesitter for improved syntax highlighting and parsing:
 ** Work
 #+begin_src elisp
 
-(defun org-download-work-calendar (link output)
-  (let ((command (list "wget" link "-O" output)))
-    (with-temp-buffer
-      (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
-        (if (= exit-code 0)
-            (message "Downloaded calendar")
-          (message "Failed to download calendar with exit code %d" exit-code))))))
+  (defun org-download-work-calendar (link output)
+    (let ((command (list "wget" link "-O" output)))
+      (with-temp-buffer
+        (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
+          (if (= exit-code 0)
+              (message "Downloaded calendar")
+            (message "Failed to download calendar with exit code %d" exit-code))))))
 
-(defun org-convert-work-calendar (input output)
-  (let ((command (list "ical2orgpy" input output)))
-    (with-temp-buffer
-      (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
-        (if (= exit-code 0)
-            (message "Converted calendar")
-          (message "Failed to convert calendar with exit code %d" exit-code)))
-      (let ((command (list "rm" "-rf" input)))
-        (apply 'call-process (car command) nil t nil (cdr command))
-        )
-      )))
+  (defun org-convert-work-calendar (input output)
+    (let ((command (list "ical2orgpy" input output)))
+      (with-temp-buffer
+        (let ((exit-code (apply 'call-process (car command) nil t nil (cdr command))))
+          (if (= exit-code 0)
+              (message "Converted calendar")
+            (message "Failed to convert calendar with exit code %d" exit-code)))
+        (let ((command (list "rm" "-rf" input)))
+          (apply 'call-process (car command) nil t nil (cdr command))
+          )
+        )))
 
-(defun org-refresh-work-calendar ()
-  (interactive)
-  (org-download-work-calendar "https://outlook.office365.com/owa/calendar/5a510932ff8a4fd6b4d73fa1203d4683@optadata.de/f18ceea7bff54438ab2e6fd922b669bc5942294383520341840/calendar.ics"
-                              (expand-file-name "~/org/calendar_work.ical"))
-  (org-convert-work-calendar (expand-file-name "~/org/calendar_work.ical")
-                             (expand-file-name "~/org/calendar_work.org")))
-
-
-
-(defun vpn/status ()
-  (interactive)
-x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
-    (with-current-buffer output-buffer
-      (erase-buffer)
-      (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "status")))
-        (if (= exit 0)
-            (insert "VPN connection status: worked\n")
-          (insert "VPN connection status: failed\n"))))
-    (pop-to-buffer output-buffer)))
+  (defun org-refresh-work-calendar ()
+    (interactive)
+    (org-download-work-calendar "https://outlook.office365.com/owa/calendar/5a510932ff8a4fd6b4d73fa1203d4683@optadata.de/f18ceea7bff54438ab2e6fd922b669bc5942294383520341840/calendar.ics"
+                                (expand-file-name "~/org/calendar_work.ical"))
+    (org-convert-work-calendar (expand-file-name "~/org/calendar_work.ical")
+                               (expand-file-name "~/org/calendar_work.org")))
 
 
-(defun vpn/disconnect ()
-  (interactive)
-  (let ((output-buffer (get-buffer-create "*VPN Status*")))
-    (with-current-buffer output-buffer
-      (erase-buffer)
-      (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "disconnect")))
-        (if (= exit 0)
-            (insert "VPN connection status: worked\n")
-          (insert "VPN connection status: failed\n"))))
-    (pop-to-buffer output-buffer)))
 
-(defun vpn/connect ()
-  (interactive)
-  (let ((output-buffer (get-buffer-create "*VPN Status*")))
-    (with-current-buffer output-buffer
-      (erase-buffer)
-      (let ((exit (call-process "/Users/taradruffel/.workspace/scripts/connect_vpn.clj" nil t nil)))
-        (if (= exit 0)
-            (insert "VPN connection status: worked\n")
-          (insert "VPN connection status: failed\n"))))
-    (pop-to-buffer output-buffer)))
+  (defun vpn/status ()
+    (interactive)
+  x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
+      (with-current-buffer output-buffer
+        (erase-buffer)
+        (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "status")))
+          (if (= exit 0)
+              (insert "VPN connection status: worked\n")
+            (insert "VPN connection status: failed\n"))))
+      (pop-to-buffer output-buffer)))
+
+
+  (defun vpn/disconnect ()
+    (interactive)
+    (let ((output-buffer (get-buffer-create "*VPN Status*")))
+      (with-current-buffer output-buffer
+        (erase-buffer)
+        (let ((exit (call-process "/System/Volumes/Data/opt/cisco/secureclient/bin/vpn" nil t nil "-s" "disconnect")))
+          (if (= exit 0)
+              (insert "VPN connection status: worked\n")
+            (insert "VPN connection status: failed\n"))))
+      (pop-to-buffer output-buffer)))
+
+  (defun vpn/connect ()
+    (interactive)
+    (let ((output-buffer (get-buffer-create "*VPN Status*")))
+      (with-current-buffer output-buffer
+        (erase-buffer)
+        (let ((exit (call-process "/Users/taradruffel/.workspace/scripts/connect_vpn.clj" nil t nil)))
+          (if (= exit 0)
+              (insert "VPN connection status: worked\n")
+            (insert "VPN connection status: failed\n"))))
+      (pop-to-buffer output-buffer)))
 
 #+end_src
 
