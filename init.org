@@ -1143,7 +1143,6 @@ x  (let ((output-buffer (get-buffer-create "*VPN Status*")))
 ** AI
 #+begin_src elisp
 (setq gptel-default-mode 'text-mode)
-(setq gptel-api-key "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")
 
 ;; keybinds for chat gpt in emacs with C-c c as prefix
 #+end_src
