@@ -93,6 +93,22 @@
 ;; Finance
 (use-package hledger-mode :ensure nil)
 
+(use-package aider
+  :vc (:url "https://github.com/tninja/aider.el")
+  :config
+  ;; Use claude-3-5-sonnet cause it is best in aider benchmark 
+  ;; (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
+  ;; (setenv "ANTHROPIC_API_KEY" anthropic-api-key)
+  ;; Or use chatgpt model since it is most well known
+  (setq aider-args '("--model" "gpt-4o-mini"))
+  (setenv "OPENAI_API_KEY" "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" )
+  ;; Or use gemini v2 model since it is very good and free
+  ;; (setq aider-args '("--model" "gemini/gemini-exp-1206"))
+  ;; (setenv "GEMINI_API_KEY" <your-gemini-api-key>)
+  ;; ;;
+  ;; Optional: Set a key binding for the transient menu
+)
+  (global-set-key (kbd "C-c AA") 'aider-transient-menu)
 ;; Clojure development
 ;; (use-package clojure-mode
 ;;   :ensure t)
@@ -425,27 +441,6 @@
 
 (require 'calfw)
 (require 'calfw-org)
-(defun my-calfw-open-calendar ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources (list (cfw:org-create-source "Green"))
-   :view 'block-week))
-
-
-(defun my-calfw-set-view (view)
-  (interactive)
-  (setq cfw:current-view view)
-  (cfw:refresh-calendar-buffer nil))
-
-(define-key cfw:calendar-mode-map (kbd "M") (lambda () (interactive) (my-calfw-set-view 'month)))
-(define-key cfw:calendar-mode-map (kbd "W") (lambda () (interactive) (my-calfw-set-view 'week)))
-(define-key cfw:calendar-mode-map (kbd "D") (lambda () (interactive) (my-calfw-set-view 'day)))
-(define-key cfw:calendar-mode-map (kbd "B") (lambda () (interactive) (my-calfw-set-view 'block-week)))
-(define-key cfw:calendar-mode-map (kbd "1") (lambda () (interactive) (my-calfw-set-view 'block-day)))
-(define-key cfw:calendar-mode-map (kbd "2") (lambda () (interactive) (my-calfw-set-view 'block-2-day)))
-(define-key cfw:calendar-mode-map (kbd "3") (lambda () (interactive) (my-calfw-set-view 'block-3-day)))
-(define-key cfw:calendar-mode-map (kbd "4") (lambda () (interactive) (my-calfw-set-view 'block-4-day)))
-(define-key cfw:calendar-mode-map (kbd "5") (lambda () (interactive) (my-calfw-set-view 'block-5-day)))
 
 (setq calfw-blocks-default-event-length 0.25)
 
@@ -455,7 +450,7 @@
 (global-set-key (kbd "C-c ns") 'org-search-view)
 (global-set-key (kbd "C-c na") 'org-agenda)
 (global-set-key (kbd "C-c x") 'org-capture)
-(global-set-key (kbd "C-c ocm") 'my-calfw-open-calendar)
+(global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
 
 (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
 (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
@@ -885,3 +880,35 @@
       '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
 
 (setq prefix-help-command #'embark-prefix-help-command)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(calfw-blocks-render-multiday-events t)
+ '(package-selected-packages '(aide))
+ '(package-vc-selected-packages '((aide :url "https://github.com/junjizhi/aide.el"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(cfw:face-today ((t nil)))
+ '(fringe ((t :background "#0d0e1c")))
+ '(header-line ((t :box (:line-width 4 :color "#1d2235" :style nil))))
+ '(header-line-highlight ((t :box (:color "#ffffff"))))
+ '(keycast-key ((t)))
+ '(line-number ((t :background "#0d0e1c")))
+ '(mode-line ((t :box (:line-width 6 :color "#484d67" :style nil))))
+ '(mode-line-active ((t :box (:line-width 6 :color "#484d67" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#ffffff"))))
+ '(mode-line-inactive ((t :box (:line-width 6 :color "#292d48" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#0d0e1c" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#4a4f6a" :style nil))))
+ '(tab-line-tab ((t)))
+ '(tab-line-tab-active ((t)))
+ '(tab-line-tab-inactive ((t)))
+ '(vertical-border ((t :background "#0d0e1c" :foreground "#0d0e1c")))
+ '(window-divider ((t (:background "#0d0e1c" :foreground "#0d0e1c"))))
+ '(window-divider-first-pixel ((t (:background "#0d0e1c" :foreground "#0d0e1c"))))
+ '(window-divider-last-pixel ((t (:background "#0d0e1c" :foreground "#0d0e1c")))))
