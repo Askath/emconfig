@@ -10,7 +10,6 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(org-babel-tangle-file "init.org")
 (load-file "~/.emacs.d/init.el")
 
 ;; Download and compile all packages
