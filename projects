@@ -1,4 +1,6 @@
 ;;; -*- lisp-data -*-
 (("/Users/taradruffel/.emacs.d/") ("/Users/taradruffel/org/")
+ ("/Users/taradruffel/.emacs.d/elpa/copilot/")
+ ("/Users/taradruffel/.emacs.d/elpa/aider/")
  ("/Users/taradruffel/.workspace/repos/phoenix-frontend/")
  ("/Users/taradruffel/.emacs.d/elpa/aide/"))

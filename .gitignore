@@ -14,3 +14,4 @@ lombok.jar
 org-persist/
 *.elc
 tramp
+.aider*

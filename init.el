@@ -9,6 +9,45 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 
+(use-package dirvish
+  :ensure t
+  :init
+  (dirvish-override-dired-mode)
+  :custom
+  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("m" "/mnt/"                       "Drives")
+     ("t" "~/.local/share/Trash/files/" "TrashCan")))
+  :config
+  (dirvish-peek-mode) ; Preview files in minibuffer
+  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes
+        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
+  (setq delete-by-moving-to-trash t)
+  (setq dired-listing-switches
+        "-l --almost-all --human-readable --group-directories-first --no-group")
+)
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is univrsally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
 ;; Built-in packages
 (use-package delsel
   :hook (after-init . delete-selection-mode))
@@ -25,7 +64,7 @@
            :scroll-bar-width 8
            :fringe-width 8))
   )
-;; These are the default values, but I keep them here for visibility.
+;; ;; These are the default values, but I keep them here for visibility.
 
 ;; Local packages
 (use-package casual-suite :ensure t)
@@ -67,7 +106,7 @@
 (use-package calfw-org :ensure t)
 (use-package calfw-blocks :ensure nil)
 
-(use-package org-modern :ensure t)
+;; (use-package org-modern :ensure t)
 
 (use-package org
   :hook ((org-mode . visual-line-mode))
@@ -254,7 +293,7 @@
 (recentf-mode 1)
 (setq make-backup-files nil)
 
-(setq custom-theme 'modus-vivendi-tinted)
+(setq custom-theme 'doom-one)
 
 (defun apply-modus-operandi-tinted-palette (frame)
   (with-selected-frame frame
@@ -268,7 +307,7 @@
   (with-selected-frame frame
     (set-face-attribute 'default nil
                         :family "Iosevka SS08" ; Replace with your font name
-                        :height 180
+                        :height 160
                         )))         ; Adjust the height as needed
 
 (if (daemonp)
@@ -277,30 +316,13 @@
 
 
 
-;; Distraction-free writing
-(defun ews-distraction-free ()
-  "Distraction-free writing environment using Olivetti package."
-  (interactive)
-  (if (equal olivetti-mode nil)
-      (progn
-        (window-configuration-to-register 1)
-        (delete-other-windows)
-        (text-scale-set 1)
-        (olivetti-mode t))
-    (progn
-      (if (eq (length (window-list)) 1)
-          (jump-to-register 1))
-      (olivetti-mode 0)
-      (text-scale-set 0))))
 
 
 
 
 
-(spacious-padding-mode 1)
+;; (spacious-padding-mode 1)
 
-;; Set a key binding if you need to toggle spacious padding.
-(define-key global-map (kbd "<f8>") #'spacious-padding-mode)
 
 (setopt sentence-end-double-space nil)
 
@@ -436,7 +458,31 @@
    :contents-sources
    (list
     (cfw:org-create-source "medium purple"))
+   :view 'block-day))
+
+(defun my-open-calendar-week ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "medium purple"))
    :view 'block-week))
+
+
+(defun blocks-day-view ()
+  (interactive)
+    (cfw:cp-set-view (cfw:cp-get-component) 'block-day)
+)
+
+(defun blocks-week-view ()
+  (interactive)
+    (cfw:cp-set-view (cfw:cp-get-component) 'block-week)
+)
+
+(with-eval-after-load 'calfw
+  (define-key cfw:calendar-mode-map (kbd "D") 'blocks-day-view)
+  (define-key cfw:calendar-mode-map (kbd "W") 'blocks-week-view)
+)
 
 
 (require 'calfw)
@@ -450,7 +496,9 @@
 (global-set-key (kbd "C-c ns") 'org-search-view)
 (global-set-key (kbd "C-c na") 'org-agenda)
 (global-set-key (kbd "C-c x") 'org-capture)
-(global-set-key (kbd "C-c ocm") 'cfw:open-org-calendar)
+(global-set-key (kbd "<f6>") 'cfw:open-org-calendar)
+(global-set-key (kbd "C-c oc") 'cfw:open-org-calendar)
+
 
 (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
 (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
@@ -463,6 +511,7 @@
 (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
 (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
 (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+(keymap-set calendar-mode-map "C-o" #'casual-agenda-tmenu)
 (keymap-global-set "M-g" #'casual-avy-tmenu)
 (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
 (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
@@ -475,15 +524,15 @@
   ;; no :ensure t here because it's built-in
 
   ;; Configure hooks to automatically turn on eglot for selected modes
-  :hook
-  ((js-ts-mode . eglot-ensure)
-   (tsx-ts-mode . eglot-ensure)
-   (typescript-ts-mode . eglot-ensure)
-   (java-ts-mode . eglot-ensure)
-   (html-ts-mode . eglot-ensure)
-   (clojure-mode . eglot-ensure)
-   (clojurescript-mode . eglot-ensure)
-   )
+  ;; :hook
+  ;; ((js-ts-mode . eglot-ensure)
+  ;;  (tsx-ts-mode . eglot-ensure)
+  ;;  (typescript-ts-mode . eglot-ensure)
+  ;;  (java-ts-mode . eglot-ensure)
+  ;;  (html-ts-mode . eglot-ensure)
+  ;;  (clojure-mode . eglot-ensure)
+  ;;  (clojurescript-mode . eglot-ensure)
+  ;;  )
 
   :custom
   (eglot-send-changes-idle-time 0.1)
@@ -557,7 +606,7 @@
 
 
 
-(with-eval-after-load 'org (global-org-modern-mode))
+;; (with-eval-after-load 'org (global-org-modern-mode))
 
 ;; Agenda variables
 (setq org-directory "~/org/") ; Non-absolute paths for agenda and
@@ -784,20 +833,7 @@
   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
   )
 
-(defun vendor/open-iterm2 ()
-  "Open Puffin in a new iTerm window."
-  (interactive)
-  (let ((dir (expand-file-name default-directory)))
-    (do-applescript
-     (format
-      "tell application \"iTerm\"
-        create window with default profile
-        tell current session of current window
-          write text \"cd %s\"
-        end tell
-      end tell" dir))))
-
-(global-set-key (kbd "C-c ot") 'vendor/open-iterm2)
+(global-set-key (kbd "C-c ot") 'eat)
 
 (defun org-download-work-calendar (link output)
   (let ((command (list "wget" link "-O" output)))
@@ -885,30 +921,39 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(calfw-blocks-render-multiday-events t)
- '(package-selected-packages '(aide))
- '(package-vc-selected-packages '((aide :url "https://github.com/junjizhi/aide.el"))))
+ '(custom-safe-themes
+    '("88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+      default))
+ '(hledger-ratios-net-worth-in-next-x-years 10)
+ '(package-selected-packages
+    '(aider all-the-icons calfw calfw-org cape casual-suite copilot corfu
+            dirvish doom-themes eat elfeed embark exec-path-from-shell
+            expand-region fireplace gptel magit markdown-mode
+            orderless org-cliplink org-modern org-super-agenda
+            org-upcoming-modeline paredit pdf-tools spacious-padding
+            toc-org zig-mode))
+ '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cfw:face-today ((t nil)))
- '(fringe ((t :background "#0d0e1c")))
- '(header-line ((t :box (:line-width 4 :color "#1d2235" :style nil))))
+ '(calfw-blocks-today-indicator ((t nil)))
+ '(fringe ((t :background "#000000")))
+ '(header-line ((t :box (:line-width 4 :color "#1e1e1e" :style nil))))
  '(header-line-highlight ((t :box (:color "#ffffff"))))
  '(keycast-key ((t)))
- '(line-number ((t :background "#0d0e1c")))
- '(mode-line ((t :box (:line-width 6 :color "#484d67" :style nil))))
- '(mode-line-active ((t :box (:line-width 6 :color "#484d67" :style nil))))
+ '(line-number ((t :background "#000000")))
+ '(mode-line ((t :box (:line-width 6 :color "#505050" :style nil))))
+ '(mode-line-active ((t :box (:line-width 6 :color "#505050" :style nil))))
  '(mode-line-highlight ((t :box (:color "#ffffff"))))
- '(mode-line-inactive ((t :box (:line-width 6 :color "#292d48" :style nil))))
- '(tab-bar-tab ((t :box (:line-width 4 :color "#0d0e1c" :style nil))))
- '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#4a4f6a" :style nil))))
+ '(mode-line-inactive ((t :box (:line-width 6 :color "#2d2d2d" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#000000" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#545454" :style nil))))
  '(tab-line-tab ((t)))
  '(tab-line-tab-active ((t)))
  '(tab-line-tab-inactive ((t)))
- '(vertical-border ((t :background "#0d0e1c" :foreground "#0d0e1c")))
- '(window-divider ((t (:background "#0d0e1c" :foreground "#0d0e1c"))))
- '(window-divider-first-pixel ((t (:background "#0d0e1c" :foreground "#0d0e1c"))))
- '(window-divider-last-pixel ((t (:background "#0d0e1c" :foreground "#0d0e1c")))))
+ '(vertical-border ((t :background "#000000" :foreground "#000000")))
+ '(window-divider ((t (:background "#000000" :foreground "#000000"))))
+ '(window-divider-first-pixel ((t (:background "#000000" :foreground "#000000"))))
+ '(window-divider-last-pixel ((t (:background "#000000" :foreground "#000000")))))
