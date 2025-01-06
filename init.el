@@ -52,6 +52,11 @@
 (use-package delsel
   :hook (after-init . delete-selection-mode))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 
 (use-package spacious-padding :ensure t
   :config
@@ -327,7 +332,8 @@
 (setopt sentence-end-double-space nil)
 
 (setq xref-search-program 'ripgrep)
-(setq grep-command "rg -nS --noheading")
+(setq grep-command "rg -nS --no-heading ")
+(setq grep-find-template "find . -type f -exec rg -nS --no-heading \{\} + ")
 
 (savehist-mode)
 
@@ -448,6 +454,17 @@
 (global-set-key (kbd "M-]") 'flymake-goto-next-error)
 
 (global-set-key (kbd "C-x R") 'hledger-run-command)
+
+
+(defun project-generate-tags-ts ()
+  "Generate tags file for the current project root."
+  (interactive)
+  (let ((project-root (project-root (project-current t))))
+    (if project-root
+        (let ((default-directory project-root))
+          (shell-command "find . -name \"*.ts\" -print | etags -")
+          (message "Tags file generated in project root: %s" project-root))
+      (message "Not in a project!"))))
 
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 
@@ -922,16 +939,18 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-    '("88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
-      default))
+   '("2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
+     "4ade6b630ba8cbab10703b27fd05bb43aaf8a3e5ba8c2dc1ea4a2de5f8d45882"
+     "56044c5a9cc45b6ec45c0eb28df100d3f0a576f18eef33ff8ff5d32bac2d9700"
+     "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+     default))
  '(hledger-ratios-net-worth-in-next-x-years 10)
  '(package-selected-packages
-    '(aider all-the-icons calfw calfw-org cape casual-suite copilot corfu
-            dirvish doom-themes eat elfeed embark exec-path-from-shell
-            expand-region fireplace gptel magit markdown-mode
-            orderless org-cliplink org-modern org-super-agenda
-            org-upcoming-modeline paredit pdf-tools spacious-padding
-            toc-org zig-mode))
+   '(aide aider all-the-icons calfw calfw-org cape casual-suite copilot
+          corfu dirvish doom-themes eat elfeed embark
+          exec-path-from-shell expand-region gptel magit markdown-mode
+          orderless org-cliplink org-upcoming-modeline paredit
+          spacious-padding toc-org))
  '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -939,21 +958,21 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(calfw-blocks-today-indicator ((t nil)))
- '(fringe ((t :background "#000000")))
- '(header-line ((t :box (:line-width 4 :color "#1e1e1e" :style nil))))
- '(header-line-highlight ((t :box (:color "#ffffff"))))
+ '(fringe ((t :background "#0c1400")))
+ '(header-line ((t :box (:line-width 4 :color "#222b14" :style nil))))
+ '(header-line-highlight ((t :box (:color "#d5c9b0"))))
  '(keycast-key ((t)))
- '(line-number ((t :background "#000000")))
- '(mode-line ((t :box (:line-width 6 :color "#505050" :style nil))))
- '(mode-line-active ((t :box (:line-width 6 :color "#505050" :style nil))))
- '(mode-line-highlight ((t :box (:color "#ffffff"))))
- '(mode-line-inactive ((t :box (:line-width 6 :color "#2d2d2d" :style nil))))
- '(tab-bar-tab ((t :box (:line-width 4 :color "#000000" :style nil))))
- '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#545454" :style nil))))
+ '(line-number ((t :background "#0c1400")))
+ '(mode-line ((t :box (:line-width 6 :color "#222b14" :style nil))))
+ '(mode-line-active ((t :box (:line-width 6 :color "#222b14" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#d5c9b0"))))
+ '(mode-line-inactive ((t :box (:line-width 6 :color "#121e00" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#0c1400" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#121e00" :style nil))))
  '(tab-line-tab ((t)))
  '(tab-line-tab-active ((t)))
  '(tab-line-tab-inactive ((t)))
- '(vertical-border ((t :background "#000000" :foreground "#000000")))
- '(window-divider ((t (:background "#000000" :foreground "#000000"))))
- '(window-divider-first-pixel ((t (:background "#000000" :foreground "#000000"))))
- '(window-divider-last-pixel ((t (:background "#000000" :foreground "#000000")))))
+ '(vertical-border ((t :background "#0c1400" :foreground "#0c1400")))
+ '(window-divider ((t (:background "#0c1400" :foreground "#0c1400"))))
+ '(window-divider-first-pixel ((t (:background "#0c1400" :foreground "#0c1400"))))
+ '(window-divider-last-pixel ((t (:background "#0c1400" :foreground "#0c1400")))))
