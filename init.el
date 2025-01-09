@@ -29,6 +29,7 @@
 
 
 (use-package aider
+	:ensure nil
   :vc (:url "https://github.com/tninja/aider.el")
   :config
   (setq aider-args '("--model" "gpt-4o-mini"))

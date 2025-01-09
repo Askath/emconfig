@@ -12,6 +12,3 @@
   (package-install 'use-package))
 (load-file "~/.emacs.d/init.el")
 
-;; Download and compile all packages
-(setq use-package-always-ensure t)
-
