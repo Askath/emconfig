@@ -4,174 +4,48 @@
 
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
+(let ((site-lisp-dir "~/.emacs.d/site-lisp"))
+  (when (file-directory-p site-lisp-dir)
+    (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
+      (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
+(load-file "~/.emacs.d/package_builtin.el")
+(load-file "~/.emacs.d/packages.el")
 
-(use-package dirvish
-  :ensure t
-  :init
-  (dirvish-override-dired-mode)
-  :custom
-  (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-   '(("h" "~/"                          "Home")
-     ("d" "~/Downloads/"                "Downloads")
-     ("m" "/mnt/"                       "Drives")
-     ("t" "~/.local/share/Trash/files/" "TrashCan")))
-  :config
-  (dirvish-peek-mode) ; Preview files in minibuffer
-  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
-  (setq dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index)))
-  (setq dirvish-attributes
-        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg))
-  (setq delete-by-moving-to-trash t)
-  (setq dired-listing-switches
-        "-l --almost-all --human-readable --group-directories-first --no-group")
-)
-
-(use-package doom-themes
-  :ensure t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is univrsally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-  (doom-themes-treemacs-config)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
-
-;; Built-in packages
-(use-package delsel
-  :hook (after-init . delete-selection-mode))
-
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
-
-
-(use-package spacious-padding :ensure t
-  :config
-  (setq spacious-padding-widths
-        '( :internal-border-width 15
-           :header-line-width 4
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8
-           :fringe-width 8))
-  )
-;; ;; These are the default values, but I keep them here for visibility.
-
-;; Local packages
-(use-package casual-suite :ensure t)
-
-;; Theme configuration
-(use-package modus-themes
-  :custom
-  (modus-themes-italic-constructs t)
-  (modus-themes-bold-constructs t)
-  (modus-themes-mixed-fonts t)
-  (modus-themes-headings '((1 . (1.5))
-                           (2 . (1.3))
-                           (t . (1.1))))
-  (modus-themes-to-toggle
-   '(modus-operandi-tinted modus-vivendi-tinted))
-  :bind (("C-c w m" . modus-themes-toggle)
-         ("C-c w M" . modus-themes-select)))
-
-;; Utility packages
-(use-package which-key
-  :ensure nil
-  :config
-  (which-key-mode))
-
-(use-package expand-region
-  :ensure t
-  :commands er/expand-region
-  :bind (("C-=" . er/expand-region)))
-
-(use-package exec-path-from-shell :ensure t)
-
-;; Markdown mode
-(use-package markdown-mode
-  :ensure t
-  :hook (markdown-mode . visual-line-mode))
-
-;; Calendar and org-mode extensions
-(use-package calfw :ensure t)
-(use-package calfw-org :ensure t)
-(use-package calfw-blocks :ensure nil)
-
-;; (use-package org-modern :ensure t)
-
-(use-package org
-  :hook ((org-mode . visual-line-mode))
-  :bind (:map global-map)
-  :config
-  (require 'oc-csl) ; citation support
-  (add-to-list 'org-export-backends 'md)
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-  (setq org-export-with-smart-quotes t))
-
-(use-package org-super-agenda :ensure t)
+(use-package org-super-agenda :ensure nil)
 (use-package toc-org
-  :ensure t
+  :ensure nil
   :hook (org-mode . toc-org-enable)
   :config
   (setq toc-org-hrefify-default "gh"))
-(use-package org-cliplink :ensure t)
+(use-package org-cliplink :ensure nil)
 (use-package org-upcoming-modeline
-  :ensure t
+  :ensure nil
   :config
   (org-upcoming-modeline-mode))
 
-;; Finance
-(use-package hledger-mode :ensure nil)
 
 (use-package aider
   :vc (:url "https://github.com/tninja/aider.el")
   :config
-  ;; Use claude-3-5-sonnet cause it is best in aider benchmark 
-  ;; (setq aider-args '("--model" "anthropic/claude-3-5-sonnet-20241022"))
-  ;; (setenv "ANTHROPIC_API_KEY" anthropic-api-key)
-  ;; Or use chatgpt model since it is most well known
   (setq aider-args '("--model" "gpt-4o-mini"))
-  (setenv "OPENAI_API_KEY" "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" )
-  ;; Or use gemini v2 model since it is very good and free
-  ;; (setq aider-args '("--model" "gemini/gemini-exp-1206"))
-  ;; (setenv "GEMINI_API_KEY" <your-gemini-api-key>)
-  ;; ;;
-  ;; Optional: Set a key binding for the transient menu
 )
-  (global-set-key (kbd "C-c AA") 'aider-transient-menu)
-;; Clojure development
-;; (use-package clojure-mode
-;;   :ensure t)
-;; (use-package cider :ensure t)
 
-;; ;; Common Lisp development
-;; (use-package sly :ensure t)
-
-;; Git integration
 (use-package magit
-  :ensure t
+  :ensure nil
   :bind (("C-x g" . magit-status)))
+
 (use-package elfeed 
-  :ensure t)
+  :ensure nil)
+
 ;; Other utilities
-(use-package embark :ensure t)
+(use-package embark :ensure nil)
 
 (use-package eshell
-  :ensure t
+  :ensure nil
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -181,7 +55,7 @@
 
 ;; Eat: Emulate A Terminal
 (use-package eat
-  :ensure t
+  :ensure nil
   :custom
   (eat-term-name "iterm")
   :config
@@ -189,12 +63,7 @@
   (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
 (use-package gptel 
-  :ensure t)
-
-(use-package corfu
-  :ensure t
-  :init
-  (global-corfu-mode))
+  :ensure nil)
 
 (use-package emacs
   :custom
@@ -217,53 +86,15 @@
 
 ;; Optionally use the `orderless' completion style.
 (use-package orderless
-  :ensure t
+  :ensure nil
   :custom
-  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
-  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
-;; Enable auto completion and configure quitting
-(setq corfu-auto t
-      corfu-quit-no-match 'separator) ;; or t
-
-(use-package copilot
-  :ensure t
-  :vc (:url "https://github.com/copilot-emacs/copilot.el"
-            :rev :newest
-            :branch "main"))
-(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-
-;; Add extensions
-(use-package cape
-  :ensure t
-  ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
-  ;; Press C-c p ? to for help.
-  :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
-  ;; Alternatively bind Cape commands individually.
-  ;; :bind (("C-c p d" . cape-dabbrev)
-  ;;        ("C-c p h" . cape-history)
-  ;;        ("C-c p f" . cape-file)
-  ;;        ...)
-  :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-hook 'completion-at-point-functions #'cape-history)
-  ;; ...
-  )
-
-(use-package paredit :ensure t
+(use-package paredit :ensure nil
   :config
   (autoload 'enable-paredit-mode "paredit"
-    "Turn on pseudo-structural editing of Lisp code."
     t)
   (add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
   (add-hook 'lisp-mode-hook             'enable-paredit-mode)
@@ -272,10 +103,7 @@
   (add-hook 'geiser-mode-hook           'enable-paredit-mode)
   )
 
-(let ((site-lisp-dir "~/.emacs.d/site-lisp"))
-  (when (file-directory-p site-lisp-dir)
-    (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
-      (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
+
 
 
 
@@ -298,7 +126,7 @@
 (recentf-mode 1)
 (setq make-backup-files nil)
 
-(setq custom-theme 'doom-one)
+(setq custom-theme 'doom-Iosvkem)
 
 (defun apply-modus-operandi-tinted-palette (frame)
   (with-selected-frame frame
@@ -318,16 +146,6 @@
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'set-default-font)
   (set-default-font (selected-frame)))
-
-
-
-
-
-
-
-
-;; (spacious-padding-mode 1)
-
 
 (setopt sentence-end-double-space nil)
 
@@ -449,22 +267,34 @@
 (global-set-key (kbd "C-c c t") 'eglot-find-typeDefinition)
 (global-set-key (kbd "C-c c e") 'eglot-reconnect)
 (global-set-key (kbd "C-c c q") 'eglot-shutdown)
+(global-set-key (kbd "C-c c s") 'eglot)
+(global-set-key (kbd "C-x A") 'aider-transient-menu)
+
 (global-set-key (kbd "C-c c c") 'compile)
 (global-set-key (kbd "M-[") 'flymake-goto-prev-error)
 (global-set-key (kbd "M-]") 'flymake-goto-next-error)
 
 (global-set-key (kbd "C-x R") 'hledger-run-command)
 
-
-(defun project-generate-tags-ts ()
+(defun generate-tags-for-project ()
   "Generate tags file for the current project root."
   (interactive)
   (let ((project-root (project-root (project-current t))))
     (if project-root
         (let ((default-directory project-root))
-          (shell-command "find . -name \"*.ts\" -print | etags -")
+          (shell-command "ctags -e -R --languages=JavaScript,TypeScript *")
           (message "Tags file generated in project root: %s" project-root))
       (message "Not in a project!"))))
+
+(defun generate-tags-for-cwd ()
+  "Generate tags file for all files starting from the current working directory."
+  (interactive)
+  (let ((default-directory (or default-directory (getenv "PWD"))))
+    (if default-directory
+        (progn
+          (shell-command "find . -type f -print | etags -")
+          (message "ctags -e -R *" default-directory))
+      (message "Cannot determine the current working directory!"))))
 
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 
@@ -517,40 +347,11 @@
 (global-set-key (kbd "C-c oc") 'cfw:open-org-calendar)
 
 
-(keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
-(keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
-(keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
-(keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
-(keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
-(keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
-(keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
-(keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
-(keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
-(keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
-(keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
-(keymap-set calendar-mode-map "C-o" #'casual-agenda-tmenu)
-(keymap-global-set "M-g" #'casual-avy-tmenu)
-(keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
-(keymap-global-set "C-o" #'casual-editkit-main-tmenu)
-
 (setq lombok-library-path (concat user-emacs-directory "lombok.jar"))
 (unless (file-exists-p lombok-library-path)
   (url-copy-file "https://projectlombok.org/downloads/lombok.jar" lombok-library-path))
 
 (use-package eglot
-  ;; no :ensure t here because it's built-in
-
-  ;; Configure hooks to automatically turn on eglot for selected modes
-  ;; :hook
-  ;; ((js-ts-mode . eglot-ensure)
-  ;;  (tsx-ts-mode . eglot-ensure)
-  ;;  (typescript-ts-mode . eglot-ensure)
-  ;;  (java-ts-mode . eglot-ensure)
-  ;;  (html-ts-mode . eglot-ensure)
-  ;;  (clojure-mode . eglot-ensure)
-  ;;  (clojurescript-mode . eglot-ensure)
-  ;;  )
-
   :custom
   (eglot-send-changes-idle-time 0.1)
   (eglot-extend-to-xref t) ; activate Eglot in referenced non-project files
@@ -564,7 +365,7 @@
                                        (:preferences
                                         (
                                          ;; https://github.com/microsoft/TypeScript/blob/main/src/server/protocol.ts#L3410-L3539
-                                         :disableSuggestions                                    :json-false     ;; boolean
+                                         :disableSuggestions                                    t      ;; boolean
                                          :quotePreference                                       "double"        ;; "auto" | "double" | "single"
                                          :includeCompletionsForModuleExports                    t               ;; boolean
                                          :includeCompletionsForImportStatements                 t               ;; boolean
@@ -586,14 +387,14 @@
                                          :jsxAttributeCompletionStyle                           "auto"          ;; "auto" | "braces" | "none"
                                          :displayPartsForJSDoc                                  t               ;; boolean
                                          :generateReturnInDocTemplate                           t               ;; boolean
-                                         :includeInlayParameterNameHints                        "all"           ;; "none" | "literals" | "all"
-                                         :includeInlayParameterNameHintsWhenArgumentMatchesName t               ;; boolean
-                                         :includeInlayFunctionParameterTypeHints                t               ;; boolean,
-                                         :includeInlayVariableTypeHints                         t               ;; boolean
-                                         :includeInlayVariableTypeHintsWhenTypeMatchesName      t               ;; boolean
-                                         :includeInlayPropertyDeclarationTypeHints              t               ;; boolean
-                                         :includeInlayFunctionLikeReturnTypeHints               t               ;; boolean
-                                         :includeInlayEnumMemberValueHints                      t               ;; boolean
+                                         ;; :includeInlayParameterNameHints                        "all"           ;; "none" | "literals" | "all"
+                                         ;; :includeInlayParameterNameHintsWhenArgumentMatchesName t               ;; boolean
+                                         ;; :includeInlayFunctionParameterTypeHints                t               ;; boolean,
+                                         ;; :includeInlayVariableTypeHints                         t               ;; boolean
+                                         ;; :includeInlayVariableTypeHintsWhenTypeMatchesName      t               ;; boolean
+                                         ;; :includeInlayPropertyDeclarationTypeHints              t               ;; boolean
+                                         ;; :includeInlayFunctionLikeReturnTypeHints               t               ;; boolean
+                                         ;; :includeInlayEnumMemberValueHints                      t               ;; boolean
                                          ;; :autoImportFileExcludePatterns                                      ;; string[]
                                          ;; :organizeImportsIgnoreCase                                          ;; "auto" | boolean
                                          ;; :organizeImportsCollation                                           ;; "ordinal" | "unicode"
@@ -810,7 +611,11 @@
 
 (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
 (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.rkt". racket-mode))
+(require 'racket-xp)
 
+(add-hook 'racket-mode-hook #'racket-xp-mode)
 
 
 (use-package emacs
@@ -831,6 +636,7 @@
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (zig "https://github.com/tree-sitter-grammars/tree-sitter-zig=")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
         (go "https://github.com/tree-sitter/tree-sitter-go")
         (html "https://github.com/tree-sitter/tree-sitter-html")
@@ -846,7 +652,7 @@
         (clojure "https://github.com/sogaiu/tree-sitter-clojure")))
 
 (defun treesit-install-all () 
-  (interactive)
+  interactive
   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
   )
 
@@ -938,41 +744,24 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(aider-args '("--model" "gpt-4o-mini"))
  '(custom-safe-themes
-   '("2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
-     "4ade6b630ba8cbab10703b27fd05bb43aaf8a3e5ba8c2dc1ea4a2de5f8d45882"
-     "56044c5a9cc45b6ec45c0eb28df100d3f0a576f18eef33ff8ff5d32bac2d9700"
-     "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+   '("b5fd9c7429d52190235f2383e47d340d7ff769f141cd8f9e7a4629a81abc6b19"
+     "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
+     "dd4582661a1c6b865a33b89312c97a13a3885dc95992e2e5fc57456b4c545176"
+     "4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
+     "2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
+     "f5f80dd6588e59cfc3ce2f11568ff8296717a938edd448a947f9823a4e282b66"
      default))
- '(hledger-ratios-net-worth-in-next-x-years 10)
- '(package-selected-packages
-   '(aide aider all-the-icons calfw calfw-org cape casual-suite copilot
-          corfu dirvish doom-themes eat elfeed embark
-          exec-path-from-shell expand-region gptel magit markdown-mode
-          orderless org-cliplink org-upcoming-modeline paredit
-          spacious-padding toc-org))
- '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el"))))
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch
+              "main")
+     (aider :url "https://github.com/tninja/aider.el")))
+ '(zig-format-on-save nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(calfw-blocks-today-indicator ((t nil)))
- '(fringe ((t :background "#0c1400")))
- '(header-line ((t :box (:line-width 4 :color "#222b14" :style nil))))
- '(header-line-highlight ((t :box (:color "#d5c9b0"))))
- '(keycast-key ((t)))
- '(line-number ((t :background "#0c1400")))
- '(mode-line ((t :box (:line-width 6 :color "#222b14" :style nil))))
- '(mode-line-active ((t :box (:line-width 6 :color "#222b14" :style nil))))
- '(mode-line-highlight ((t :box (:color "#d5c9b0"))))
- '(mode-line-inactive ((t :box (:line-width 6 :color "#121e00" :style nil))))
- '(tab-bar-tab ((t :box (:line-width 4 :color "#0c1400" :style nil))))
- '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#121e00" :style nil))))
- '(tab-line-tab ((t)))
- '(tab-line-tab-active ((t)))
- '(tab-line-tab-inactive ((t)))
- '(vertical-border ((t :background "#0c1400" :foreground "#0c1400")))
- '(window-divider ((t (:background "#0c1400" :foreground "#0c1400"))))
- '(window-divider-first-pixel ((t (:background "#0c1400" :foreground "#0c1400"))))
- '(window-divider-last-pixel ((t (:background "#0c1400" :foreground "#0c1400")))))
+ )
