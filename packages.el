@@ -1,39 +1,102 @@
+;; Completion UI Framework
+;; Enable vertico
+(use-package vertico
+  :ensure t
+  :config
+  (vertico-mode))
+
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package embark :ensure t)
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  :ensure t
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle))
+  :config
+  (marginalia-mode))
+
+(use-package corfu
+  :ensure t
+  ;; Optional customizations
+  :config
+  (setq corfu-auto t)
+  (global-corfu-mode))
+
+(use-package dirvish
+  :ensure t
+  :config
+  (setq dirvish-attributes
+      '(vc-state subtree-state collapse git-msg file-time file-size))
+  (require 'dirvish-peek)
+  (dirvish-peek-mode)
+  (dirvish-override-dired-mode)
+  :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+  (("C-c f" . dirvish-fd)
+   :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
+   ("a"   . dirvish-quick-access)
+   ("f"   . dirvish-file-info-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dirvish-history-last)
+   ("h"   . dirvish-history-jump) ; remapped `describe-mode'
+   ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+   ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-l" . dirvish-ls-switches-menu)
+   ("M-m" . dirvish-mark-menu)
+   ("M-t" . dirvish-layout-toggle)
+   ("M-s" . dirvish-setup-menu)
+   ("M-e" . dirvish-emerge-menu)
+   ("M-j" . dirvish-fd-jump)))
+
+;;;;
+
+
 ;; Finance
 (use-package hledger-mode :ensure nil
-:demand t
-:config
-(add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
-;; Provide the path to you journal file.
-;; The default location is too opinionated.
-(setq hledger-jfile "~/org/finance/2024.ledger")
-(global-set-key (kbd "C-c C-l e") 'hledger-jentry)
-(global-set-key (kbd "C-c C-l l") 'hledger-run-command)
-(setq hledger-currency-string "EUR"
-      hledger-extra-args ""
-      hledger-extrapolate-savings-period 12
-      hledger-extrapolate-savings-rate 7.0
-      hledger-ratios-assets-accounts "Assets"
-      hledger-ratios-debt-accounts "Liabilities"
-      hledger-ratios-essential-expense-accounts ""
-      hledger-ratios-income-accounts
-      "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
-      hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
-      hledger-show-expanded-report t
-      hledger-top-asset-account "Assets"
-      hledger-top-expense-account "Expenses"
-      hledger-top-income-account "Revenue"
-      hledger-year-of-birth 1997)
-)
+  :demand t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
+  ;; Provide the path to you journal file.
+  ;; The default location is too opinionated.
+  (setq hledger-jfile "~/org/finance/2024.ledger")
+  (global-set-key (kbd "C-c C-l e") 'hledger-jentry)
+  (global-set-key (kbd "C-c C-l l") 'hledger-run-command)
+  (setq hledger-currency-string "EUR"
+        hledger-extra-args ""
+        hledger-extrapolate-savings-period 12
+        hledger-extrapolate-savings-rate 7.0
+        hledger-ratios-assets-accounts "Assets"
+        hledger-ratios-debt-accounts "Liabilities"
+        hledger-ratios-essential-expense-accounts ""
+        hledger-ratios-income-accounts
+        "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
+        hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
+        hledger-show-expanded-report t
+        hledger-top-asset-account "Assets"
+        hledger-top-expense-account "Expenses"
+        hledger-top-income-account "Revenue"
+        hledger-year-of-birth 1997)
+  )
 
 (use-package delsel
-  :hook (after-init . delete-selection-mode) :ensure nil)
+  :hook (after-init . delete-selection-mode) :ensure t)
 
 (use-package exec-path-from-shell
-  :ensure nil
+  :ensure t
   :config
   (exec-path-from-shell-initialize))
 
-(use-package spacious-padding :ensure nil
+(use-package spacious-padding :ensure t
   :config
   (setq spacious-padding-widths
         '( :internal-border-width 15
@@ -43,6 +106,7 @@
            :right-divider-width 30
            :scroll-bar-width 8
            :fringe-width 8))
+(spacious-padding-mode)
   )
 
 (use-package modus-themes
@@ -60,24 +124,24 @@
 
 ;; Utility packages
 (use-package which-key
-  :ensure nil
+  :ensure t
   :config
   (which-key-mode))
 
 (use-package expand-region
-  :ensure nil
+  :ensure t
   :commands er/expand-region
   :bind (("C-=" . er/expand-region)))
 
 ;; Markdown mode
 (use-package markdown-mode
-  :ensure nil
+  :ensure t
   :hook (markdown-mode . visual-line-mode))
 
 ;; Calendar and org-mode extensions
-(use-package calfw :ensure nil)
-(use-package calfw-org :ensure nil)
-(use-package calfw-blocks :ensure nil
+(use-package calfw :ensure t)
+(use-package calfw-org :ensure t)
+(use-package calfw-blocks :ensure nil 
   :config 
   (setq calfw-blocks-default-event-length 0.25))
 
@@ -147,34 +211,33 @@
           ("KILL" . +org-todo-cancel)))
   )
 
-(use-package org-super-agenda :ensure nil)
+(use-package org-super-agenda :ensure t)
 (use-package toc-org
-  :ensure nil
+  :ensure t
   :hook (org-mode . toc-org-enable)
   :config
   (setq toc-org-hrefify-default "gh"))
-(use-package org-cliplink :ensure nil)
+(use-package org-cliplink :ensure t)
 (use-package org-upcoming-modeline
-  :ensure nil
+  :ensure t
   :config
   (org-upcoming-modeline-mode))
 
 
 (use-package aider
-  :ensure nil
+  :ensure t
   :config
   (setq aider-args '("--model" "gpt-4o-mini"))
   )
 
 (use-package magit
-  :ensure nil
+  :ensure t
   :bind (("C-x g" . magit-status)))
 
-;; Other utilities
-(use-package embark :ensure nil)
+
 
 (use-package eshell
-  :ensure nil
+  :ensure t
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -184,7 +247,7 @@
 
 ;; Eat: Emulate A Terminal
 (use-package eat
-  :ensure nil
+  :ensure t
   :custom
   (eat-term-name "iterm")
   :config
@@ -192,7 +255,7 @@
   (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
 (use-package gptel 
-  :ensure nil
+  :ensure t
 :config 
 (setq gptel-default-mode 'text-mode))
 
@@ -215,15 +278,9 @@
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
-;; Optionally use the `orderless' completion style.
-(use-package orderless
-  :ensure nil
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package paredit :ensure nil
+
+(use-package paredit :ensure t
   :config
   (autoload 'enable-paredit-mode "paredit"
     t)
@@ -235,7 +292,7 @@
   )
 
 (use-package org-super-agenda
-  :ensure nil
+  :ensure t
   :after org-agenda
   :init
   (setq org-agenda-skip-scheduled-if-done t
@@ -326,7 +383,7 @@
 
 
 (use-package helpful 
-:ensure nil
+:ensure t
 :config
 (global-set-key (kbd "C-h f") #'helpful-callable)
 (global-set-key (kbd "C-h v") #'helpful-variable)

@@ -9,28 +9,11 @@
     (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
       (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
 (require 'package)
-
-(load-file "~/.emacs.d/packages.el")
-(load-file "~/.emacs.d/keybinds.el")
-
-;; THEMES AND UI ;;
-(setopt inhibit-splash-screen t)
-(setopt initial-major-mode 'fundamental-mode)
-(setopt display-time-default-load-average nil)
-(setq make-backup-files nil)
-(setq global-auto-revert-mode 1)
-(setopt auto-revert-avoid-polling t)
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
-(delete-selection-mode 1)
-(global-display-line-numbers-mode)
-
-;;Disable line numbers
-(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
-(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
-(setq make-backup-files nil)
-(savehist-mode)
-
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
+;; and `package-pinned-packages`. Most users will not need or want to do this.
+;;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(require 'doom-themes)
 (setq custom-theme 'doom-Iosvkem)
 
 (defun apply-modus-operandi-tinted-palette (frame)
@@ -52,14 +35,39 @@
     (add-hook 'after-make-frame-functions #'set-default-font)
   (set-default-font (selected-frame)))
 
+(load-file "~/.emacs.d/packages.el")
+(load-file "~/.emacs.d/keybinds.el")
+(load-file "~/.emacs.d/custom_functions.el")
+
+(require 'custom-functions)
+
+;; disable auto save mode
+(auto-save-mode -1)
+
+;; THEMES AND UI ;;
+(setopt inhibit-splash-screen t)
+(setopt initial-major-mode 'fundamental-mode)
+(setopt display-time-default-load-average nil)
+(setq make-backup-files nil)
+(setq global-auto-revert-mode 1)
+(setopt auto-revert-avoid-polling t)
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+(delete-selection-mode 1)
+(global-display-line-numbers-mode)
+
+;;Disable line numbers
+(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
+(add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
+(setq make-backup-files nil)
+(savehist-mode)
 (setopt sentence-end-double-space nil)
 
 ;; OTHER SETTINGS ;;
+;;change grep command to rg
 (setq xref-search-program 'ripgrep)
 (setq grep-command "rg -nS --no-heading ")
 (setq grep-find-template "find . -type f -exec rg -nS --no-heading \{\} + ")
-
-(windmove-default-keybindings 'control)
 
 (when (display-graphic-p)
   (context-menu-mode))
@@ -155,7 +163,7 @@
      default))
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
- '(package-selected-packages '(aider doom-themes))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el")))
  '(zig-format-on-save nil))
 (custom-set-faces

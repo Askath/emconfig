@@ -1,4 +1,3 @@
-
 (defun generate-tags-for-project ()
   "Generate tags file for the current project root."
   (interactive)
@@ -56,7 +55,7 @@
 
 
 (defun treesit-install-all () 
-  interactive
+ (interactive) 
   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
   )
 
@@ -124,3 +123,5 @@
             (insert "VPN connection status: worked\n")
           (insert "VPN connection status: failed\n"))))
     (pop-to-buffer output-buffer)))
+
+(provide 'custom-functions)
