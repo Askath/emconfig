@@ -14,8 +14,6 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/marginalia")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/corfu")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/dirvish")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/hledger-mode")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/delsel")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/exec-path-from-shell")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/spacious-padding")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/modus-themes")
