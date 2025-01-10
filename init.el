@@ -13,6 +13,7 @@
 ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
 ;; and `package-pinned-packages`. Most users will not need or want to do this.
 ;;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(load-file "~/.emacs.d/packages.el")
 (require 'doom-themes)
 (setq custom-theme 'doom-Iosvkem)
 
@@ -35,7 +36,6 @@
     (add-hook 'after-make-frame-functions #'set-default-font)
   (set-default-font (selected-frame)))
 
-(load-file "~/.emacs.d/packages.el")
 (load-file "~/.emacs.d/keybinds.el")
 (load-file "~/.emacs.d/custom_functions.el")
 

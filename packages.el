@@ -31,12 +31,14 @@
 
 (use-package dirvish
   :ensure t
+  :init 
+  (dirvish-override-dired-mode)
   :config
   (setq dirvish-attributes
       '(vc-state subtree-state collapse git-msg file-time file-size))
   (require 'dirvish-peek)
   (dirvish-peek-mode)
-  (dirvish-override-dired-mode)
+
   :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
   (("C-c f" . dirvish-fd)
    :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
@@ -225,7 +227,7 @@
 
 
 (use-package aider
-  :ensure t
+  :ensure nil 
   :config
   (setq aider-args '("--model" "gpt-4o-mini"))
   )
