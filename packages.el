@@ -48,31 +48,26 @@
 
 
 ;; Finance
-(use-package hledger-mode :ensure nil
-  :demand t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
-  ;; Provide the path to you journal file.
-  ;; The default location is too opinionated.
-  (setq hledger-jfile "~/org/finance/2024.ledger")
-  (global-set-key (kbd "C-c C-l e") 'hledger-jentry)
-  (global-set-key (kbd "C-c C-l l") 'hledger-run-command)
-  (setq hledger-currency-string "EUR"
-        hledger-extra-args ""
-        hledger-extrapolate-savings-period 12
-        hledger-extrapolate-savings-rate 7.0
-        hledger-ratios-assets-accounts "Assets"
-        hledger-ratios-debt-accounts "Liabilities"
-        hledger-ratios-essential-expense-accounts ""
-        hledger-ratios-income-accounts
-        "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
-        hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
-        hledger-show-expanded-report t
-        hledger-top-asset-account "Assets"
-        hledger-top-expense-account "Expenses"
-        hledger-top-income-account "Revenue"
-        hledger-year-of-birth 1997)
-  )
+(require 'hledger-mode)
+(add-to-list 'auto-mode-alist '("\\.ledger\\'" . hledger-mode))
+(setq hledger-jfile "~/org/finance/2024.ledger")
+(global-set-key (kbd "C-c C-l e") 'hledger-jentry)
+(global-set-key (kbd "C-c C-l l") 'hledger-run-command)
+(setq hledger-currency-string "EUR"
+      hledger-extra-args ""
+      hledger-extrapolate-savings-period 12
+      hledger-extrapolate-savings-rate 7.0
+      hledger-ratios-assets-accounts "Assets"
+      hledger-ratios-debt-accounts "Liabilities"
+      hledger-ratios-essential-expense-accounts ""
+      hledger-ratios-income-accounts
+      "Revenue:Gehalt Revenue:Sonstiges Revenue:Netflix Revenue:Refunds"
+      hledger-ratios-liquid-asset-accounts "Assets:Cash Assets:Checking Assets:Savings"
+      hledger-show-expanded-report t
+      hledger-top-asset-account "Assets"
+      hledger-top-expense-account "Expenses"
+      hledger-top-income-account "Revenue"
+      hledger-year-of-birth 1997)
 
 (use-package delsel
   :hook (after-init . delete-selection-mode) :ensure t)
@@ -127,9 +122,8 @@
 ;; Calendar and org-mode extensions
 (use-package calfw :ensure t)
 (use-package calfw-org :ensure t)
-(use-package calfw-blocks :ensure nil 
-  :config 
-  (setq calfw-blocks-default-event-length 0.25))
+(require 'calfw-blocks)
+(setq calfw-blocks-default-event-length 0.25)
 
 (use-package org
   :hook ((org-mode . visual-line-mode))
