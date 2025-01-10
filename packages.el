@@ -1,64 +1,48 @@
 ;; Completion UI Framework
 ;; Enable vertico
-(use-package vertico
-  :ensure t
-  :config
-  (vertico-mode))
+(require 'vertico)
+(vertico-mode)
 
 ;; Optionally use the `orderless' completion style.
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+(require 'orderless)
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles partial-completion))))
 
-(use-package embark :ensure t)
+(require 'embark)
 ;; Enable rich annotations using the Marginalia package
-(use-package marginalia
-  :ensure t
-  :bind (:map minibuffer-local-map
-              ("M-A" . marginalia-cycle))
-  :config
-  (marginalia-mode))
+(require 'marginalia)
+(define-key minibuffer-local-map (kbd "M-A") 'marginalia-cycle)
+(marginalia-mode)
 
-(use-package corfu
-  :ensure t
-  ;; Optional customizations
-  :config
-  (setq corfu-auto t)
-  (global-corfu-mode))
+(require 'corfu)
+(setq corfu-auto t)
+(global-corfu-mode)
 
-(use-package dirvish
-  :ensure t
-  :init 
-  (dirvish-override-dired-mode)
-  :config
-  (setq dirvish-attributes
+(require 'dirvish)
+(dirvish-override-dired-mode)
+(setq dirvish-attributes
       '(vc-state subtree-state collapse git-msg file-time file-size))
-  (require 'dirvish-peek)
-  (dirvish-peek-mode)
-
-  :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
-  (("C-c f" . dirvish-fd)
-   :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
-   ("a"   . dirvish-quick-access)
-   ("f"   . dirvish-file-info-menu)
-   ("y"   . dirvish-yank-menu)
-   ("N"   . dirvish-narrow)
-   ("^"   . dirvish-history-last)
-   ("h"   . dirvish-history-jump) ; remapped `describe-mode'
-   ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
-   ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
-   ("TAB" . dirvish-subtree-toggle)
-   ("M-f" . dirvish-history-go-forward)
-   ("M-b" . dirvish-history-go-backward)
-   ("M-l" . dirvish-ls-switches-menu)
-   ("M-m" . dirvish-mark-menu)
-   ("M-t" . dirvish-layout-toggle)
-   ("M-s" . dirvish-setup-menu)
-   ("M-e" . dirvish-emerge-menu)
-   ("M-j" . dirvish-fd-jump)))
+(require 'dirvish-peek)
+(dirvish-peek-mode)
+(define-key global-map (kbd "C-c f") 'dirvish-fd)
+(define-key dirvish-mode-map (kbd "a") 'dirvish-quick-access)
+(define-key dirvish-mode-map (kbd "f") 'dirvish-file-info-menu)
+(define-key dirvish-mode-map (kbd "y") 'dirvish-yank-menu)
+(define-key dirvish-mode-map (kbd "N") 'dirvish-narrow)
+(define-key dirvish-mode-map (kbd "^") 'dirvish-history-last)
+(define-key dirvish-mode-map (kbd "h") 'dirvish-history-jump)
+(define-key dirvish-mode-map (kbd "s") 'dirvish-quicksort)
+(define-key dirvish-mode-map (kbd "v") 'dirvish-vc-menu)
+(define-key dirvish-mode-map (kbd "TAB") 'dirvish-subtree-toggle)
+(define-key dirvish-mode-map (kbd "M-f") 'dirvish-history-go-forward)
+(define-key dirvish-mode-map (kbd "M-b") 'dirvish-history-go-backward)
+(define-key dirvish-mode-map (kbd "M-l") 'dirvish-ls-switches-menu)
+(define-key dirvish-mode-map (kbd "M-m") 'dirvish-mark-menu)
+(define-key dirvish-mode-map (kbd "M-t") 'dirvish-layout-toggle)
+(define-key dirvish-mode-map (kbd "M-s") 'dirvish-setup-menu)
+(define-key dirvish-mode-map (kbd "M-e") 'dirvish-emerge-menu)
+(define-key dirvish-mode-map (kbd "M-j") 'dirvish-fd-jump)
 
 ;;;;
 
