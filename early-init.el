@@ -16,10 +16,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Startup speed, annoyance suppression
-(setq gc-cons-threshold 10000000)
-(setq byte-compile-warnings '(not obsolete))
-(setq warning-suppress-log-types '((comp) (bytecomp)))
-(setq native-comp-async-report-warnings-errors 'silent)
+(setq gc-cons-threshold 10000000
+      byte-compile-warnings '(not obsolete)
+      warning-suppress-log-types '((comp) (bytecomp))
+      native-comp-async-report-warnings-errors 'silent
+      inhibit-startup-echo-area-message (user-login-name)
+      frame-resize-pixelwise t
+      default-frame-alist '((fullscreen . maximized)
+                            (background-color . "#000000")
+                            (foreground-color . "#ffffff")
+                            (ns-appearance . dark)
+                            (ns-transparent-titlebar . t)))
 
 ;; Silence stupid startup message
 (setq inhibit-startup-echo-area-message (user-login-name))

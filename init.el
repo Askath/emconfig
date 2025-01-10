@@ -48,11 +48,11 @@
 (setopt inhibit-splash-screen t)
 (setopt initial-major-mode 'fundamental-mode)
 (setopt display-time-default-load-average nil)
-(setq make-backup-files nil)
-(setq global-auto-revert-mode 1)
-(setopt auto-revert-avoid-polling t)
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
+(setq make-backup-files nil
+      global-auto-revert-mode 1
+      auto-revert-avoid-polling t
+      auto-revert-interval 5
+      auto-revert-check-vc-info t)
 (delete-selection-mode 1)
 (global-display-line-numbers-mode)
 
@@ -65,14 +65,36 @@
 
 ;; OTHER SETTINGS ;;
 ;;change grep command to rg
-(setq xref-search-program 'ripgrep)
-(setq grep-command "rg -nS --no-heading ")
-(setq grep-find-template "find . -type f -exec rg -nS --no-heading \{\} + ")
+(setq xref-search-program 'ripgrep
+      grep-command "rg -nS --no-heading "
+      grep-find-template "find . -type f -exec rg -nS --no-heading \\{\\} + ")
 
 (when (display-graphic-p)
   (context-menu-mode))
 
-(setq imenu-flatten 'prefix)
+(setq imenu-flatten 'prefix
+      line-number-mode t
+      column-number-mode t
+      display-line-numbers-type 'relative
+      x-underline-at-descent-line nil
+      switch-to-buffer-obey-display-actions t
+      show-trailing-whitespace nil
+      indicate-buffer-boundaries 'left
+      mouse-wheel-tilt-scroll t
+      mouse-wheel-flip-direction t
+      display-line-numbers-width 3
+      tab-bar-show 1
+      display-time-format "%a %F %T"
+      display-time-interval 1
+      indent-tabs-mode nil
+      tab-width 4
+      indent-line-function 'insert-tab
+      which-key-sort-order 'which-key-key-order-alpha
+      which-key-max-display-columns 2
+      which-key-popup-type 'side-window
+      which-key-side-window-location 'right
+      which-key-side-window-max-height 0.25
+      which-key-side-window-max-width 0.33)
 
 (defun bedrock--backup-file-name (fpath)
   (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
