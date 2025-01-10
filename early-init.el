@@ -29,10 +29,36 @@
                             (ns-transparent-titlebar . t)))
 
 ;; Silence stupid startup message
-(setq inhibit-startup-echo-area-message (user-login-name))
+(setq inhibit-startup-echo-area-message (user-login-name)
+      inhibit-splash-screen t
+      initial-major-mode 'fundamental-mode
+      display-time-default-load-average nil
+      make-backup-files nil
+      global-auto-revert-mode 1
+      auto-revert-avoid-polling t
+      auto-revert-interval 5
+      auto-revert-check-vc-info t
+      line-number-mode t
+      column-number-mode t
+      display-line-numbers-type 'relative
+      x-underline-at-descent-line nil
+      switch-to-buffer-obey-display-actions t
+      show-trailing-whitespace nil
+      indicate-buffer-boundaries 'left
+      mouse-wheel-tilt-scroll t
+      mouse-wheel-flip-direction t
+      display-time-format "%a %F %T"
+      display-time-interval 1
+      indent-tabs-mode nil
+      tab-width 4
+      indent-line-function 'insert-tab
+      which-key-sort-order 'which-key-key-order-alpha
+      which-key-max-display-columns 2
+      which-key-popup-type 'side-window
+      which-key-side-window-location 'right
+      which-key-side-window-max-height 0.25
+      which-key-side-window-max-width 0.33)
 
-;; Default frame configuration: full screen, good-looking title bar on macOS
-(setq frame-resize-pixelwise t)
 (tool-bar-mode -1)                      ; All these tools are in the menu-bar anyway
 (setq default-frame-alist '((fullscreen . maximized)
 

@@ -45,21 +45,12 @@
 (auto-save-mode -1)
 
 ;; THEMES AND UI ;;
-(setopt inhibit-splash-screen t)
-(setopt initial-major-mode 'fundamental-mode)
-(setopt display-time-default-load-average nil)
-(setq make-backup-files nil
-      global-auto-revert-mode 1
-      auto-revert-avoid-polling t
-      auto-revert-interval 5
-      auto-revert-check-vc-info t)
 (delete-selection-mode 1)
 (global-display-line-numbers-mode)
 
 ;;Disable line numbers
 (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
 (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode 1)))
-(setq make-backup-files nil)
 (savehist-mode)
 (setopt sentence-end-double-space nil)
 
@@ -104,15 +95,6 @@
     backupFilePath))
 (setopt make-backup-file-name-function 'bedrock--backup-file-name)
 
-(setopt line-number-mode t)
-(setopt column-number-mode t)
-(setq display-line-numbers-type 'relative)
-(setopt x-underline-at-descent-line nil)
-(setopt switch-to-buffer-obey-display-actions t)
-(setopt show-trailing-whitespace nil)
-(setopt indicate-buffer-boundaries 'left)
-(setopt mouse-wheel-tilt-scroll t)
-(setopt mouse-wheel-flip-direction t)
 (blink-cursor-mode -1)
 (pixel-scroll-precision-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -124,23 +106,12 @@
 (setopt tab-bar-show 1)
 (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
 (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
-(setopt display-time-format "%a %F %T")
-(setopt display-time-interval 1)
 (display-time-mode)
 
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq indent-line-function 'insert-tab)
 
-(setq which-key-sort-order 'which-key-key-order-alpha)
-(setq which-key-max-display-columns 2)
-(setq which-key-popup-type 'side-window)
-(setq which-key-side-window-location 'right)
-(setq which-key-side-window-max-height 0.25)
-(setq which-key-side-window-max-width 0.33)
 
 (require 'calfw)
 (require 'calfw-org)
