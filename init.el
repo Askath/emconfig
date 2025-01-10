@@ -4,38 +4,12 @@
 
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-subdirs-to-load-path))
+
 (let ((site-lisp-dir "~/.emacs.d/site-lisp"))
   (when (file-directory-p site-lisp-dir)
     (dolist (dir (directory-files-recursively site-lisp-dir "dir$"))
       (add-to-list 'Info-default-directory-list (file-name-directory dir)))))
-(add-to-list 'load-path "~/.emacs.d/site-lisp/vertico")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/orderless")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/embark")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/marginalia")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/corfu")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/dirvish")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/exec-path-from-shell")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/spacious-padding")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/modus-themes")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/which-key")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/expand-region")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/markdown-mode")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-org")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/calfw-blocks")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/org")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/org-super-agenda")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/toc-org")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/org-cliplink")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/org-upcoming-modeline")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/aider")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/magit")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/eshell")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/eat")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/gptel")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/dabbrev")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/paredit")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/helpful")
+
 (load-file "~/.emacs.d/packages.el")
 (require 'doom-themes)
 (setq custom-theme 'doom-Iosvkem)
@@ -170,16 +144,15 @@
  ;; If there is more than one, they won't work right.
  '(aider-args '("--model" "gpt-4o-mini"))
  '(custom-safe-themes
-   '("b5fd9c7429d52190235f2383e47d340d7ff769f141cd8f9e7a4629a81abc6b19"
-     "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
-     "dd4582661a1c6b865a33b89312c97a13a3885dc95992e2e5fc57456b4c545176"
-     "4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
-     "2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
-     "f5f80dd6588e59cfc3ce2f11568ff8296717a938edd448a947f9823a4e282b66"
-     default))
+    '("b5fd9c7429d52190235f2383e47d340d7ff769f141cd8f9e7a4629a81abc6b19"
+      "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
+      "dd4582661a1c6b865a33b89312c97a13a3885dc95992e2e5fc57456b4c545176"
+      "4b6cc3b60871e2f4f9a026a5c86df27905fb1b0e96277ff18a76a39ca53b82e1"
+      "2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
+      "f5f80dd6588e59cfc3ce2f11568ff8296717a938edd448a947f9823a4e282b66"
+      default))
  '(org-safe-remote-resources
-   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
- '(package-selected-packages nil)
+    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el")))
  '(zig-format-on-save nil))
 (custom-set-faces

@@ -1,3 +1,5 @@
+
+
 ;; Completion UI Framework
 ;; Enable vertico
 (require 'vertico)
@@ -19,11 +21,12 @@
 (setq corfu-auto t)
 (global-corfu-mode)
 
-(require 'dirvish)
-(dirvish-override-dired-mode)
+
+(use-package dirvish
+  :config
+  (dirvish-override-dired-mode)
 (setq dirvish-attributes
       '(vc-state subtree-state collapse git-msg file-time file-size))
-(require 'dirvish-peek)
 (dirvish-peek-mode)
 (define-key global-map (kbd "C-c f") 'dirvish-fd)
 (define-key dirvish-mode-map (kbd "a") 'dirvish-quick-access)
@@ -43,6 +46,9 @@
 (define-key dirvish-mode-map (kbd "M-s") 'dirvish-setup-menu)
 (define-key dirvish-mode-map (kbd "M-e") 'dirvish-emerge-menu)
 (define-key dirvish-mode-map (kbd "M-j") 'dirvish-fd-jump)
+)
+
+
 
 ;;;;
 
@@ -70,16 +76,13 @@
       hledger-year-of-birth 1997)
 
 (use-package delsel
-  :hook (after-init . delete-selection-mode) :ensure t)
+  :hook (after-init . delete-selection-mode) :ensure nil)
 
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
 
-(use-package spacious-padding :ensure t
-  :config
-  (setq spacious-padding-widths
+(require 'spacious-padding)
+(setq spacious-padding-widths
         '( :internal-border-width 15
            :header-line-width 4
            :mode-line-width 6
@@ -88,7 +91,6 @@
            :scroll-bar-width 8
            :fringe-width 8))
 (spacious-padding-mode)
-  )
 
 (use-package modus-themes
   :custom
@@ -105,23 +107,19 @@
 
 ;; Utility packages
 (use-package which-key
-  :ensure t
+  :ensure nil
   :config
   (which-key-mode))
 
-(use-package expand-region
-  :ensure t
-  :commands er/expand-region
-  :bind (("C-=" . er/expand-region)))
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
 
-;; Markdown mode
-(use-package markdown-mode
-  :ensure t
-  :hook (markdown-mode . visual-line-mode))
+(require 'markdown-mode)
+(add-hook 'markdown-mode-hook 'visual-line-mode)
 
 ;; Calendar and org-mode extensions
-(use-package calfw :ensure t)
-(use-package calfw-org :ensure t)
+(use-package calfw :ensure nil)
+(use-package calfw-org :ensure nil)
 (require 'calfw-blocks)
 (setq calfw-blocks-default-event-length 0.25)
 
@@ -191,15 +189,15 @@
           ("KILL" . +org-todo-cancel)))
   )
 
-(use-package org-super-agenda :ensure t)
+(use-package org-super-agenda :ensure nil)
 (use-package toc-org
-  :ensure t
+  :ensure nil
   :hook (org-mode . toc-org-enable)
   :config
   (setq toc-org-hrefify-default "gh"))
-(use-package org-cliplink :ensure t)
+(use-package org-cliplink :ensure nil)
 (use-package org-upcoming-modeline
-  :ensure t
+  :ensure nil
   :config
   (org-upcoming-modeline-mode))
 
@@ -211,13 +209,13 @@
   )
 
 (use-package magit
-  :ensure t
+  :ensure nil
   :bind (("C-x g" . magit-status)))
 
 
 
 (use-package eshell
-  :ensure t
+  :ensure nil
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -227,7 +225,7 @@
 
 ;; Eat: Emulate A Terminal
 (use-package eat
-  :ensure t
+  :ensure nil
   :custom
   (eat-term-name "iterm")
   :config
@@ -235,7 +233,7 @@
   (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
 (use-package gptel 
-  :ensure t
+  :ensure nil
 :config 
 (setq gptel-default-mode 'text-mode))
 
@@ -260,7 +258,7 @@
 
 
 
-(use-package paredit :ensure t
+(use-package paredit :ensure nil
   :config
   (autoload 'enable-paredit-mode "paredit"
     t)
@@ -272,7 +270,7 @@
   )
 
 (use-package org-super-agenda
-  :ensure t
+  :ensure nil
   :after org-agenda
   :init
   (setq org-agenda-skip-scheduled-if-done t
@@ -363,7 +361,7 @@
 
 
 (use-package helpful 
-:ensure t
+:ensure nil
 :config
 (global-set-key (kbd "C-h f") #'helpful-callable)
 (global-set-key (kbd "C-h v") #'helpful-variable)
