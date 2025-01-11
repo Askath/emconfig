@@ -23,32 +23,46 @@
 
 
 (use-package dirvish
+  :demand
   :config
+  (require 'dirvish-widgets)
+  (require 'dirvish-extras)
+  (require 'dirvish-collapse)
+  (require 'dirvish-emerge)
+  (require 'dirvish-fd)
+  (require 'dirvish-history)
+  (require 'dirvish-icons)
+  (require 'dirvish-ls)
+  (require 'dirvish-narrow)
+  (require 'dirvish-peek)
+  ;; (require 'dirvish-quick-access-entries)
+  (require 'dirvish-side)
+  (require 'dirvish-subtree)
+  (require 'dirvish-vc)
+  (require 'dirvish-yank)
   (dirvish-override-dired-mode)
-(setq dirvish-attributes
-      '(vc-state subtree-state collapse git-msg file-time file-size))
-(dirvish-peek-mode)
-(define-key global-map (kbd "C-c f") 'dirvish-fd)
-(define-key dirvish-mode-map (kbd "a") 'dirvish-quick-access)
-(define-key dirvish-mode-map (kbd "f") 'dirvish-file-info-menu)
-(define-key dirvish-mode-map (kbd "y") 'dirvish-yank-menu)
-(define-key dirvish-mode-map (kbd "N") 'dirvish-narrow)
-(define-key dirvish-mode-map (kbd "^") 'dirvish-history-last)
-(define-key dirvish-mode-map (kbd "h") 'dirvish-history-jump)
-(define-key dirvish-mode-map (kbd "s") 'dirvish-quicksort)
-(define-key dirvish-mode-map (kbd "v") 'dirvish-vc-menu)
-(define-key dirvish-mode-map (kbd "TAB") 'dirvish-subtree-toggle)
-(define-key dirvish-mode-map (kbd "M-f") 'dirvish-history-go-forward)
-(define-key dirvish-mode-map (kbd "M-b") 'dirvish-history-go-backward)
-(define-key dirvish-mode-map (kbd "M-l") 'dirvish-ls-switches-menu)
-(define-key dirvish-mode-map (kbd "M-m") 'dirvish-mark-menu)
-(define-key dirvish-mode-map (kbd "M-t") 'dirvish-layout-toggle)
-(define-key dirvish-mode-map (kbd "M-s") 'dirvish-setup-menu)
-(define-key dirvish-mode-map (kbd "M-e") 'dirvish-emerge-menu)
-(define-key dirvish-mode-map (kbd "M-j") 'dirvish-fd-jump)
-)
-
-
+  (setq dirvish-attributes
+	'(vc-state subtree-state collapse git-msg file-time file-size))
+  (dirvish-peek-mode)
+  (define-key global-map (kbd "C-c f") 'dirvish-fd)
+  (define-key dirvish-mode-map (kbd "a") 'dirvish-quick-access)
+  (define-key dirvish-mode-map (kbd "f") 'dirvish-file-info-menu)
+  (define-key dirvish-mode-map (kbd "y") 'dirvish-yank-menu)
+  (define-key dirvish-mode-map (kbd "N") 'dirvish-narrow)
+  (define-key dirvish-mode-map (kbd "^") 'dirvish-history-last)
+  (define-key dirvish-mode-map (kbd "h") 'dirvish-history-jump)
+  (define-key dirvish-mode-map (kbd "s") 'dirvish-quicksort)
+  (define-key dirvish-mode-map (kbd "v") 'dirvish-vc-menu)
+  (define-key dirvish-mode-map (kbd "TAB") 'dirvish-subtree-toggle)
+  (define-key dirvish-mode-map (kbd "M-f") 'dirvish-history-go-forward)
+  (define-key dirvish-mode-map (kbd "M-b") 'dirvish-history-go-backward)
+  (define-key dirvish-mode-map (kbd "M-l") 'dirvish-ls-switches-menu)
+  (define-key dirvish-mode-map (kbd "M-m") 'dirvish-mark-menu)
+  (define-key dirvish-mode-map (kbd "M-t") 'dirvish-layout-toggle)
+  (define-key dirvish-mode-map (kbd "M-s") 'dirvish-setup-menu)
+  (define-key dirvish-mode-map (kbd "M-e") 'dirvish-emerge-menu)
+  (define-key dirvish-mode-map (kbd "M-j") 'dirvish-fd-jump)
+  )
 
 ;;;;
 
@@ -83,13 +97,13 @@
 
 (require 'spacious-padding)
 (setq spacious-padding-widths
-        '( :internal-border-width 15
-           :header-line-width 4
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8
-           :fringe-width 8))
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8
+         :fringe-width 8))
 (spacious-padding-mode)
 
 (use-package modus-themes
@@ -234,8 +248,8 @@
 
 (use-package gptel 
   :ensure nil
-:config 
-(setq gptel-default-mode 'text-mode))
+  :config 
+  (setq gptel-default-mode 'text-mode))
 
 (use-package emacs
   :custom
@@ -361,11 +375,11 @@
 
 
 (use-package helpful 
-:ensure nil
-:config
-(global-set-key (kbd "C-h f") #'helpful-callable)
-(global-set-key (kbd "C-h v") #'helpful-variable)
-(global-set-key (kbd "C-h k") #'helpful-key)
-(global-set-key (kbd "C-h x") #'helpful-command)
-(global-set-key (kbd "C-c C-d") #'helpful-at-point)
-(global-set-key (kbd "C-h F") #'helpful-function))
+  :ensure nil
+  :config
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+  (global-set-key (kbd "C-h x") #'helpful-command)
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+  (global-set-key (kbd "C-h F") #'helpful-function))
