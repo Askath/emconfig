@@ -110,9 +110,9 @@
 
 
 
-(require 'calfw)
-(require 'calfw-org)
-(require 'hledger-mode)
+;; (require 'calfw)
+;; (require 'calfw-org)
+;; (require 'hledger-mode)
 ;; To open files with .journal extension in hledger-mode
 
 (setq treesit-language-source-alist
