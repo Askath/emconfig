@@ -1,5 +1,3 @@
-
-
 ;; ESSENTIALS
 
 (use-package exec-path-from-shell :ensure t
@@ -383,3 +381,9 @@
   (global-set-key (kbd "C-h x") #'helpful-command)
   (global-set-key (kbd "C-c C-d") #'helpful-at-point)
   (global-set-key (kbd "C-h F") #'helpful-function))
+
+;; Racket mode for Racket files
+(add-to-list 'auto-mode-alist '("\\.rkt\\'" . racket-mode))
+
+;; TypeScript mode for TypeScript files
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
