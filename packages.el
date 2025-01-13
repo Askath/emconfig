@@ -1,3 +1,5 @@
+
+
 ;; ESSENTIALS
 
 (use-package exec-path-from-shell :ensure t
@@ -277,7 +279,11 @@
   (add-hook 'geiser-mode-hook           'enable-paredit-mode)
   )
 
-(use-package racket-mode :ensure t)
+(use-package racket-mode :ensure t
+:config
+    (require 'racket-xp)
+    (add-hook 'racket-mode-hook #'racket-xp-mode)
+)
 
 (use-package org-super-agenda
   :ensure t
@@ -387,3 +393,5 @@
 
 ;; TypeScript mode for TypeScript files
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
