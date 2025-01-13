@@ -1,49 +1,59 @@
 
 
-;; Completion UI Framework
-;; Enable vertico
-(require 'vertico)
-(vertico-mode)
+;; ESSENTIALS
+
+(use-package exec-path-from-shell :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+
+(use-package spacious-padding :ensure t
+  :config
+  (setq spacious-padding-widths
+	'( :internal-border-width 15
+           :header-line-width 4
+           :mode-line-width 6
+           :tab-width 4
+           :right-divider-width 30
+           :scroll-bar-width 8
+           :fringe-width 8))
+  (spacious-padding-mode)
+  )
+
+(use-package vertico :ensure t
+  :config
+  (vertico-mode)
+  )
+
+(use-package no-littering :ensure t)
 
 ;; Optionally use the `orderless' completion style.
-(require 'orderless)
-(setq completion-styles '(orderless basic)
-      completion-category-defaults nil
-      completion-category-overrides '((file (styles partial-completion))))
+(use-package orderless :ensure t
+  :config
+  (setq completion-styles '(orderless basic)
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion))))
+  )
 
-(require 'embark)
+
+(use-package embark :ensure t)
 ;; Enable rich annotations using the Marginalia package
-(require 'marginalia)
-(define-key minibuffer-local-map (kbd "M-A") 'marginalia-cycle)
-(marginalia-mode)
+(use-package marginalia :ensure t
+  :config
+  (define-key minibuffer-local-map (kbd "M-A") 'marginalia-cycle)
+  (marginalia-mode))
 
-(require 'corfu)
-(setq corfu-auto t)
-(global-corfu-mode)
-
+(use-package corfu :ensure t
+  :config
+  (setq corfu-auto t)
+  (global-corfu-mode))
 
 (use-package dirvish
-  :demand
+  :ensure t
   :config
-  (require 'dirvish-widgets)
-  (require 'dirvish-extras)
-  (require 'dirvish-collapse)
-  (require 'dirvish-emerge)
-  (require 'dirvish-fd)
-  (require 'dirvish-history)
-  (require 'dirvish-icons)
-  (require 'dirvish-ls)
-  (require 'dirvish-narrow)
-  (require 'dirvish-peek)
-  ;; (require 'dirvish-quick-access-entries)
-  (require 'dirvish-side)
-  (require 'dirvish-subtree)
-  (require 'dirvish-vc)
-  (require 'dirvish-yank)
   (dirvish-override-dired-mode)
   (setq dirvish-attributes
 	'(vc-state subtree-state collapse git-msg file-time file-size))
-  (dirvish-peek-mode)
   (define-key global-map (kbd "C-c f") 'dirvish-fd)
   (define-key dirvish-mode-map (kbd "a") 'dirvish-quick-access)
   (define-key dirvish-mode-map (kbd "f") 'dirvish-file-info-menu)
@@ -64,7 +74,15 @@
   (define-key dirvish-mode-map (kbd "M-j") 'dirvish-fd-jump)
   )
 
+(use-package magit :ensure t)
+
+(use-package doom-themes :ensure t)
+
+(use-package devdocs :ensure t 
+:config
+(global-set-key (kbd "C-h D") 'devdocs-lookup))
 ;;;;
+
 
 
 ;; Finance
@@ -92,19 +110,8 @@
 (use-package delsel
   :hook (after-init . delete-selection-mode) :ensure nil)
 
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
 
-(require 'spacious-padding)
-(setq spacious-padding-widths
-      '( :internal-border-width 15
-         :header-line-width 4
-         :mode-line-width 6
-         :tab-width 4
-         :right-divider-width 30
-         :scroll-bar-width 8
-         :fringe-width 8))
-(spacious-padding-mode)
+
 
 (use-package modus-themes
   :custom
@@ -125,15 +132,15 @@
   :config
   (which-key-mode))
 
-(require 'expand-region)
+(use-package expand-region :ensure t)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
-(require 'markdown-mode)
+(use-package markdown-mode :ensure t)
 (add-hook 'markdown-mode-hook 'visual-line-mode)
 
 ;; Calendar and org-mode extensions
-(use-package calfw :ensure nil)
-(use-package calfw-org :ensure nil)
+(use-package calfw :ensure t)
+(use-package calfw-org :ensure t)
 (require 'calfw-blocks)
 (setq calfw-blocks-default-event-length 0.25)
 
@@ -203,33 +210,22 @@
           ("KILL" . +org-todo-cancel)))
   )
 
-(use-package org-super-agenda :ensure nil)
+(use-package org-super-agenda :ensure t)
 (use-package toc-org
-  :ensure nil
+  :ensure t
   :hook (org-mode . toc-org-enable)
   :config
   (setq toc-org-hrefify-default "gh"))
-(use-package org-cliplink :ensure nil)
-(use-package org-upcoming-modeline
-  :ensure nil
-  :config
-  (org-upcoming-modeline-mode))
-
+(use-package org-cliplink :ensure t)
 
 (use-package aider
-  :ensure nil 
+  :ensure nil
   :config
   (setq aider-args '("--model" "gpt-4o-mini"))
   )
 
-(use-package magit
-  :ensure nil
-  :bind (("C-x g" . magit-status)))
-
-
-
 (use-package eshell
-  :ensure nil
+  :ensure t
   :init
   (defun bedrock/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
@@ -239,7 +235,7 @@
 
 ;; Eat: Emulate A Terminal
 (use-package eat
-  :ensure nil
+  :ensure t
   :custom
   (eat-term-name "iterm")
   :config
@@ -247,7 +243,7 @@
   (eat-eshell-visual-command-mode))     ; commands like less will be handled by Eat
 
 (use-package gptel 
-  :ensure nil
+  :ensure t
   :config 
   (setq gptel-default-mode 'text-mode))
 
@@ -272,7 +268,7 @@
 
 
 
-(use-package paredit :ensure nil
+(use-package paredit :ensure t
   :config
   (autoload 'enable-paredit-mode "paredit"
     t)
@@ -283,9 +279,17 @@
   (add-hook 'geiser-mode-hook           'enable-paredit-mode)
   )
 
+(use-package racket-mode :ensure t
+:config
+    (require 'racket-xp)
+    (add-hook 'racket-mode-hook #'racket-xp-mode)
+)
+
 (use-package org-super-agenda
-  :ensure nil
+  :ensure t
   :after org-agenda
+  :config
+  (org-super-agenda-mode)
   :init
   (setq org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t
@@ -356,7 +360,7 @@
                             )))
                      ))
            ))))
-(org-super-agenda-mode)
+
 
 (use-package emacs
   :config
@@ -375,7 +379,7 @@
 
 
 (use-package helpful 
-  :ensure nil
+  :ensure t
   :config
   (global-set-key (kbd "C-h f") #'helpful-callable)
   (global-set-key (kbd "C-h v") #'helpful-variable)
@@ -383,3 +387,11 @@
   (global-set-key (kbd "C-h x") #'helpful-command)
   (global-set-key (kbd "C-c C-d") #'helpful-at-point)
   (global-set-key (kbd "C-h F") #'helpful-function))
+
+;; Racket mode for Racket files
+(add-to-list 'auto-mode-alist '("\\.rkt\\'" . racket-mode))
+
+;; TypeScript mode for TypeScript files
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
