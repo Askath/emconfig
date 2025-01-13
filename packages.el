@@ -222,10 +222,8 @@
   (setq aider-args '("--model" "gpt-4o-mini"))
   )
 
-(use-package magit
-  :ensure nil
-  :bind (("C-x g" . magit-status)))
 
+(load "~/.emacs.d/site-lisp/magit/magit-autoloads")
 
 
 (use-package eshell
