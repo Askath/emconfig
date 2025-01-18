@@ -1,5 +1,27 @@
+;; TEST
+(use-package denote :ensure t
+  :config
+ (global-set-key (kbd "C-c nn") #'denote)
+)
 
-
+(use-package denote-search
+  :ensure t
+  ;; Installation with VC
+  :vc (:url "https://github.com/lmq-10/denote-search"
+       :rev :newest)
+  :bind
+  ;; Customize keybindings to your liking
+  (("C-c s s" . denote-search)
+   ("C-c s d" . denote-search-marked-dired-files)
+   ("C-c s r" . denote-search-files-referenced-in-region))
+  :custom
+  ;; Disable help string (set it once you learn the commands)
+  ;; (denote-search-help-string "")
+  ;; Display keywords in results buffer
+  (denote-search-format-heading-function #'denote-search-format-heading-with-keywords)
+  :config 
+ (global-set-key (kbd "C-c nf") #'denote-search))
+ 
 ;; ESSENTIALS
 
 (use-package exec-path-from-shell :ensure t

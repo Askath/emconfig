@@ -157,15 +157,18 @@
      "2078837f21ac3b0cc84167306fa1058e3199bbd12b6d5b56e3777a4125ff6851"
      "f5f80dd6588e59cfc3ce2f11568ff8296717a938edd448a947f9823a4e282b66"
      default))
+ '(denote-directory "/Users/taradruffel/org/inbox/")
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-selected-packages
-   '(calfw calfw-org corfu devdocs dirvish dockerfile-mode doom-themes
-	   eat embark exec-path-from-shell expand-region gptel helpful
-	   magit marginalia markdown-mode no-littering orderless
-	   org-cliplink org-upcoming-modeline paredit racket-mode
-	   rainbow-delimiters spacious-padding toc-org vertico))
- '(package-vc-selected-packages '((aider :url "https://github.com/tninja/aider.el")))
+   '(calfw calfw-org corfu denote denote-search devdocs dirvish
+	   doom-themes eat embark exec-path-from-shell expand-region
+	   gptel helpful magit marginalia markdown-mode no-littering
+	   orderless org-cliplink org-super-agenda paredit racket-mode
+	   spacious-padding toc-org vertico))
+ '(package-vc-selected-packages
+   '((denote-search :url "https://github.com/lmq-10/denote-search")
+     (aider :url "https://github.com/tninja/aider.el")))
  '(zig-format-on-save nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
